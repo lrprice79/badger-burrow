@@ -113,6 +113,39 @@ The same components built for React Native. Produces flat `StyleSheet` objects i
 
 ---
 
+## Framework compatibility
+
+BadgerBurrow is built on standard React with no framework-specific code, so it works anywhere React runs.
+
+**Web frameworks:**
+
+| Framework | Supported | Notes |
+|---|---|---|
+| Next.js (App Router) | ✅ | Call `digBurrow()` inside a `'use client'` component at your app root — not directly in `layout.tsx` |
+| Next.js (Pages Router) | ✅ | Call `digBurrow()` in `_app.tsx` |
+| Vite + React | ✅ | Call `digBurrow()` in your entry file |
+| Remix | ✅ | Call `digBurrow()` in your root component |
+| Gatsby | ✅ | Call `digBurrow()` in `gatsby-browser.js` |
+| Astro (React islands) | ✅ | Works inside React island components |
+
+**Mobile:**
+
+| Framework | Supported | Notes |
+|---|---|---|
+| Expo | ✅ | Primary mobile target |
+| React Native CLI | ✅ | Bare React Native without Expo |
+
+**Not supported:**
+
+| Framework | Reason |
+|---|---|
+| Vue / Svelte / Angular | React only |
+| Server Components (RSC) | The store is client-side only. Full server-side rendering support is planned for v1.1. |
+
+> **Next.js App Router tip:** wrap your `digBurrow()` call in a small `BurrowProvider.tsx` client component and import it into your root `layout.tsx`. That's all it takes — the rest of your app can stay server components.
+
+---
+
 ## Responsive props
 
 You can pass different values for different screen sizes using an object:
