@@ -1,11 +1,11 @@
+import { generateScale } from './colorScale'
+
 export const palette = {
-  teal: { 300: '#81E6D9', 400: '#4FD1C5', 500: '#38B2AC', 600: '#2C7A7B' },
-  blue: { 100: '#EBF8FF', 500: '#4299E1', 900: '#14213D' },
-  gray: { 100: '#F7FAFC', 200: '#EDF2F7', 300: '#E2E8F0', 500: '#718096', 700: '#4A5568', 900: '#1A202C' },
-  orange: { 400: '#F6AD55', 500: '#FCA311' },
-  yellow: { 400: '#F6E05E', 500: '#ECC94B' },
-  lavBlue: { 300: '#B794F4', 400: '#9A92F2', 500: '#805AD5' },
-  purple: { 400: '#B794F4', 500: '#9F7AEA' },
-  green: { 700: '#065143' },
-  platinum: { 500: '#E4E2E2' },
+  primary:   generateScale('#8B5CF6'),
+  secondary: generateScale('#14B8A6'),
+  neutral:   generateScale('#71717A'),
+  success:   generateScale('#22C55E'),
+  error:     generateScale('#EF4444'),
+  warning:   generateScale('#F59E0B'),
+  info:      generateScale('#3B82F6'),
 }

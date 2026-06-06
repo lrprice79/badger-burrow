@@ -32,9 +32,9 @@ Most styling libraries wrap your entire app in a `ThemeProvider`. Any token chan
 Two-level resolution: **primitive → semantic → usage**
 
 ```
-primitive.color.teal.500 = '#38B2AC'
+primitive.color.primary.500 = '#8b5cf6'
          ↓
-semantic.light['color.interactive.primary'] = '{color.teal.500}'
+semantic.light['color.interactive.primary'] = '{color.primary.500}'
          ↓
 <Chamber bg="color.interactive.primary" />  →  var(--bb-color-interactive-primary)
 ```
@@ -67,20 +67,20 @@ Pure TypeScript — no runtime, no React. Defines the `BurrowTokens` interface a
 
 | Category | Keys |
 |---|---|
-| `primitive.color` | Colour scales (teal, blue, gray, orange, …) |
+| `primitive.color` | `primary`, `secondary`, `neutral`, `success`, `error`, `warning`, `info` — each a full 50–900 scale |
 | `primitive.space` | Numeric (`4 → 16px`) and named (`md → 16px`) |
 | `primitive.radius` | `none`, `sm`, `md`, `lg`, `xl`, `full` |
 | `primitive.fontSize` | `xs` → `3xl` |
 | `primitive.fontWeight` | `normal`, `medium`, `semibold`, `bold` |
 | `primitive.shadow` | Web (`box-shadow`) + Native (`elevation`) per key |
-| `semantic.light` | Light mode token aliases (reference format: `{color.teal.500}`) |
+| `semantic.light` | Light mode token aliases (reference format: `{color.primary.500}`) |
 | `semantic.dark` | Dark mode overrides |
 | `motion.duration` | `instant`, `fast`, `normal`, `slow`, `glacial` |
 | `motion.easing` | `standard`, `decelerate`, `accelerate`, `sharp` |
 | `motion.spring` | `bouncy`, `gentle`, `stiff` (Reanimated-compatible) |
 | `breakpoints` | `sm`, `md`, `lg`, `xl` |
 
-### `@badger-burrow/core` 🚧 in progress
+### `@badger-burrow/core` 🔜
 
 Pub/sub store, semantic token resolver, CSS Custom Property injection, `useBurrow` hook, `variants()` utility.
 
@@ -107,22 +107,46 @@ React Native primitives: same API, flat `StyleSheet` output, breakpoints via `us
 
 ## Token Customisation
 
+### Extending the default tokens
+
 ```ts
 import { extendBurrow } from '@badger-burrow/core'
 
 const myTokens = extendBurrow({
   primitive: {
     color: {
-      brand: { 500: '#ff6b35' }
-    }
-  },
-  semantic: {
-    light: {
-      'color.interactive.primary': '{color.brand.500}'
+      primary: generateScale('#ff6b35'),   // replaces default purple scale
+      secondary: generateScale('#06b6d4'), // replaces default teal scale
     }
   }
 })
 ```
+
+### Generating a colour scale from any hex value
+
+`generateScale` takes any hex colour and returns a full 50–900 scale using perceptually uniform OKLCH spacing — no external dependencies.
+
+```ts
+import { extendBurrow } from '@badger-burrow/core'
+import { generateScale } from '@badger-burrow/tokens'
+
+const myTokens = extendBurrow({
+  primitive: {
+    color: {
+      primary:   generateScale('#ff6b35'),                      // anchor at 500 (default)
+      secondary: generateScale('#06b6d4', { anchor: 400 }),    // anchor at a custom shade
+      neutral:   generateScale('#6b7280', { format: 'hsl' }),  // output as hsl(...) strings
+    }
+  }
+})
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `anchor` | `50 \| 100 \| … \| 900` | `500` | Which shade the input hex maps to |
+| `format` | `'hex' \| 'rgb' \| 'hsl' \| 'oklch'` | `'hex'` | Output colour format |
 
 ---
 
@@ -175,8 +199,8 @@ The `__debug` prop renders a dev-only overlay showing resolved token values, re-
 
 | Phase | Package | Status |
 |---|---|---|
-| 1 | `packages/tokens` | ✅ Complete |
-| 2 | `packages/core` | 🚧 In progress |
+| 1–2 | `packages/tokens` | ✅ Complete — schema, default scales, `generateScale` |
+| 3 | `packages/core` | 🔜 Next |
 | 3 | `packages/web` | 🔜 Planned |
 | 4 | `packages/native` | 🔜 Planned |
 | 5 | `badger-sync` CLI | 🔜 Planned (v1) |
