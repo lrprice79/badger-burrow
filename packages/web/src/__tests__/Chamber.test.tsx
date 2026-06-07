@@ -225,4 +225,16 @@ describe('as prop', () => {
         const tag = document.head.querySelector('[data-bb]')
         expect(tag?.textContent).toContain(':hover')
     })
+    it('renders as dialog', () => {
+        render(<Chamber data-testid="c" as="dialog" />)
+        expect(screen.getByTestId('c').tagName).toBe('DIALOG')
+    })
+    it('renders as details', () => {
+        render(<Chamber data-testid="c" as="details" />)
+        expect(screen.getByTestId('c').tagName).toBe('DETAILS')
+    })
+    it('renders as summary', () => {
+        render(<Chamber data-testid="c" as="summary" />)
+        expect(screen.getByTestId('c').tagName).toBe('SUMMARY')
+    })
 })

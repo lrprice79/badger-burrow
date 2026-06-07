@@ -16,6 +16,7 @@ export type ChamberTag =
     | 'button' | 'a' | 'form' | 'fieldset'
     | 'ul' | 'ol' | 'li'
     | 'figure' | 'figcaption' | 'label'
+    | 'dialog' | 'details' | 'summary'
 
 export interface ChamberProps
     extends React.HTMLAttributes<HTMLElement>,
