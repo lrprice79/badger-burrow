@@ -7,3 +7,4 @@ export { toCssVar, buildCssVarMap, injectCssVars, removeCssVars } from './cssVar
 export { BadgerBase } from './store'
 export type { BurrowSnapshot } from './store'
 export { extendBurrow } from './extendBurrow'
+export { createVariants } from './variants'
