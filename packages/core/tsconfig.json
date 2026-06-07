@@ -8,7 +8,8 @@
     "declaration": true,
     "outDir": "dist",
     "rootDir": "src",
-    "types": ["jest"]
+    "types": ["jest"],
+    "isolatedModules": true
   },
   "include": ["src"]
 }
