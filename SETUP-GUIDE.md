@@ -253,12 +253,36 @@ That's your entire setup. No `<ThemeProvider>` anywhere in your app.
 
 ## 4. Use it in components
 
+Chamber defaults to `<div>` but renders as any semantic element via the `as` prop. This matters for accessibility — a button should be a `<button>`, a link should be an `<a>`.
+
 ```tsx
 import { Chamber, Tunnel } from '@badger-burrow/web'
 
+// Button — renders as <button> with hover + disabled states
+function PrimaryButton({ children, onClick, disabled }) {
+  return (
+    <Chamber
+      as="button"
+      bg="color.interactive.primary"
+      px="space.4" py="space.2"
+      radius="radius.md"
+      _hover={{ bg: 'color.interactive.primary.hover', cursor: 'pointer' }}
+      _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      <Tunnel color="color.text.inverse" fontWeight="fontWeight.medium">
+        {children}
+      </Tunnel>
+    </Chamber>
+  )
+}
+
+// Card — renders as <article>
 function Card({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <Chamber
+      as="article"
       bg="color.bg.elevated"
       p="space.6"
       radius="radius.md"
@@ -279,6 +303,8 @@ function Card({ title, subtitle }: { title: string; subtitle: string }) {
   )
 }
 ```
+
+**Chamber tags:** `div` · `section` · `article` · `aside` · `header` · `footer` · `main` · `nav` · `button` · `a` · `form` · `fieldset` · `ul` · `ol` · `li` · `figure` · `figcaption` · `label`
 
 ---
 

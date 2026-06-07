@@ -185,3 +185,44 @@ describe('live token updates', () => {
         expect(after).toBe('rgb(255, 0, 0)')
     })
 })
+
+// ─── as prop ──────────────────────────────────────────────────────────────────
+
+describe('as prop', () => {
+    it('renders as div by default', () => {
+        render(<Chamber data-testid="c" />)
+        expect(screen.getByTestId('c').tagName).toBe('DIV')
+    })
+    it('renders as button', () => {
+        render(<Chamber data-testid="c" as="button" />)
+        expect(screen.getByTestId('c').tagName).toBe('BUTTON')
+    })
+    it('renders as nav', () => {
+        render(<Chamber data-testid="c" as="nav" />)
+        expect(screen.getByTestId('c').tagName).toBe('NAV')
+    })
+    it('renders as section', () => {
+        render(<Chamber data-testid="c" as="section" />)
+        expect(screen.getByTestId('c').tagName).toBe('SECTION')
+    })
+    it('renders as a', () => {
+        render(<Chamber data-testid="c" as="a" href="#" />)
+        expect(screen.getByTestId('c').tagName).toBe('A')
+    })
+    it('renders as ul', () => {
+        render(<Chamber data-testid="c" as="ul" />)
+        expect(screen.getByTestId('c').tagName).toBe('UL')
+    })
+    it('passes token props through when using as', () => {
+        render(<Chamber data-testid="c" as="button" bg="color.primary.500" p="space.4" />)
+        const el = screen.getByTestId('c')
+        expect(el.tagName).toBe('BUTTON')
+        expect(el.style.backgroundColor).toBeTruthy()
+        expect(el.style.padding).toBeTruthy()
+    })
+    it('pseudo props work when using as', () => {
+        render(<Chamber data-testid="c" as="button" _hover={{ cursor: 'pointer' }} />)
+        const tag = document.head.querySelector('[data-bb]')
+        expect(tag?.textContent).toContain(':hover')
+    })
+})

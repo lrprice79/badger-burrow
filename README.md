@@ -256,31 +256,36 @@ Uses `useSyncExternalStore` under the hood. No provider needed.
 
 ### `Chamber` — styled box
 
-A `<div>` with token-aware shorthand props. All standard HTML div props pass through.
+A styled box component. Defaults to `<div>`. Use the `as` prop to render any semantic element — `button`, `nav`, `section`, `a`, and more. All standard HTML props pass through.
 
 **Style priority (lowest → highest):** `sx` → named props → `style`
 
 ```tsx
 <Chamber
-  bg="color.bg.surface"
-  p="space.4"
-  px="space.6"
+  as="button"
+  bg="color.interactive.primary"
+  px="space.4" py="space.2"
   radius="radius.md"
-  shadow="md"
-  display="flex"
-  flexDir="row"
-  align="center"
-  justify="space-between"
-  gap="space.3"
-  w="100%"
-  maxW={600}
-  transition="all 0.2s ease"
-  sx={{ cursor: 'pointer' }}
-  style={{ border: '1px solid red' }}
+  _hover={{ bg: 'color.interactive.primary.hover', cursor: 'pointer' }}
+  _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
+  onClick={handleClick}
 >
-  content
+  Save
+</Chamber>
+
+<Chamber
+  as="nav"
+  display="flex"
+  gap="space.4"
+  p="space.3"
+  bg="color.bg.elevated"
+  shadow="sm"
+>
+  {children}
 </Chamber>
 ```
+
+**Supported tags:** `div` · `section` · `article` · `aside` · `header` · `footer` · `main` · `nav` · `button` · `a` · `form` · `fieldset` · `ul` · `ol` · `li` · `figure` · `figcaption` · `label`
 
 #### Full prop reference
 
@@ -437,8 +442,8 @@ raw number:      16                             → 16 (or '16px' for px props)
 |---|---|
 | `@badger-burrow/tokens` | 42 |
 | `@badger-burrow/core` | 136 |
-| `@badger-burrow/web` | 263 |
-| **Total** | **441** |
+| `@badger-burrow/web` | 271 |
+| **Total** | **449** |
 
 ---
 

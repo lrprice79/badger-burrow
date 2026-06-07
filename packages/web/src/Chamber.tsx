@@ -10,13 +10,26 @@ import type { BurrowBoxProps } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
 import { acquirePseudoStyles, releasePseudoStyles } from './styleInjector'
 
+export type ChamberTag =
+    | 'div' | 'section' | 'article' | 'aside'
+    | 'header' | 'footer' | 'main' | 'nav'
+    | 'button' | 'a' | 'form' | 'fieldset'
+    | 'ul' | 'ol' | 'li'
+    | 'figure' | 'figcaption' | 'label'
+
 export interface ChamberProps
-    extends React.HTMLAttributes<HTMLDivElement>,
-        BurrowBoxProps {}
+    extends React.HTMLAttributes<HTMLElement>,
+        BurrowBoxProps {
+    /** Element tag to render — defaults to div */
+    as?: ChamberTag
+    /** Required when as="a" */
+    href?: string
+}
 
 /**
  * A styled box component backed by BadgerBurrow tokens.
- * Accepts shorthand token props alongside all standard div props.
+ * Accepts shorthand token props alongside all standard HTML props.
+ * Use `as` to render as any semantic element — button, nav, section, etc.
  *
  * Priority (lowest → highest): sx → named props → style
  *
@@ -27,13 +40,16 @@ export interface ChamberProps
  *
  * @example
  * <Chamber
- *   bg="color.primary.500"
- *   p="space.4" radius="radius.md"
- *   _hover={{ shadow: 'md', cursor: 'pointer' }}
- *   _focus={{ outlineStyle: 'solid', outlineColor: 'color.interactive.primary', outlineWidth: '2px' }}
+ *   as="button"
+ *   bg="color.interactive.primary"
+ *   px="space.4" py="space.2"
+ *   radius="radius.md"
+ *   _hover={{ bg: 'color.interactive.primary.hover', cursor: 'pointer' }}
+ *   _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
+ *   onClick={handleClick}
  * />
  */
-export function Chamber({ sx, style, children, ...props }: ChamberProps) {
+export function Chamber({ as: Tag = 'div', sx, style, children, ...props }: ChamberProps) {
     const { tokens, mode } = useBurrow()
 
     // Split props into burrow props vs plain HTML props
@@ -76,12 +92,12 @@ export function Chamber({ sx, style, children, ...props }: ChamberProps) {
     }, [className, pseudoStyles, hasPseudo])
 
     return (
-        <div
+        <Tag
             className={className}
             style={{ ...sxStyles, ...tokenStyles, ...style } as React.CSSProperties}
-            {...(htmlProps as React.HTMLAttributes<HTMLDivElement>)}
+            {...(htmlProps as React.HTMLAttributes<HTMLElement>)}
         >
             {children}
-        </div>
+        </Tag>
     )
 }
