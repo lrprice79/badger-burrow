@@ -308,6 +308,32 @@ function Card({ title, subtitle }: { title: string; subtitle: string }) {
 
 ---
 
+### The rule: Chamber for layout, Tunnel for text
+
+> **If it's visible text — it goes in a `Tunnel`. If it's a container, box, or interactive surface — it's a `Chamber`.**
+
+`Chamber` has no text props. `Tunnel` has no layout props. They do one thing each and do it well.
+
+```tsx
+// ✅ Right
+<Chamber as="section" p="space.6" display="flex" flexDir="column" gap="space.3">
+  <Tunnel as="h2" fontSize="fontSize.xl" fontWeight="fontWeight.bold" color="color.text.primary">
+    Account settings
+  </Tunnel>
+  <Tunnel as="p" fontSize="fontSize.md" color="color.text.secondary" lineHeight="lineHeight.relaxed">
+    Update your name, email, and preferences.
+  </Tunnel>
+</Chamber>
+
+// ❌ Wrong — don't put raw text directly in Chamber
+<Chamber>Account settings</Chamber>
+
+// ❌ Wrong — don't use Tunnel as a layout wrapper
+<Tunnel display="flex" gap="space.4">...</Tunnel>
+```
+
+---
+
 ## 5. Dark mode toggle — anywhere in your app
 
 ```tsx

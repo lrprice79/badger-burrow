@@ -376,22 +376,33 @@ Use them inside `_hover` for token-consistent hover styles:
 />
 ```
 
-### `Tunnel` — styled text
+### `Tunnel` — all text goes here
 
-A text element with token-aware shorthand props. Defaults to `<span>`. Use the `as` prop to change the tag.
+**Tunnel is the text component.** Every piece of visible text in your UI — headings, body copy, labels, captions, error messages — should be rendered inside a `Tunnel`. It has no layout props (no padding, margin, flex, grid). Its props are entirely focused on how text looks: font, colour, size, weight, alignment, decoration, and truncation.
+
+If you need to lay out text next to other elements, wrap it in a `Chamber`. The `Tunnel` just handles the text itself.
 
 ```tsx
-<Tunnel
-  as="h1"
-  fontSize="fontSize.2xl"
-  fontWeight="fontWeight.bold"
-  color="color.text.primary"
-  lineHeight="lineHeight.tight"
-  truncate
->
-  Hello world
+// ✅ Correct — Tunnel for text, Chamber for layout
+<Chamber display="flex" align="center" gap="space.2">
+  <Tunnel color="color.text.primary" fontSize="fontSize.md">Hello world</Tunnel>
+</Chamber>
+
+// ✅ Headings, labels, captions — all Tunnel
+<Tunnel as="h1" fontSize="fontSize.2xl" fontWeight="fontWeight.bold" color="color.text.primary">
+  Page title
+</Tunnel>
+
+<Tunnel as="label" fontSize="fontSize.sm" color="color.text.secondary">
+  Email address
+</Tunnel>
+
+<Tunnel as="p" fontSize="fontSize.md" lineHeight="lineHeight.relaxed" color="color.text.primary">
+  Body copy goes here.
 </Tunnel>
 ```
+
+Defaults to `<span>`. Use `as` to change the tag — `h1`–`h6`, `p`, `label` are the most common.
 
 #### Full prop reference
 
