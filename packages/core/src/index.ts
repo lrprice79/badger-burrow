@@ -14,7 +14,8 @@ export { buildBoxStyles, buildTextStyles } from './buildStyles'
 export type {
     BurrowBoxProps, BurrowTextProps,
     BackgroundProps, PaddingProps, MarginProps, SizeProps,
-    LayoutProps, GridProps, BorderProps, EffectProps, PositionProps, InteractionProps, TransitionProps,
+    LayoutProps, GridProps, InsetProps, BorderProps, EffectProps, PositionProps,
+    InteractionProps, TransitionProps, AnimationProps, ScrollProps,
     FontProps, TextLayoutProps, TextHelperProps,
     TokenValue, ShadowKey,
 } from './props'
