@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React from 'react'
 import {
     resolveSx,
     buildBoxStyles,
@@ -8,7 +8,7 @@ import {
 } from '@badger-burrow/core'
 import type { BurrowBoxProps } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
-import { acquirePseudoStyles, releasePseudoStyles } from './styleInjector'
+import { injectPseudoStyles } from './styleInjector'
 
 export type ChamberTag =
     | 'div' | 'section' | 'article' | 'aside'
@@ -66,30 +66,15 @@ export function Chamber({ as: Tag = 'div', sx, style, children, ...props }: Cham
     const tokenStyles = buildBoxStyles(boxPropsTyped, tokens, mode)
     const sxStyles    = sx ? resolveSx(sx, tokens, mode) : {}
 
-    // Resolve pseudo styles — memoised so they only recompute on prop/token/mode change
-    const pseudoStyles = useMemo(
-        () => buildPseudoStyles(boxPropsTyped, tokens, mode),
-        // JSON.stringify is intentional — props object reference changes every render
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [JSON.stringify(burrowProps), mode, tokens],
-    )
+    // Resolve pseudo styles and generate a scoped class name
+    const pseudoStyles = buildPseudoStyles(boxPropsTyped, tokens, mode)
+    const hasPseudo    = Object.keys(pseudoStyles).length > 0
+    const className    = hasPseudo ? toClassName(JSON.stringify(pseudoStyles) + mode) : undefined
 
-    const hasPseudo = Object.keys(pseudoStyles).length > 0
-
-    // Stable class name derived from resolved pseudo CSS + mode
-    // Including mode ensures light/dark get separate class names (different resolved colours)
-    const className = useMemo(() => {
-        if (!hasPseudo) return undefined
-        return toClassName(JSON.stringify(pseudoStyles) + mode)
-    }, [pseudoStyles, hasPseudo, mode])
-
-    // Inject pseudo <style> tags; clean up on unmount
-    useEffect(() => {
-        if (!className || !hasPseudo) return
-        acquirePseudoStyles(className, pseudoStyles)
-        const keys = Object.keys(pseudoStyles)
-        return () => releasePseudoStyles(className, keys)
-    }, [className, pseudoStyles, hasPseudo])
+    // Inject <style> tags synchronously during render — idempotent, no useEffect needed
+    if (hasPseudo && className) {
+        injectPseudoStyles(className, pseudoStyles)
+    }
 
     return (
         <Tag

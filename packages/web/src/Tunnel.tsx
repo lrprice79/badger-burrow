@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React from 'react'
 import {
     resolveSx,
     buildTextStyles,
@@ -8,7 +8,7 @@ import {
 } from '@badger-burrow/core'
 import type { BurrowTextProps } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
-import { acquirePseudoStyles, releasePseudoStyles } from './styleInjector'
+import { injectPseudoStyles } from './styleInjector'
 
 type TunnelTag = 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'label'
 
@@ -20,22 +20,22 @@ export interface TunnelProps
 }
 
 /**
- * A styled text component backed by BadgerBurrow tokens.
- * Accepts shorthand token props alongside all standard HTML text props.
+ * The text component. Every piece of visible text in your UI goes in a Tunnel —
+ * headings, body copy, labels, captions, error messages.
+ *
+ * Tunnel has no layout props. Use a Chamber to position or space text alongside
+ * other elements.
  *
  * Priority (lowest → highest): sx → named props → style
  *
- * Pseudo-state styling via _hover, _focus, _active, _focusVisible, _disabled.
- *
  * @example
- * <Tunnel
- *   as="h1"
- *   color="color.text.primary"
- *   fontSize="fontSize.2xl"
- *   fontWeight="fontWeight.bold"
- *   _hover={{ color: 'color.interactive.primary', textDecoration: 'underline' }}
- *   truncate
- * />
+ * <Tunnel as="h1" fontSize="fontSize.2xl" fontWeight="fontWeight.bold" color="color.text.primary">
+ *   Page title
+ * </Tunnel>
+ *
+ * <Tunnel as="p" color="color.text.secondary" lineHeight="lineHeight.relaxed">
+ *   Body copy here.
+ * </Tunnel>
  */
 export function Tunnel({ as: Tag = 'span', sx, style, children, ...props }: TunnelProps) {
     const { tokens, mode } = useBurrow()
@@ -54,26 +54,15 @@ export function Tunnel({ as: Tag = 'span', sx, style, children, ...props }: Tunn
     const tokenStyles = buildTextStyles(textPropsTyped, tokens, mode)
     const sxStyles    = sx ? resolveSx(sx, tokens, mode) : {}
 
-    // Resolve pseudo styles
-    const pseudoStyles = useMemo(
-        () => buildTextPseudoStyles(textPropsTyped, tokens, mode),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [JSON.stringify(burrowProps), mode, tokens],
-    )
+    // Resolve pseudo styles and generate a scoped class name
+    const pseudoStyles = buildTextPseudoStyles(textPropsTyped, tokens, mode)
+    const hasPseudo    = Object.keys(pseudoStyles).length > 0
+    const className    = hasPseudo ? toClassName(JSON.stringify(pseudoStyles) + mode) : undefined
 
-    const hasPseudo = Object.keys(pseudoStyles).length > 0
-
-    const className = useMemo(() => {
-        if (!hasPseudo) return undefined
-        return toClassName(JSON.stringify(pseudoStyles) + mode)
-    }, [pseudoStyles, hasPseudo, mode])
-
-    useEffect(() => {
-        if (!className || !hasPseudo) return
-        acquirePseudoStyles(className, pseudoStyles)
-        const keys = Object.keys(pseudoStyles)
-        return () => releasePseudoStyles(className, keys)
-    }, [className, pseudoStyles, hasPseudo])
+    // Inject <style> tags synchronously during render — idempotent, no useEffect needed
+    if (hasPseudo && className) {
+        injectPseudoStyles(className, pseudoStyles)
+    }
 
     return (
         <Tag

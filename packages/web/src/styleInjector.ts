@@ -2,9 +2,13 @@
  * Style injector for pseudo-class rules.
  *
  * Injects <style> tags into document.head for :hover, :focus, :active,
- * :focus-visible, and :disabled rules. Deduplicates by class name + pseudo
- * combo using reference counting — a style tag is only removed when the last
- * component using it unmounts.
+ * :focus-visible, and :disabled rules.
+ *
+ * Injection is idempotent — calling it multiple times with the same class name
+ * and pseudo is safe. Tags are keyed by [data-bb] attribute so duplicates are
+ * never created. Style tags are not cleaned up on unmount (they are tiny,
+ * uniquely scoped, and cause no correctness issues — same approach as
+ * styled-components and emotion).
  *
  * SSR safe — all DOM operations are guarded by typeof document checks.
  */
@@ -24,24 +28,16 @@ function styleObjectToCss(styles: Record<string, string | number | undefined>): 
         .join(' ')
 }
 
-/** Map of "className:pseudo" → ref count */
-const refCounts = new Map<string, number>()
-
-/** The CSS pseudo-class string for a given pseudo key */
+/** The CSS pseudo-class selector string for a given pseudo key */
 function pseudoSelector(pseudo: string): string {
     if (pseudo === 'focusVisible') return 'focus-visible'
     return pseudo
 }
 
-/** data-bb attribute value for a given className + pseudo */
-function tagId(className: string, pseudo: string): string {
-    return `${className}:${pseudo}`
-}
-
 /**
  * Inject a single pseudo-class rule for a class name.
- * Uses reference counting — safe to call from multiple mounted components
- * sharing the same generated class.
+ * Idempotent — if a tag already exists for this class+pseudo, updates it
+ * in place only if the content changed (e.g. on dark mode switch).
  */
 export function injectPseudoRule(
     className: string,
@@ -53,13 +49,10 @@ export function injectPseudoRule(
     const css = styleObjectToCss(styles)
     if (!css) return
 
-    const id = tagId(className, pseudo)
-    const count = (refCounts.get(id) ?? 0) + 1
-    refCounts.set(id, count)
-
-    // Already injected — update content in case tokens changed (mode switch)
-    const existing = document.head.querySelector(`[${ATTR}="${id}"]`)
+    const id = `${className}:${pseudo}`
     const rule = `.${className}:${pseudoSelector(pseudo)} { ${css} }`
+    const existing = document.head.querySelector(`[${ATTR}="${id}"]`)
+
     if (existing) {
         if (existing.textContent !== rule) existing.textContent = rule
         return
@@ -72,45 +65,14 @@ export function injectPseudoRule(
 }
 
 /**
- * Release a pseudo-class rule for a class name.
- * Removes the <style> tag when the ref count drops to zero.
+ * Inject all pseudo rules for a component.
+ * Call directly during render — no useEffect needed.
  */
-export function releasePseudoRule(className: string, pseudo: string): void {
-    if (typeof document === 'undefined') return
-
-    const id = tagId(className, pseudo)
-    const count = (refCounts.get(id) ?? 1) - 1
-
-    if (count <= 0) {
-        refCounts.delete(id)
-        document.head.querySelector(`[${ATTR}="${id}"]`)?.remove()
-    } else {
-        refCounts.set(id, count)
-    }
-}
-
-/**
- * Inject all pseudo rules for a component instance.
- * Call in useEffect on mount / when pseudoStyles changes.
- */
-export function acquirePseudoStyles(
+export function injectPseudoStyles(
     className: string,
     pseudoStyles: Record<string, Record<string, string | number | undefined>>,
 ): void {
     for (const [pseudo, styles] of Object.entries(pseudoStyles)) {
         injectPseudoRule(className, pseudo, styles)
-    }
-}
-
-/**
- * Release all pseudo rules for a component instance.
- * Call in the useEffect cleanup (return function) — runs on unmount.
- */
-export function releasePseudoStyles(
-    className: string,
-    pseudoKeys: string[],
-): void {
-    for (const pseudo of pseudoKeys) {
-        releasePseudoRule(className, pseudo)
     }
 }
