@@ -75,8 +75,19 @@ export interface BorderProps {
     border?: string
     borderColor?: TokenValue
     borderWidth?: number
-    /** borderRadius — token path or raw value */
+    /** borderRadius — all corners — token path or raw value */
     radius?: TokenValue
+    /** Per-corner radius — token path or raw value */
+    borderTopLeftRadius?: TokenValue
+    borderTopRightRadius?: TokenValue
+    borderBottomLeftRadius?: TokenValue
+    borderBottomRightRadius?: TokenValue
+    /** outline */
+    outline?: string
+    outlineColor?: TokenValue
+    outlineWidth?: TokenValue
+    outlineStyle?: string
+    outlineOffset?: TokenValue
 }
 
 export interface EffectProps {
@@ -84,10 +95,15 @@ export interface EffectProps {
     /** boxShadow — shadow token key ('none' | 'sm' | 'md' | 'lg') */
     shadow?: ShadowKey
     transform?: string
+    filter?: string
+    backdropFilter?: string
+    mixBlendMode?: string
 }
 
 export interface PositionProps {
     overflow?: string
+    overflowX?: string
+    overflowY?: string
     position?: string
     top?: TokenValue
     right?: TokenValue
@@ -99,9 +115,19 @@ export interface PositionProps {
 export interface InteractionProps {
     cursor?: string
     pointerEvents?: string
+    touchAction?: string
+    userSelect?: string
     visibility?: string
     boxSizing?: string
     aspectRatio?: string
+}
+
+export interface TransitionProps {
+    transition?: string
+    transitionProperty?: string
+    transitionDuration?: string
+    transitionTimingFunction?: string
+    transitionDelay?: string
 }
 
 /** All box props combined — used by Chamber (web) and Chamber (native) */
@@ -115,7 +141,8 @@ export interface BurrowBoxProps
         BorderProps,
         EffectProps,
         PositionProps,
-        InteractionProps {
+        InteractionProps,
+        TransitionProps {
     sx?: SxProp
 }
 
@@ -138,12 +165,19 @@ export interface TextLayoutProps {
     textAlign?: 'left' | 'right' | 'center' | 'justify'
     textTransform?: string
     textDecoration?: string
+    textDecorationColor?: TokenValue
+    textDecorationStyle?: string
+    textDecorationThickness?: TokenValue
+    textUnderlineOffset?: TokenValue
     textOverflow?: string
     textShadow?: string
     textIndent?: TokenValue
     textWrap?: string
     whiteSpace?: string
     overflow?: string
+    wordBreak?: string
+    overflowWrap?: string
+    verticalAlign?: string
 }
 
 export interface TextHelperProps {
@@ -153,6 +187,9 @@ export interface TextHelperProps {
     truncate?: boolean
     /** whiteSpace: nowrap shorthand */
     nowrap?: boolean
+    /** Multi-line clamp — sets -webkit-line-clamp with required companions */
+    lineClamp?: number
+    userSelect?: string
 }
 
 /** All text props combined — used by Tunnel (web) and Tunnel (native) */
@@ -174,9 +211,16 @@ export const BURROW_BOX_KEYS = new Set<string>([
     'gridTemplateColumns', 'gridTemplateRows', 'gridTemplateAreas',
     'gridColumn', 'gridRow', 'gridArea',
     'border', 'borderColor', 'borderWidth', 'radius',
-    'opacity', 'shadow', 'transform',
-    'overflow', 'position', 'top', 'right', 'bottom', 'left', 'zIndex',
-    'cursor', 'pointerEvents', 'visibility', 'boxSizing', 'aspectRatio',
+    'borderTopLeftRadius', 'borderTopRightRadius',
+    'borderBottomLeftRadius', 'borderBottomRightRadius',
+    'outline', 'outlineColor', 'outlineWidth', 'outlineStyle', 'outlineOffset',
+    'opacity', 'shadow', 'transform', 'filter', 'backdropFilter', 'mixBlendMode',
+    'overflow', 'overflowX', 'overflowY',
+    'position', 'top', 'right', 'bottom', 'left', 'zIndex',
+    'cursor', 'pointerEvents', 'touchAction', 'userSelect',
+    'visibility', 'boxSizing', 'aspectRatio',
+    'transition', 'transitionProperty', 'transitionDuration',
+    'transitionTimingFunction', 'transitionDelay',
     'sx',
 ])
 
@@ -184,8 +228,11 @@ export const BURROW_TEXT_KEYS = new Set<string>([
     'color',
     'fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'fontVariant', 'fontStretch',
     'lineHeight', 'letterSpacing', 'wordSpacing',
-    'textAlign', 'textTransform', 'textDecoration', 'textOverflow',
-    'textShadow', 'textIndent', 'textWrap', 'whiteSpace', 'overflow',
-    'italic', 'truncate', 'nowrap',
+    'textAlign', 'textTransform',
+    'textDecoration', 'textDecorationColor', 'textDecorationStyle', 'textDecorationThickness',
+    'textUnderlineOffset',
+    'textOverflow', 'textShadow', 'textIndent', 'textWrap',
+    'whiteSpace', 'overflow', 'wordBreak', 'overflowWrap', 'verticalAlign',
+    'italic', 'truncate', 'nowrap', 'lineClamp', 'userSelect',
     'sx',
 ])
