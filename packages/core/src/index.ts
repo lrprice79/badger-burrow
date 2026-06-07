@@ -11,8 +11,11 @@ export { createVariants } from './variants'
 export { resolveSx } from './sx'
 export type { SxProp } from './sx'
 export { buildBoxStyles, buildTextStyles } from './buildStyles'
+export { stepShade, resolveHoverBg, buildPseudoStyles, buildTextPseudoStyles } from './pseudo'
+export type { ResolvedPseudoStyles } from './pseudo'
 export type {
-    BurrowBoxProps, BurrowTextProps,
+    BurrowBoxProps, BurrowBoxVisualProps, PseudoBoxProps,
+    BurrowTextProps, BurrowTextVisualProps, PseudoTextProps,
     BackgroundProps, PaddingProps, MarginProps, SizeProps,
     LayoutProps, GridProps, InsetProps, BorderProps, EffectProps, PositionProps,
     InteractionProps, TransitionProps, AnimationProps, ScrollProps,

@@ -188,8 +188,11 @@ export interface ScrollProps {
     scrollBehavior?: string
 }
 
-/** All box props combined — used by Chamber (web) and Chamber (native) */
-export interface BurrowBoxProps
+/**
+ * Visual-only box props — all style groups without pseudo-state props.
+ * Safe to nest inside _hover, _focus etc (no recursive pseudo nesting).
+ */
+export interface BurrowBoxVisualProps
     extends BackgroundProps,
         PaddingProps,
         MarginProps,
@@ -203,7 +206,35 @@ export interface BurrowBoxProps
         InteractionProps,
         TransitionProps,
         AnimationProps,
-        ScrollProps {
+        ScrollProps {}
+
+/** Pseudo-state style props */
+export interface PseudoBoxProps {
+    /** Styles applied on :hover */
+    _hover?: BurrowBoxVisualProps
+    /** Styles applied on :focus */
+    _focus?: BurrowBoxVisualProps
+    /** Styles applied on :active */
+    _active?: BurrowBoxVisualProps
+    /** Styles applied on :focus-visible */
+    _focusVisible?: BurrowBoxVisualProps
+    /** Styles applied on :disabled */
+    _disabled?: BurrowBoxVisualProps
+    /**
+     * Name of a primitive colour scale to use for the auto hover background.
+     * e.g. 'primary' → steps one shade darker on the primary scale.
+     * Set to false to disable the smart hover default entirely.
+     */
+    hoverScale?: string | false
+    /**
+     * Explicit shade (50–900) to use with hoverScale.
+     * If omitted, the shade is auto-stepped one darker from the current bg shade.
+     */
+    hoverShade?: number
+}
+
+/** All box props combined — used by Chamber (web) and Chamber (native) */
+export interface BurrowBoxProps extends BurrowBoxVisualProps, PseudoBoxProps {
     sx?: SxProp
 }
 
@@ -253,8 +284,27 @@ export interface TextHelperProps {
     userSelect?: string
 }
 
+/**
+ * Visual-only text props — safe to nest inside _hover, _focus etc.
+ */
+export interface BurrowTextVisualProps extends FontProps, TextLayoutProps, TextHelperProps {}
+
+/** Pseudo-state style props for text */
+export interface PseudoTextProps {
+    /** Styles applied on :hover */
+    _hover?: BurrowTextVisualProps
+    /** Styles applied on :focus */
+    _focus?: BurrowTextVisualProps
+    /** Styles applied on :active */
+    _active?: BurrowTextVisualProps
+    /** Styles applied on :focus-visible */
+    _focusVisible?: BurrowTextVisualProps
+    /** Styles applied on :disabled */
+    _disabled?: BurrowTextVisualProps
+}
+
 /** All text props combined — used by Tunnel (web) and Tunnel (native) */
-export interface BurrowTextProps extends FontProps, TextLayoutProps, TextHelperProps {
+export interface BurrowTextProps extends BurrowTextVisualProps, PseudoTextProps {
     sx?: SxProp
 }
 
@@ -310,6 +360,9 @@ export const BURROW_BOX_KEYS = new Set<string>([
     'scrollSnapType', 'scrollSnapAlign',
     'overscrollBehavior', 'overscrollBehaviorX', 'overscrollBehaviorY',
     'scrollBehavior',
+    // pseudo
+    '_hover', '_focus', '_active', '_focusVisible', '_disabled',
+    'hoverScale', 'hoverShade',
     'sx',
 ])
 
@@ -323,5 +376,7 @@ export const BURROW_TEXT_KEYS = new Set<string>([
     'textOverflow', 'textShadow', 'textIndent', 'textWrap',
     'whiteSpace', 'overflow', 'wordBreak', 'overflowWrap', 'verticalAlign',
     'italic', 'truncate', 'nowrap', 'lineClamp', 'userSelect',
+    // pseudo
+    '_hover', '_focus', '_active', '_focusVisible', '_disabled',
     'sx',
 ])

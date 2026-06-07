@@ -302,8 +302,74 @@ A `<div>` with token-aware shorthand props. All standard HTML div props pass thr
 | **Animation** | `animation` `animationName` `animationDuration` `animationTimingFunction` `animationDelay` `animationIterationCount` `animationDirection` `animationFillMode` `animationPlayState` |
 | **Scroll** | `scrollSnapType` `scrollSnapAlign` `overscrollBehavior` `overscrollBehaviorX` `overscrollBehaviorY` `scrollBehavior` |
 | **Catch-all** | `sx` — token-aware styles for any CSS property not covered above |
+| **Pseudo** | `_hover` `_focus` `_active` `_focusVisible` `_disabled` — see below |
+| **Hover helpers** | `hoverScale` `hoverShade` — see below |
 
 Token paths are resolved automatically. Numbers get `px` appended where appropriate. Unresolvable values pass through as-is.
+
+#### Pseudo-state props
+
+All pseudo props accept the same style props as Chamber itself (minus other pseudo props — no nesting). BadgerBurrow generates a scoped class name and injects a `<style>` tag — no inline-style limitation.
+
+```tsx
+<Chamber
+  bg="color.primary.500"
+  p="space.4"
+  radius="radius.md"
+  _hover={{ shadow: 'md', cursor: 'pointer' }}
+  _focus={{ outlineStyle: 'solid', outlineColor: 'color.interactive.primary', outlineWidth: '2px' }}
+  _active={{ opacity: 0.85 }}
+  _focusVisible={{ outlineStyle: 'solid', outlineColor: 'color.interactive.primary', outlineOffset: '2px' }}
+  _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
+/>
+```
+
+#### Smart hover background
+
+When `bg` is a **primitive colour path** (e.g. `color.primary.500`), BadgerBurrow automatically steps the hover background one shade darker — no `_hover` needed:
+
+```tsx
+<Chamber bg="color.primary.500" />
+// :hover { background-color: <color.primary.600> }  ← auto
+```
+
+**Control it with `hoverScale` and `hoverShade`:**
+
+```tsx
+// Use a different scale for the hover bg — auto-steps to shade 600
+<Chamber bg="color.bg.surface" hoverScale="primary" />
+
+// Use a different scale at an exact shade
+<Chamber bg="color.bg.surface" hoverScale="primary" hoverShade={400} />
+
+// Disable the smart default
+<Chamber bg="color.primary.500" hoverScale={false} />
+```
+
+Semantic token paths (`color.bg.surface`) are not auto-stepped — they don't encode which scale they live on. Use `hoverScale` to specify, or use `_hover` for full manual control.
+
+#### Hover semantic tokens
+
+The default token set includes pre-built hover variants for common semantic colours:
+
+```
+color.interactive.primary.hover   → primary.600 (light) / primary.300 (dark)
+color.interactive.secondary.hover → secondary.600 (light) / secondary.300 (dark)
+color.bg.surface.hover            → neutral.100 (light) / neutral.800 (dark)
+color.bg.elevated.hover           → neutral.50 (light) / neutral.700 (dark)
+color.text.primary.hover          → neutral.700 (light) / neutral.200 (dark)
+color.text.secondary.hover        → neutral.700 (light) / neutral.200 (dark)
+color.border.default.hover        → neutral.400 (light) / neutral.500 (dark)
+```
+
+Use them inside `_hover` for token-consistent hover styles:
+
+```tsx
+<Chamber
+  bg="color.bg.surface"
+  _hover={{ bg: 'color.bg.surface.hover', borderColor: 'color.border.default.hover' }}
+/>
+```
 
 ### `Tunnel` — styled text
 
@@ -332,6 +398,7 @@ A text element with token-aware shorthand props. Defaults to `<span>`. Use the `
 | **Interaction** | `userSelect` |
 | **Boolean helpers** | `italic` — sets `fontStyle: italic` · `truncate` — sets overflow + whiteSpace + textOverflow · `nowrap` — sets `whiteSpace: nowrap` · `lineClamp={n}` — multi-line ellipsis |
 | **Tags** | `as` — `'span'` `'p'` `'h1'`–`'h6'` `'label'` |
+| **Pseudo** | `_hover` `_focus` `_active` `_focusVisible` `_disabled` — same shape as above |
 | **Catch-all** | `sx` — token-aware styles for any CSS property not covered above |
 
 ---
@@ -369,9 +436,9 @@ raw number:      16                             → 16 (or '16px' for px props)
 | Package | Tests |
 |---|---|
 | `@badger-burrow/tokens` | 42 |
-| `@badger-burrow/core` | 108 |
-| `@badger-burrow/web` | 241 |
-| **Total** | **391** |
+| `@badger-burrow/core` | 136 |
+| `@badger-burrow/web` | 263 |
+| **Total** | **441** |
 
 ---
 

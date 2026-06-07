@@ -340,7 +340,125 @@ Token paths work inside `sx` too:
 
 ---
 
-## 7. Reusable variants with `createVariants`
+## 7. Hover and pseudo-state styles
+
+Inline styles can't do `:hover`, `:focus` etc — the browser doesn't support it. BadgerBurrow solves this by generating a scoped class name and injecting a `<style>` tag automatically. You never touch a CSS file.
+
+### `_hover`, `_focus`, `_active`, `_focusVisible`, `_disabled`
+
+Each pseudo prop accepts the same style props as Chamber/Tunnel itself:
+
+```tsx
+<Chamber
+  bg="color.bg.elevated"
+  p="space.4"
+  radius="radius.md"
+  transition="all 0.15s ease"
+  _hover={{ shadow: 'md', cursor: 'pointer' }}
+  _focus={{ outlineStyle: 'solid', outlineColor: 'color.interactive.primary', outlineWidth: '2px', outlineOffset: '2px' }}
+  _active={{ opacity: 0.85 }}
+  _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
+/>
+```
+
+Token paths resolve inside pseudo props exactly as they do on the main props.
+
+### Smart hover background — automatic shade stepping
+
+When `bg` is a **primitive colour path**, the hover background auto-steps one shade darker with no extra code:
+
+```tsx
+<Chamber bg="color.primary.500" />
+// On hover: background becomes color.primary.600  ← automatic
+```
+
+The shade scale steps: `50 → 100 → 200 → 300 → 400 → 500 → 600 → 700 → 800 → 900`. Clamps at `900`.
+
+### `hoverScale` — use a specific colour scale
+
+When `bg` is a semantic token (e.g. `color.bg.surface`), BadgerBurrow can't auto-detect the scale. Use `hoverScale` to tell it which one to step on:
+
+```tsx
+<Chamber bg="color.bg.surface" hoverScale="primary" />
+// On hover: background becomes color.primary.100
+// (primary scale, shade is inferred from bg's resolved shade or defaults to 500→600)
+```
+
+### `hoverShade` — exact shade
+
+Pin the hover to a specific shade instead of auto-stepping:
+
+```tsx
+<Chamber bg="color.bg.surface" hoverScale="primary" hoverShade={400} />
+// On hover: background-color = color.primary.400
+```
+
+### Disable the smart default
+
+```tsx
+<Chamber bg="color.primary.500" hoverScale={false} />
+// No auto hover bg — you control it fully via _hover
+```
+
+### Hover semantic tokens
+
+The default token set includes ready-made hover variants. Use them inside `_hover` for semantically consistent hover styles:
+
+```tsx
+<Chamber
+  bg="color.bg.surface"
+  borderColor="color.border.default"
+  border="1px solid"
+  _hover={{
+    bg: 'color.bg.surface.hover',
+    borderColor: 'color.border.default.hover',
+    shadow: 'sm',
+  }}
+/>
+```
+
+Available hover tokens:
+
+| Token | Light | Dark |
+|---|---|---|
+| `color.interactive.primary.hover` | primary.600 | primary.300 |
+| `color.interactive.secondary.hover` | secondary.600 | secondary.300 |
+| `color.bg.surface.hover` | neutral.100 | neutral.800 |
+| `color.bg.elevated.hover` | neutral.50 | neutral.700 |
+| `color.text.primary.hover` | neutral.700 | neutral.200 |
+| `color.text.secondary.hover` | neutral.700 | neutral.200 |
+| `color.border.default.hover` | neutral.400 | neutral.500 |
+
+You can override any of these via `extendBurrow`:
+
+```ts
+extendBurrow({
+  semantic: {
+    light: { 'color.bg.surface.hover': green[200] },
+    dark:  { 'color.bg.surface.hover': green[800] },
+  },
+})
+```
+
+### Tunnel pseudo styles
+
+`_hover`, `_focus`, `_active`, `_focusVisible`, `_disabled` all work on Tunnel too. Common use: underline and colour change on link-style text:
+
+```tsx
+<Tunnel
+  color="color.interactive.primary"
+  fontWeight="fontWeight.medium"
+  _hover={{ color: 'color.interactive.primary.hover', textDecoration: 'underline' }}
+  onClick={handleClick}
+  sx={{ cursor: 'pointer' }}
+>
+  View details
+</Tunnel>
+```
+
+---
+
+## 8. Reusable variants with `createVariants`
 
 Define them once, use the resolver in any component:
 
@@ -385,5 +503,8 @@ function Button({ size = 'md', children }) {
 | Layout | `<Chamber>` for boxes and containers |
 | Text | `<Tunnel>` for all text elements |
 | Dark mode | `useBurrow()` → `setMode('dark')` from anywhere |
+| Pseudo states | `_hover` `_focus` `_active` `_focusVisible` `_disabled` on Chamber and Tunnel |
+| Smart hover bg | Primitive bg paths auto-step one shade darker on hover |
+| Hover scale | `hoverScale="primary"` + optional `hoverShade={400}` |
 | Escape hatch | `sx` prop for anything not covered by named props |
 | Variants | `createVariants` for reusable size/style maps |
