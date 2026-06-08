@@ -1,4 +1,5 @@
 export * from './schema'
+export * from './paths'
 export * from './defaults'
 export * from './motion'
 export * from './palette'

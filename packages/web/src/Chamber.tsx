@@ -5,10 +5,12 @@ import {
     buildPseudoStyles,
     toClassName,
     BURROW_BOX_KEYS,
+    splitResponsiveProps,
+    getBreakpointOrder,
 } from '@badger-burrow/core'
 import type { BurrowBoxProps } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
-import { injectPseudoStyles } from './styleInjector'
+import { injectPseudoStyles, injectResponsiveStyles } from './styleInjector'
 
 export type ChamberTag =
     | 'div' | 'section' | 'article' | 'aside'
@@ -19,7 +21,7 @@ export type ChamberTag =
     | 'dialog' | 'details' | 'summary'
 
 export interface ChamberProps
-    extends React.HTMLAttributes<HTMLElement>,
+    extends Omit<React.HTMLAttributes<HTMLElement>, 'color'>,
         BurrowBoxProps {
     /** Element tag to render — defaults to div */
     as?: ChamberTag
@@ -61,20 +63,47 @@ export function Chamber({ as: Tag = 'div', sx, style, children, ...props }: Cham
         else htmlProps[key] = value
     }
 
-    const boxPropsTyped = burrowProps as BurrowBoxProps
+    // Split burrow props into base (plain + base values) and responsive objects
+    // Pass tokens.breakpoints so custom breakpoints (xs, xxl, etc.) are recognised
+    const { baseProps, responsiveProps } = splitResponsiveProps(burrowProps, tokens.breakpoints)
+    const boxPropsTyped = baseProps as BurrowBoxProps
 
-    // Resolve inline styles
+    // Resolve inline styles from base props
     const tokenStyles = buildBoxStyles(boxPropsTyped, tokens, mode)
     const sxStyles    = sx ? resolveSx(sx, tokens, mode) : {}
 
-    // Resolve pseudo styles and generate a scoped class name
+    // Resolve pseudo styles
     const pseudoStyles = buildPseudoStyles(boxPropsTyped, tokens, mode)
     const hasPseudo    = Object.keys(pseudoStyles).length > 0
-    const className    = hasPseudo ? toClassName(JSON.stringify(pseudoStyles) + mode) : undefined
+    const hasResponsive = Object.keys(responsiveProps).length > 0
+
+    // Generate a scoped class name when pseudo or responsive styles are needed
+    const className = (hasPseudo || hasResponsive)
+        ? toClassName(JSON.stringify(pseudoStyles) + JSON.stringify(responsiveProps) + mode)
+        : undefined
 
     // Inject <style> tags synchronously during render — idempotent, no useEffect needed
     if (hasPseudo && className) {
         injectPseudoStyles(className, pseudoStyles)
+    }
+
+    // Inject media-query rules for responsive props
+    // Uses getBreakpointOrder so custom breakpoints are automatically included
+    if (hasResponsive && className) {
+        const breakpoints = tokens.breakpoints ?? {}
+        const bpOrder = getBreakpointOrder(breakpoints)
+        const bpStyles: Partial<Record<string, Record<string, string | number | undefined>>> = {}
+        for (const bp of bpOrder.filter(b => b !== 'base')) {
+            const bpProps: Record<string, unknown> = {}
+            for (const [key, obj] of Object.entries(responsiveProps)) {
+                const bpObj = obj as Record<string, unknown>
+                if (bp in bpObj && bpObj[bp] !== undefined) bpProps[key] = bpObj[bp]
+            }
+            if (Object.keys(bpProps).length > 0) {
+                bpStyles[bp] = buildBoxStyles(bpProps as BurrowBoxProps, tokens, mode)
+            }
+        }
+        injectResponsiveStyles(className, bpStyles, breakpoints)
     }
 
     return (

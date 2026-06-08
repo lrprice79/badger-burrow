@@ -5,10 +5,12 @@ import {
     buildTextPseudoStyles,
     toClassName,
     BURROW_TEXT_KEYS,
+    splitResponsiveProps,
+    getBreakpointOrder,
 } from '@badger-burrow/core'
 import type { BurrowTextProps } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
-import { injectPseudoStyles } from './styleInjector'
+import { injectPseudoStyles, injectResponsiveStyles } from './styleInjector'
 
 type TunnelTag = 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'label'
 
@@ -48,20 +50,45 @@ export function Tunnel({ as: Tag = 'span', sx, style, children, ...props }: Tunn
         else htmlProps[key] = value
     }
 
-    const textPropsTyped = burrowProps as BurrowTextProps
+    // Split burrow props into base (plain + base values) and responsive objects
+    const { baseProps, responsiveProps } = splitResponsiveProps(burrowProps, tokens.breakpoints)
+    const textPropsTyped = baseProps as BurrowTextProps
 
-    // Resolve inline styles
+    // Resolve inline styles from base props
     const tokenStyles = buildTextStyles(textPropsTyped, tokens, mode)
     const sxStyles    = sx ? resolveSx(sx, tokens, mode) : {}
 
-    // Resolve pseudo styles and generate a scoped class name
+    // Resolve pseudo styles
     const pseudoStyles = buildTextPseudoStyles(textPropsTyped, tokens, mode)
     const hasPseudo    = Object.keys(pseudoStyles).length > 0
-    const className    = hasPseudo ? toClassName(JSON.stringify(pseudoStyles) + mode) : undefined
+    const hasResponsive = Object.keys(responsiveProps).length > 0
+
+    // Generate a scoped class name when pseudo or responsive styles are needed
+    const className = (hasPseudo || hasResponsive)
+        ? toClassName(JSON.stringify(pseudoStyles) + JSON.stringify(responsiveProps) + mode)
+        : undefined
 
     // Inject <style> tags synchronously during render — idempotent, no useEffect needed
     if (hasPseudo && className) {
         injectPseudoStyles(className, pseudoStyles)
+    }
+
+    // Inject media-query rules for responsive props
+    if (hasResponsive && className) {
+        const breakpoints = tokens.breakpoints ?? {}
+        const bpOrder = getBreakpointOrder(breakpoints)
+        const bpStyles: Partial<Record<string, Record<string, string | number | undefined>>> = {}
+        for (const bp of bpOrder.filter(b => b !== 'base')) {
+            const bpProps: Record<string, unknown> = {}
+            for (const [key, obj] of Object.entries(responsiveProps)) {
+                const bpObj = obj as Record<string, unknown>
+                if (bp in bpObj && bpObj[bp] !== undefined) bpProps[key] = bpObj[bp]
+            }
+            if (Object.keys(bpProps).length > 0) {
+                bpStyles[bp] = buildTextStyles(bpProps as BurrowTextProps, tokens, mode)
+            }
+        }
+        injectResponsiveStyles(className, bpStyles, breakpoints)
     }
 
     return (

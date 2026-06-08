@@ -1,14 +1,21 @@
 import React from 'react'
-import { View, ViewStyle } from 'react-native'
+import { View, ViewStyle, useWindowDimensions } from 'react-native'
 import {
     buildBoxStyles,
     resolveSx,
     BURROW_BOX_KEYS,
+    splitResponsiveProps,
+    getActiveBreakpoint,
+    getBreakpointOrder,
+    resolveResponsiveValue,
 } from '@badger-burrow/core'
 import type { BurrowBoxProps, SxProp } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
+import type { NativeBoxCSSOverrides } from './cssOverrides'
 
-export interface ChamberProps extends BurrowBoxProps {
+export interface ChamberProps
+    extends Omit<BurrowBoxProps, keyof NativeBoxCSSOverrides>,
+        NativeBoxCSSOverrides {
     style?: ViewStyle
     sx?: SxProp
     testID?: string
@@ -31,6 +38,7 @@ export interface ChamberProps extends BurrowBoxProps {
  */
 export function Chamber({ sx, style, children, testID, ...props }: ChamberProps) {
     const { tokens, mode } = useBurrow()
+    const { width } = useWindowDimensions()
 
     // Split burrow props from passthrough props
     const burrowProps: Record<string, unknown> = {}
@@ -40,7 +48,17 @@ export function Chamber({ sx, style, children, testID, ...props }: ChamberProps)
         else passthroughProps[key] = value
     }
 
-    const tokenStyles = buildBoxStyles(burrowProps as BurrowBoxProps, tokens, mode)
+    // Resolve responsive props to a single value based on current window width
+    const breakpoints = tokens.breakpoints ?? {}
+    const { baseProps, responsiveProps } = splitResponsiveProps(burrowProps, breakpoints)
+    const activeBreakpoint = getActiveBreakpoint(width, breakpoints)
+    const bpOrder = getBreakpointOrder(breakpoints)
+    for (const [key, obj] of Object.entries(responsiveProps)) {
+        const resolved = resolveResponsiveValue(obj as Record<string, unknown>, activeBreakpoint, bpOrder)
+        if (resolved !== undefined) baseProps[key] = resolved
+    }
+
+    const tokenStyles = buildBoxStyles(baseProps as BurrowBoxProps, tokens, mode)
     const sxStyles    = sx ? resolveSx(sx, tokens, mode) : {}
 
     // Native shadow: if a shadow token resolves to a native elevation object,

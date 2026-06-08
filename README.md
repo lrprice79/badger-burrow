@@ -258,6 +258,8 @@ Uses `useSyncExternalStore` under the hood. No provider needed.
 
 A styled box component. Defaults to `<div>`. Use the `as` prop to render any semantic element — `button`, `nav`, `section`, `a`, and more. All standard HTML props pass through.
 
+Chamber accepts **all font and typography props** as well as layout props — so you can set `color`, `fontSize`, `fontWeight` etc. directly on a `div` without wrapping content in a `Tunnel`. Use `Tunnel` when the element itself is a heading, paragraph, or inline text node (`as="h1"`, `as="p"`, `as="span"`).
+
 **Style priority (lowest → highest):** `sx` → named props → `style`
 
 ```tsx
@@ -306,6 +308,9 @@ A styled box component. Defaults to `<div>`. Use the `as` prop to render any sem
 | **Transition** | `transition` `transitionProperty` `transitionDuration` `transitionTimingFunction` `transitionDelay` |
 | **Animation** | `animation` `animationName` `animationDuration` `animationTimingFunction` `animationDelay` `animationIterationCount` `animationDirection` `animationFillMode` `animationPlayState` |
 | **Scroll** | `scrollSnapType` `scrollSnapAlign` `overscrollBehavior` `overscrollBehaviorX` `overscrollBehaviorY` `scrollBehavior` |
+| **Font** | `color` `fontSize` `fontWeight` `fontFamily` `fontStyle` `fontVariant` `fontStretch` `lineHeight` `letterSpacing` `wordSpacing` |
+| **Text layout** | `textAlign` `textTransform` `textDecoration` `textDecorationColor` `textDecorationStyle` `textDecorationThickness` `textUnderlineOffset` `textOverflow` `textShadow` `textIndent` `textWrap` `whiteSpace` `wordBreak` `overflowWrap` `verticalAlign` |
+| **Text helpers** | `italic` `truncate` `nowrap` `lineClamp` |
 | **Catch-all** | `sx` — token-aware styles for any CSS property not covered above |
 | **Pseudo** | `_hover` `_focus` `_active` `_focusVisible` `_disabled` — see below |
 | **Hover helpers** | `hoverScale` `hoverShade` — see below |
@@ -375,6 +380,39 @@ Use them inside `_hover` for token-consistent hover styles:
   _hover={{ bg: 'color.bg.surface.hover', borderColor: 'color.border.default.hover' }}
 />
 ```
+
+### Responsive props
+
+Any token prop on `Chamber` or `Tunnel` (web or native) can accept a responsive object instead of a plain value.
+
+```tsx
+// Plain value — same at all sizes
+<Chamber p="space.4" />
+
+// Responsive — breakpoint overrides cascade up (like CSS min-width)
+<Chamber p={{ base: 'space.2', md: 'space.4', lg: 'space.6' }} />
+
+// Mix — some props plain, some responsive
+<Chamber
+  bg="color.bg.surface"
+  p={{ base: 'space.2', md: 'space.6' }}
+  fontSize={{ base: 'fontSize.sm', lg: 'fontSize.xl' }}
+/>
+```
+
+**Breakpoints** (default, can be overridden via `extendBurrow`):
+
+| Key | Default | Meaning |
+|---|---|---|
+| `base` | — | Applies below `sm` (inline style, no media query) |
+| `sm` | `576px` | ≥ 576 px |
+| `md` | `768px` | ≥ 768 px |
+| `lg` | `992px` | ≥ 992 px |
+| `xl` | `1200px` | ≥ 1200 px |
+
+**Web** — base values are set as inline styles; named breakpoints inject scoped `@media (min-width: …)` rules via a `[data-bb-responsive]` style tag. Two components with identical responsive configs share one style tag.
+
+**React Native** — uses `useWindowDimensions` to resolve the active breakpoint at render time. No media queries; the correct value is computed and applied as an inline style.
 
 ### `Tunnel` — all text goes here
 
@@ -512,6 +550,23 @@ raw value:       '#ff0000'                      → passes through unchanged
 raw number:      16                             → 16 (or '16px' for px props)
 ```
 
+### IDE autocomplete
+
+Prop values are typed with string literal unions so your editor suggests valid token paths as you type. Each prop accepts the tokens relevant to it:
+
+| Prop group | Autocomplete | Example |
+|---|---|---|
+| `bg`, `color`, `borderColor`, `outlineColor`, … | `ColorToken` | `'color.primary.500'`, `'color.bg.surface'` |
+| `p`, `m`, `gap`, `w`, `h`, `top`, … | `SpaceToken \| number` | `'space.4'`, `'space.md'` |
+| `radius`, `border*Radius` | `RadiusToken \| number` | `'radius.md'`, `'radius.full'` |
+| `fontSize` | `FontSizeToken \| number` | `'fontSize.lg'`, `'fontSize.2xl'` |
+| `fontWeight` | `FontWeightToken \| number` | `'fontWeight.bold'` |
+| `lineHeight` | `LineHeightToken \| number` | `'lineHeight.normal'` |
+| `letterSpacing` | `LetterSpacingToken \| number` | `'letterSpacing.wide'` |
+| `fontFamily` | `FontFamilyToken` | `'fontFamily.sans'`, `'fontFamily.mono'` |
+
+All token types include `(string & {})` so raw CSS values (`'#ff0000'`, `'100%'`, `'auto'`) and custom extended tokens are still accepted without type errors — autocomplete shows the known values first.
+
 ---
 
 ## Test coverage
@@ -519,10 +574,10 @@ raw number:      16                             → 16 (or '16px' for px props)
 | Package | Tests |
 |---|---|
 | `@badger-burrow/tokens` | 42 |
-| `@badger-burrow/core` | 136 |
-| `@badger-burrow/web` | 273 |
-| `@badger-burrow/native` | 24 |
-| **Total** | **475** |
+| `@badger-burrow/core` | 166 |
+| `@badger-burrow/web` | 296 |
+| `@badger-burrow/native` | 34 |
+| **Total** | **538** |
 
 ---
 

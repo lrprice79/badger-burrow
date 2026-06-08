@@ -1,14 +1,21 @@
 import React from 'react'
-import { Text, TextStyle } from 'react-native'
+import { Text, TextStyle, useWindowDimensions } from 'react-native'
 import {
     buildTextStyles,
     resolveSx,
     BURROW_TEXT_KEYS,
+    splitResponsiveProps,
+    getActiveBreakpoint,
+    getBreakpointOrder,
+    resolveResponsiveValue,
 } from '@badger-burrow/core'
 import type { BurrowTextProps, SxProp } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
+import type { NativeTextCSSOverrides } from './cssOverrides'
 
-export interface TunnelProps extends BurrowTextProps {
+export interface TunnelProps
+    extends Omit<BurrowTextProps, keyof NativeTextCSSOverrides>,
+        NativeTextCSSOverrides {
     style?: TextStyle
     sx?: SxProp
     testID?: string
@@ -31,6 +38,7 @@ export interface TunnelProps extends BurrowTextProps {
  */
 export function Tunnel({ sx, style, children, testID, ...props }: TunnelProps) {
     const { tokens, mode } = useBurrow()
+    const { width } = useWindowDimensions()
 
     // Split burrow props from passthrough props
     const burrowProps: Record<string, unknown> = {}
@@ -40,7 +48,17 @@ export function Tunnel({ sx, style, children, testID, ...props }: TunnelProps) {
         else passthroughProps[key] = value
     }
 
-    const tokenStyles = buildTextStyles(burrowProps as BurrowTextProps, tokens, mode)
+    // Resolve responsive props to a single value based on current window width
+    const breakpoints = tokens.breakpoints ?? {}
+    const { baseProps, responsiveProps } = splitResponsiveProps(burrowProps, breakpoints)
+    const activeBreakpoint = getActiveBreakpoint(width, breakpoints)
+    const bpOrder = getBreakpointOrder(breakpoints)
+    for (const [key, obj] of Object.entries(responsiveProps)) {
+        const resolved = resolveResponsiveValue(obj as Record<string, unknown>, activeBreakpoint, bpOrder)
+        if (resolved !== undefined) baseProps[key] = resolved
+    }
+
+    const tokenStyles = buildTextStyles(baseProps as BurrowTextProps, tokens, mode)
     const sxStyles    = sx ? resolveSx(sx, tokens, mode) : {}
 
     const resolvedStyle = {

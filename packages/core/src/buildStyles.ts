@@ -1,16 +1,24 @@
 import type { BurrowTokens } from '@badger-burrow/tokens'
 import { resolveToken } from './resolver'
 import type { ColorMode } from './resolver'
-import type { BurrowBoxProps, BurrowTextProps, TokenValue } from './props'
+import type { BurrowBoxProps, BurrowTextProps, BurrowTextVisualProps, RV } from './props'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
+/**
+ * Resolve a token value to a CSS-ready string or number.
+ * Accepts RV (ResponsiveValue<TokenValue>) — responsive objects are never
+ * expected here (splitResponsiveProps resolves them before buildStyles runs),
+ * but if one does arrive it returns undefined gracefully rather than throwing.
+ */
 function resolve(
-    value: TokenValue | undefined,
+    value: RV | undefined,
     tokens: BurrowTokens,
     mode: ColorMode
 ): string | number | undefined {
     if (value === undefined) return undefined
+    // Responsive object that wasn't pre-resolved — ignore gracefully
+    if (typeof value === 'object') return undefined
     if (typeof value === 'number') return value
     const resolved = resolveToken(value, tokens, mode)
     return resolved !== undefined ? resolved : value
@@ -33,7 +41,7 @@ export function buildBoxStyles(
     tokens: BurrowTokens,
     mode: ColorMode
 ): Record<string, string | number | undefined> {
-    const r = (v: TokenValue | undefined) => resolve(v, tokens, mode)
+    const r = (v: RV | undefined) => resolve(v, tokens, mode)
 
     const {
         bg,
@@ -78,7 +86,12 @@ export function buildBoxStyles(
         ? tokens.primitive.shadow[shadow].web
         : undefined
 
+    // Font/text props are valid on Chamber too — resolve them first so any box
+    // props that overlap (e.g. overflow) take priority when spread last.
+    const fontStyles = buildFontAndTextStyles(props, tokens, mode)
+
     return {
+        ...fontStyles,
         // background
         ...(bg                    !== undefined && { backgroundColor:         withPx(r(bg)) }),
         ...(backgroundImage       !== undefined && { backgroundImage }),
@@ -223,14 +236,19 @@ export function buildBoxStyles(
     }
 }
 
-// ─── text styles ──────────────────────────────────────────────────────────────
+// ─── shared font / typography resolver ───────────────────────────────────────
 
-export function buildTextStyles(
-    props: BurrowTextProps,
+/**
+ * Resolves all font and text layout props to CSS-ready values.
+ * Called by both buildBoxStyles (Chamber) and buildTextStyles (Tunnel) so
+ * Chamber can carry font props without duplicating the resolution logic.
+ */
+function buildFontAndTextStyles(
+    props: BurrowTextVisualProps,
     tokens: BurrowTokens,
-    mode: ColorMode
+    mode: ColorMode,
 ): Record<string, string | number | undefined> {
-    const r = (v: TokenValue | undefined) => resolve(v, tokens, mode)
+    const r = (v: RV | undefined) => resolve(v, tokens, mode)
 
     const {
         color, fontSize, fontWeight, fontFamily, fontStyle, fontVariant, fontStretch,
@@ -282,4 +300,14 @@ export function buildTextStyles(
             overflow: 'hidden',
         }),
     }
+}
+
+// ─── text styles ──────────────────────────────────────────────────────────────
+
+export function buildTextStyles(
+    props: BurrowTextProps,
+    tokens: BurrowTokens,
+    mode: ColorMode
+): Record<string, string | number | undefined> {
+    return buildFontAndTextStyles(props, tokens, mode)
 }

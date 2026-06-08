@@ -1,11 +1,12 @@
 import React from 'react'
-import { create, act } from 'react-test-renderer'
-import type { ReactTestRendererJSON } from 'react-test-renderer'
+import { render, act } from '@testing-library/react-native'
 import { BadgerBase } from '@badger-burrow/core'
 import { Tunnel } from '../Tunnel'
 
-const json = (instance: ReturnType<typeof create>) =>
-    instance.toJSON() as ReactTestRendererJSON
+// toJSON() returns ReactTestRendererJSON from react-test-renderer (children can be strings).
+// Accept unknown and cast — single() is purely a narrowing helper.
+type RendererJSON = { type: string; props: Record<string, unknown>; children: (RendererJSON | string)[] | null }
+const single = (v: unknown) => v as RendererJSON | null
 
 beforeEach(() => {
     BadgerBase.reset()
@@ -15,18 +16,18 @@ beforeEach(() => {
 
 describe('Tunnel rendering', () => {
     it('renders a Text', () => {
-        const instance = create(<Tunnel />)
-        expect(json(instance)?.type).toBe('Text')
+        const { toJSON } = render(<Tunnel />)
+        expect(single(toJSON())?.type).toBe('Text')
     })
 
     it('renders children', () => {
-        const instance = create(<Tunnel>hello</Tunnel>)
-        expect(json(instance)?.children).toContain('hello')
+        const { toJSON } = render(<Tunnel>hello</Tunnel>)
+        expect((single(toJSON())?.children as any[])?.includes('hello')).toBe(true)
     })
 
     it('passes testID through', () => {
-        const instance = create(<Tunnel testID="t" />)
-        expect(json(instance)?.props.testID).toBe('t')
+        const { getByTestId } = render(<Tunnel testID="t" />)
+        expect(getByTestId('t').props.testID).toBe('t')
     })
 })
 
@@ -34,27 +35,23 @@ describe('Tunnel rendering', () => {
 
 describe('Tunnel token styles', () => {
     it('resolves color token', () => {
-        const instance = create(<Tunnel color="color.text.primary" />)
-        const style = json(instance)?.props.style
-        expect(style?.color).toBeTruthy()
+        const { getByTestId } = render(<Tunnel testID="t" color="color.text.primary" />)
+        expect(getByTestId('t').props.style?.color).toBeTruthy()
     })
 
     it('resolves fontSize token', () => {
-        const instance = create(<Tunnel fontSize="fontSize.lg" />)
-        const style = json(instance)?.props.style
-        expect(style?.fontSize).toBeTruthy()
+        const { getByTestId } = render(<Tunnel testID="t" fontSize="fontSize.lg" />)
+        expect(getByTestId('t').props.style?.fontSize).toBeTruthy()
     })
 
     it('resolves fontWeight token', () => {
-        const instance = create(<Tunnel fontWeight="fontWeight.bold" />)
-        const style = json(instance)?.props.style
-        expect(style?.fontWeight).toBeTruthy()
+        const { getByTestId } = render(<Tunnel testID="t" fontWeight="fontWeight.bold" />)
+        expect(getByTestId('t').props.style?.fontWeight).toBeTruthy()
     })
 
     it('passes raw style through', () => {
-        const instance = create(<Tunnel style={{ letterSpacing: 1 }} />)
-        const style = json(instance)?.props.style
-        expect(style?.letterSpacing).toBe(1)
+        const { getByTestId } = render(<Tunnel testID="t" style={{ letterSpacing: 1 }} />)
+        expect(getByTestId('t').props.style?.letterSpacing).toBe(1)
     })
 })
 
@@ -62,11 +59,13 @@ describe('Tunnel token styles', () => {
 
 describe('Tunnel dark mode', () => {
     it('re-renders when mode changes', () => {
-        const instance = create(<Tunnel color="color.text.primary" />)
-        const lightColor = json(instance)?.props.style?.color
+        const { getByTestId, rerender } = render(
+            <Tunnel testID="t" color="color.text.primary" />
+        )
+        const lightColor = getByTestId('t').props.style?.color
         act(() => { BadgerBase.setMode('dark') })
-        instance.update(<Tunnel color="color.text.primary" />)
-        const darkColor = json(instance)?.props.style?.color
+        rerender(<Tunnel testID="t" color="color.text.primary" />)
+        const darkColor = getByTestId('t').props.style?.color
         expect(darkColor).not.toBe(lightColor)
     })
 })

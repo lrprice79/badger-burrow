@@ -1,12 +1,12 @@
 import React from 'react'
-import { create, act } from 'react-test-renderer'
-import type { ReactTestRendererJSON } from 'react-test-renderer'
+import { render, act } from '@testing-library/react-native'
 import { BadgerBase, extendBurrow } from '@badger-burrow/core'
 import { Chamber } from '../Chamber'
 
-// toJSON() can return an array for fragments — our components always return a single node
-const json = (instance: ReturnType<typeof create>) =>
-    instance.toJSON() as ReactTestRendererJSON
+// toJSON() returns ReactTestRendererJSON from react-test-renderer (children can be strings).
+// Accept unknown and cast — single() is purely a narrowing helper.
+type RendererJSON = { type: string; props: Record<string, unknown>; children: (RendererJSON | string)[] | null }
+const single = (v: unknown) => v as RendererJSON | null
 
 beforeEach(() => {
     BadgerBase.reset()
@@ -16,18 +16,18 @@ beforeEach(() => {
 
 describe('Chamber rendering', () => {
     it('renders a View', () => {
-        const instance = create(<Chamber />)
-        expect(json(instance)?.type).toBe('View')
+        const { toJSON } = render(<Chamber />)
+        expect(single(toJSON())?.type).toBe('View')
     })
 
     it('renders children', () => {
-        const instance = create(<Chamber testID="box">hello</Chamber>)
-        expect(json(instance)?.children).toContain('hello')
+        const { toJSON } = render(<Chamber>hello</Chamber>)
+        expect((single(toJSON())?.children as any[])?.includes('hello')).toBe(true)
     })
 
     it('passes testID through', () => {
-        const instance = create(<Chamber testID="box" />)
-        expect(json(instance)?.props.testID).toBe('box')
+        const { getByTestId } = render(<Chamber testID="box" />)
+        expect(getByTestId('box').props.testID).toBe('box')
     })
 })
 
@@ -36,37 +36,31 @@ describe('Chamber rendering', () => {
 describe('Chamber token styles', () => {
     it('resolves bg token to a colour string', () => {
         extendBurrow({})
-        const instance = create(<Chamber bg="color.primary.500" />)
-        const style = json(instance)?.props.style
-        expect(style?.backgroundColor).toBeTruthy()
+        const { getByTestId } = render(<Chamber testID="c" bg="color.primary.500" />)
+        expect(getByTestId('c').props.style?.backgroundColor).toBeTruthy()
     })
 
     it('resolves padding token', () => {
-        const instance = create(<Chamber p="space.4" />)
-        const style = json(instance)?.props.style
-        expect(style?.padding).toBeTruthy()
+        const { getByTestId } = render(<Chamber testID="c" p="space.4" />)
+        expect(getByTestId('c').props.style?.padding).toBeTruthy()
     })
 
     it('resolves border radius token', () => {
-        const instance = create(<Chamber radius="radius.md" />)
-        const style = json(instance)?.props.style
-        expect(style?.borderRadius).toBeTruthy()
+        const { getByTestId } = render(<Chamber testID="c" radius="radius.md" />)
+        expect(getByTestId('c').props.style?.borderRadius).toBeTruthy()
     })
 
     it('passes raw style through', () => {
-        const instance = create(<Chamber style={{ margin: 8 }} />)
-        const style = json(instance)?.props.style
-        expect(style?.margin).toBe(8)
+        const { getByTestId } = render(<Chamber testID="c" style={{ margin: 8 }} />)
+        expect(getByTestId('c').props.style?.margin).toBe(8)
     })
 
     it('named props take priority over sx', () => {
         extendBurrow({})
-        const instance = create(
-            <Chamber sx={{ backgroundColor: 'red' }} bg="color.primary.500" />
+        const { getByTestId } = render(
+            <Chamber testID="c" sx={{ backgroundColor: 'red' }} bg="color.primary.500" />
         )
-        const style = json(instance)?.props.style
-        // bg prop should win — colour will not be 'red'
-        expect(style?.backgroundColor).not.toBe('red')
+        expect(getByTestId('c').props.style?.backgroundColor).not.toBe('red')
     })
 })
 
@@ -74,10 +68,8 @@ describe('Chamber token styles', () => {
 
 describe('Chamber shadow', () => {
     it('applies native shadow object for shadow token', () => {
-        const instance = create(<Chamber shadow="md" />)
-        const style = json(instance)?.props.style
-        // Native shadow uses elevation — should be a number
-        expect(typeof style?.elevation).toBe('number')
+        const { getByTestId } = render(<Chamber testID="c" shadow="md" />)
+        expect(typeof getByTestId('c').props.style?.elevation).toBe('number')
     })
 })
 
@@ -85,11 +77,48 @@ describe('Chamber shadow', () => {
 
 describe('Chamber dark mode', () => {
     it('re-renders when mode changes', () => {
-        const instance = create(<Chamber bg="color.interactive.primary" />)
-        const lightBg = json(instance)?.props.style?.backgroundColor
+        const { getByTestId, rerender } = render(
+            <Chamber testID="c" bg="color.interactive.primary" />
+        )
+        const lightBg = getByTestId('c').props.style?.backgroundColor
         act(() => { BadgerBase.setMode('dark') })
-        instance.update(<Chamber bg="color.interactive.primary" />)
-        const darkBg = json(instance)?.props.style?.backgroundColor
+        rerender(<Chamber testID="c" bg="color.interactive.primary" />)
+        const darkBg = getByTestId('c').props.style?.backgroundColor
         expect(darkBg).not.toBe(lightBg)
+    })
+})
+
+// ─── font props ───────────────────────────────────────────────────────────────
+
+describe('Chamber font props — native', () => {
+    it('resolves color token', () => {
+        const { getByTestId } = render(<Chamber testID="c" color="color.text.primary" />)
+        expect(getByTestId('c').props.style?.color).toBeTruthy()
+    })
+
+    it('resolves fontSize token', () => {
+        const { getByTestId } = render(<Chamber testID="c" fontSize="fontSize.lg" />)
+        expect(getByTestId('c').props.style?.fontSize).toBeTruthy()
+    })
+
+    it('resolves fontWeight token', () => {
+        const { getByTestId } = render(<Chamber testID="c" fontWeight="fontWeight.bold" />)
+        expect(getByTestId('c').props.style?.fontWeight).toBeTruthy()
+    })
+
+    it('italic shorthand applies fontStyle', () => {
+        const { getByTestId } = render(<Chamber testID="c" italic />)
+        expect(getByTestId('c').props.style?.fontStyle).toBe('italic')
+    })
+
+    it('font props coexist with box props', () => {
+        const { getByTestId } = render(
+            <Chamber testID="c" bg="color.bg.surface" p="space.4" color="color.text.primary" fontSize="fontSize.md" />
+        )
+        const s = getByTestId('c').props.style
+        expect(s?.backgroundColor).toBeTruthy()
+        expect(s?.padding).toBeTruthy()
+        expect(s?.color).toBeTruthy()
+        expect(s?.fontSize).toBeTruthy()
     })
 })

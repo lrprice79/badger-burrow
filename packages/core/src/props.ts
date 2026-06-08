@@ -1,15 +1,60 @@
+import type { CSSProperties } from 'react'
 import type { SxProp } from './sx'
+import type { ResponsiveValue } from './responsive'
+import type {
+    ColorToken,
+    SpaceToken,
+    RadiusToken,
+    FontSizeToken,
+    FontWeightToken,
+    LineHeightToken,
+    LetterSpacingToken,
+    FontFamilyToken,
+} from '@badger-burrow/tokens'
 
 // ─── shared ───────────────────────────────────────────────────────────────────
 
 export type TokenValue = string | number
+
+/**
+ * A token value that can also accept a responsive object.
+ * e.g. `p="space.4"` or `p={{ base: 'space.2', md: 'space.6', xxl: 'space.8' }}`
+ */
+export type RV = ResponsiveValue<TokenValue>
+
+// ─── typed responsive helpers ─────────────────────────────────────────────────
+
+/** Responsive colour token — e.g. 'color.primary.500', 'color.bg.surface' */
+type RC = ResponsiveValue<ColorToken>
+
+/** Responsive space token — e.g. 'space.4', 'space.md', or raw number */
+type RS = ResponsiveValue<SpaceToken | number>
+
+/** Responsive radius token — e.g. 'radius.md', 'radius.full', or raw number */
+type RR = ResponsiveValue<RadiusToken | number>
+
+/** Responsive fontSize token — e.g. 'fontSize.lg', or raw number */
+type RF = ResponsiveValue<FontSizeToken | number>
+
+/** Responsive fontWeight token — e.g. 'fontWeight.bold', or raw number */
+type RW = ResponsiveValue<FontWeightToken | number>
+
+/** Responsive lineHeight token — e.g. 'lineHeight.normal', or raw number */
+type RL = ResponsiveValue<LineHeightToken | number>
+
+/** Responsive letterSpacing token — e.g. 'letterSpacing.wide', or raw number */
+type RLS = ResponsiveValue<LetterSpacingToken | number>
+
+/** Responsive fontFamily token — e.g. 'fontFamily.sans' */
+type RFF = ResponsiveValue<FontFamilyToken>
+
 export type ShadowKey = 'none' | 'sm' | 'md' | 'lg'
 
 // ─── box prop groups ──────────────────────────────────────────────────────────
 
 export interface BackgroundProps {
-    /** backgroundColor — token path or raw value */
-    bg?: TokenValue
+    /** backgroundColor — token path or raw value, or a responsive object */
+    bg?: RC
     backgroundImage?: string
     backgroundSize?: string
     backgroundPosition?: string
@@ -21,51 +66,51 @@ export interface BackgroundProps {
 }
 
 export interface PaddingProps {
-    p?: TokenValue
-    px?: TokenValue
-    py?: TokenValue
-    pt?: TokenValue
-    pb?: TokenValue
-    pl?: TokenValue
-    pr?: TokenValue
+    p?: RS
+    px?: RS
+    py?: RS
+    pt?: RS
+    pb?: RS
+    pl?: RS
+    pr?: RS
 }
 
 export interface MarginProps {
-    m?: TokenValue
-    mx?: TokenValue
-    my?: TokenValue
-    mt?: TokenValue
-    mb?: TokenValue
-    ml?: TokenValue
-    mr?: TokenValue
+    m?: RS
+    mx?: RS
+    my?: RS
+    mt?: RS
+    mb?: RS
+    ml?: RS
+    mr?: RS
 }
 
 export interface SizeProps {
-    /** width — token path, raw number (px) or string ('100%') */
-    w?: TokenValue
-    h?: TokenValue
-    minW?: TokenValue
-    maxW?: TokenValue
-    minH?: TokenValue
-    maxH?: TokenValue
+    /** width — token path, raw number (px) or string ('100%'), or a responsive object */
+    w?: RS
+    h?: RS
+    minW?: RS
+    maxW?: RS
+    minH?: RS
+    maxH?: RS
 }
 
 export interface LayoutProps {
-    display?: string
+    display?: CSSProperties["display"]
     flex?: string | number
-    flexDir?: string
+    flexDir?: CSSProperties["flexDirection"]
     flexGrow?: number
     flexShrink?: number
-    flexBasis?: TokenValue
-    align?: string
-    alignSelf?: string
-    alignContent?: string
-    justify?: string
-    justifySelf?: string
-    wrap?: string
-    gap?: TokenValue
-    columnGap?: TokenValue
-    rowGap?: TokenValue
+    flexBasis?: RS
+    align?: CSSProperties["alignItems"]
+    alignSelf?: CSSProperties["alignSelf"]
+    alignContent?: CSSProperties["alignContent"]
+    justify?: CSSProperties["justifyContent"]
+    justifySelf?: CSSProperties["justifySelf"]
+    wrap?: CSSProperties["flexWrap"]
+    gap?: RS
+    columnGap?: RS
+    rowGap?: RS
     order?: number
 }
 
@@ -83,14 +128,14 @@ export interface GridProps {
 
 export interface InsetProps {
     /** Shorthand for top/right/bottom/left — token path or raw value */
-    inset?: TokenValue
+    inset?: RS
 }
 
 export interface BorderProps {
     /** border shorthand — raw CSS string */
     border?: string
     borderStyle?: string
-    borderColor?: TokenValue
+    borderColor?: RC
     borderWidth?: number
     /** Per-side border shorthands */
     borderTop?: string
@@ -98,65 +143,65 @@ export interface BorderProps {
     borderBottom?: string
     borderLeft?: string
     /** Per-side colours — token path or raw value */
-    borderTopColor?: TokenValue
-    borderRightColor?: TokenValue
-    borderBottomColor?: TokenValue
-    borderLeftColor?: TokenValue
+    borderTopColor?: RC
+    borderRightColor?: RC
+    borderBottomColor?: RC
+    borderLeftColor?: RC
     /** Per-side widths */
     borderTopWidth?: number
     borderRightWidth?: number
     borderBottomWidth?: number
     borderLeftWidth?: number
     /** Per-side styles */
-    borderTopStyle?: string
-    borderRightStyle?: string
-    borderBottomStyle?: string
-    borderLeftStyle?: string
-    /** borderRadius — all corners — token path or raw value */
-    radius?: TokenValue
+    borderTopStyle?: CSSProperties["borderTopStyle"]
+    borderRightStyle?: CSSProperties["borderRightStyle"]
+    borderBottomStyle?: CSSProperties["borderBottomStyle"]
+    borderLeftStyle?: CSSProperties["borderLeftStyle"]
+    /** borderRadius — all corners — token path or raw value, or a responsive object */
+    radius?: RR
     /** Per-corner radius — token path or raw value */
-    borderTopLeftRadius?: TokenValue
-    borderTopRightRadius?: TokenValue
-    borderBottomLeftRadius?: TokenValue
-    borderBottomRightRadius?: TokenValue
+    borderTopLeftRadius?: RR
+    borderTopRightRadius?: RR
+    borderBottomLeftRadius?: RR
+    borderBottomRightRadius?: RR
     /** outline */
     outline?: string
-    outlineColor?: TokenValue
-    outlineWidth?: TokenValue
-    outlineStyle?: string
-    outlineOffset?: TokenValue
+    outlineColor?: RC
+    outlineWidth?: RS
+    outlineStyle?: CSSProperties["outlineStyle"]
+    outlineOffset?: RS
 }
 
 export interface EffectProps {
     opacity?: number
     /** boxShadow — shadow token key ('none' | 'sm' | 'md' | 'lg') */
     shadow?: ShadowKey
-    transform?: string
-    filter?: string
-    backdropFilter?: string
-    mixBlendMode?: string
+    transform?: CSSProperties["transform"]
+    filter?: CSSProperties["filter"]
+    backdropFilter?: CSSProperties["backdropFilter"]
+    mixBlendMode?: CSSProperties["mixBlendMode"]
 }
 
 export interface PositionProps {
-    overflow?: string
-    overflowX?: string
-    overflowY?: string
-    position?: string
-    top?: TokenValue
-    right?: TokenValue
-    bottom?: TokenValue
-    left?: TokenValue
+    overflow?: CSSProperties["overflow"]
+    overflowX?: CSSProperties["overflowX"]
+    overflowY?: CSSProperties["overflowY"]
+    position?: CSSProperties["position"]
+    top?: RS
+    right?: RS
+    bottom?: RS
+    left?: RS
     zIndex?: number
 }
 
 export interface InteractionProps {
-    cursor?: string
-    pointerEvents?: string
-    touchAction?: string
-    userSelect?: string
-    visibility?: string
-    boxSizing?: string
-    aspectRatio?: string
+    cursor?: CSSProperties["cursor"]
+    pointerEvents?: CSSProperties["pointerEvents"]
+    touchAction?: CSSProperties["touchAction"]
+    userSelect?: CSSProperties["userSelect"]
+    visibility?: CSSProperties["visibility"]
+    boxSizing?: CSSProperties["boxSizing"]
+    aspectRatio?: CSSProperties["aspectRatio"]
 }
 
 export interface TransitionProps {
@@ -180,17 +225,21 @@ export interface AnimationProps {
 }
 
 export interface ScrollProps {
-    scrollSnapType?: string
-    scrollSnapAlign?: string
-    overscrollBehavior?: string
-    overscrollBehaviorX?: string
-    overscrollBehaviorY?: string
-    scrollBehavior?: string
+    scrollSnapType?: CSSProperties["scrollSnapType"]
+    scrollSnapAlign?: CSSProperties["scrollSnapAlign"]
+    overscrollBehavior?: CSSProperties["overscrollBehavior"]
+    overscrollBehaviorX?: CSSProperties["overscrollBehaviorX"]
+    overscrollBehaviorY?: CSSProperties["overscrollBehaviorY"]
+    scrollBehavior?: CSSProperties["scrollBehavior"]
 }
 
 /**
  * Visual-only box props — all style groups without pseudo-state props.
  * Safe to nest inside _hover, _focus etc (no recursive pseudo nesting).
+ *
+ * Includes all font/text props so Chamber can style text inside it without
+ * needing a wrapping Tunnel. Tunnel remains the semantic HTML element
+ * (h1, h2, p, span) — Chamber always renders as a block element.
  */
 export interface BurrowBoxVisualProps
     extends BackgroundProps,
@@ -206,7 +255,10 @@ export interface BurrowBoxVisualProps
         InteractionProps,
         TransitionProps,
         AnimationProps,
-        ScrollProps {}
+        ScrollProps,
+        FontProps,
+        TextLayoutProps,
+        TextHelperProps {}
 
 /** Pseudo-state style props */
 export interface PseudoBoxProps {
@@ -241,35 +293,35 @@ export interface BurrowBoxProps extends BurrowBoxVisualProps, PseudoBoxProps {
 // ─── text prop groups ─────────────────────────────────────────────────────────
 
 export interface FontProps {
-    color?: TokenValue
-    fontSize?: TokenValue
-    fontWeight?: TokenValue
-    fontFamily?: TokenValue
-    fontStyle?: string
-    fontVariant?: string
-    fontStretch?: string
-    lineHeight?: TokenValue
-    letterSpacing?: TokenValue
-    wordSpacing?: TokenValue
+    color?: RC
+    fontSize?: RF
+    fontWeight?: RW
+    fontFamily?: RFF
+    fontStyle?: CSSProperties["fontStyle"]
+    fontVariant?: CSSProperties["fontVariant"]
+    fontStretch?: CSSProperties["fontStretch"]
+    lineHeight?: RL
+    letterSpacing?: RLS
+    wordSpacing?: RV
 }
 
 export interface TextLayoutProps {
-    textAlign?: 'left' | 'right' | 'center' | 'justify'
-    textTransform?: string
-    textDecoration?: string
-    textDecorationColor?: TokenValue
-    textDecorationStyle?: string
-    textDecorationThickness?: TokenValue
-    textUnderlineOffset?: TokenValue
-    textOverflow?: string
-    textShadow?: string
-    textIndent?: TokenValue
-    textWrap?: string
-    whiteSpace?: string
-    overflow?: string
-    wordBreak?: string
-    overflowWrap?: string
-    verticalAlign?: string
+    textAlign?: CSSProperties["textAlign"]
+    textTransform?: CSSProperties["textTransform"]
+    textDecoration?: CSSProperties["textDecoration"]
+    textDecorationColor?: RC
+    textDecorationStyle?: CSSProperties["textDecorationStyle"]
+    textDecorationThickness?: RS
+    textUnderlineOffset?: RS
+    textOverflow?: CSSProperties["textOverflow"]
+    textShadow?: CSSProperties["textShadow"]
+    textIndent?: RS
+    textWrap?: CSSProperties["textWrap"]
+    whiteSpace?: CSSProperties["whiteSpace"]
+    overflow?: CSSProperties["overflow"]
+    wordBreak?: CSSProperties["wordBreak"]
+    overflowWrap?: CSSProperties["overflowWrap"]
+    verticalAlign?: CSSProperties["verticalAlign"]
 }
 
 export interface TextHelperProps {
@@ -281,7 +333,7 @@ export interface TextHelperProps {
     nowrap?: boolean
     /** Multi-line clamp — sets -webkit-line-clamp with required companions */
     lineClamp?: number
-    userSelect?: string
+    userSelect?: CSSProperties["userSelect"]
 }
 
 /**
@@ -360,6 +412,18 @@ export const BURROW_BOX_KEYS = new Set<string>([
     'scrollSnapType', 'scrollSnapAlign',
     'overscrollBehavior', 'overscrollBehaviorX', 'overscrollBehaviorY',
     'scrollBehavior',
+    // font / typography
+    'color',
+    'fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'fontVariant', 'fontStretch',
+    'lineHeight', 'letterSpacing', 'wordSpacing',
+    // text layout
+    'textAlign', 'textTransform',
+    'textDecoration', 'textDecorationColor', 'textDecorationStyle', 'textDecorationThickness',
+    'textUnderlineOffset',
+    'textOverflow', 'textShadow', 'textIndent', 'textWrap',
+    'whiteSpace', 'wordBreak', 'overflowWrap', 'verticalAlign',
+    // text helpers
+    'italic', 'truncate', 'nowrap', 'lineClamp',
     // pseudo
     '_hover', '_focus', '_active', '_focusVisible', '_disabled',
     'hoverScale', 'hoverShade',

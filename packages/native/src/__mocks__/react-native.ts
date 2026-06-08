@@ -1,22 +1,27 @@
 /**
  * Minimal react-native mock for Jest tests.
  * We test style resolution (pure logic) rather than native rendering.
- * Chamber renders View, Tunnel renders Text — we verify styles applied, not the host component.
+ * Includes all components needed by @testing-library/react-native internals.
  */
 import React from 'react'
 
-export const View = ({ children, style, testID, ...rest }: any) =>
-    React.createElement('View', { style, testID, ...rest }, children)
+const makeComponent = (name: string) =>
+    ({ children, style, testID, ...rest }: any) =>
+        React.createElement(name, { style, testID, ...rest }, children)
 
-export const Text = ({ children, style, testID, ...rest }: any) =>
-    React.createElement('Text', { style, testID, ...rest }, children)
-
-export const Pressable = ({ children, style, testID, ...rest }: any) =>
-    React.createElement('Pressable', { style, testID, ...rest }, children)
+export const View       = makeComponent('View')
+export const Text       = makeComponent('Text')
+export const TextInput  = makeComponent('TextInput')
+export const Image      = makeComponent('Image')
+export const Switch     = makeComponent('Switch')
+export const ScrollView = makeComponent('ScrollView')
+export const Modal      = makeComponent('Modal')
+export const Pressable  = makeComponent('Pressable')
 
 export const useWindowDimensions = () => ({ width: 375, height: 812 })
 
 export const StyleSheet = {
     create: (styles: Record<string, any>) => styles,
-    flatten: (style: any) => (Array.isArray(style) ? Object.assign({}, ...style) : style),
+    flatten: (style: any) =>
+        Array.isArray(style) ? Object.assign({}, ...style) : (style ?? {}),
 }

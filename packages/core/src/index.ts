@@ -11,8 +11,20 @@ export { createVariants } from './variants'
 export { resolveSx } from './sx'
 export type { SxProp } from './sx'
 export { buildBoxStyles, buildTextStyles } from './buildStyles'
+export {
+    isResponsiveValue,
+    splitResponsiveProps,
+    resolveResponsiveValue,
+    getActiveBreakpoint,
+    getBreakpointOrder,
+} from './responsive'
+export type { Breakpoint, ResponsiveValue } from './responsive'
 export { stepShade, resolveHoverBg, buildPseudoStyles, buildTextPseudoStyles } from './pseudo'
 export type { ResolvedPseudoStyles } from './pseudo'
+export type {
+    ColorToken, SpaceToken, RadiusToken,
+    FontSizeToken, FontWeightToken, LineHeightToken, LetterSpacingToken, FontFamilyToken,
+} from '@badger-burrow/tokens'
 export type {
     BurrowBoxProps, BurrowBoxVisualProps, PseudoBoxProps,
     BurrowTextProps, BurrowTextVisualProps, PseudoTextProps,
@@ -20,6 +32,6 @@ export type {
     LayoutProps, GridProps, InsetProps, BorderProps, EffectProps, PositionProps,
     InteractionProps, TransitionProps, AnimationProps, ScrollProps,
     FontProps, TextLayoutProps, TextHelperProps,
-    TokenValue, ShadowKey,
+    TokenValue, RV, ShadowKey,
 } from './props'
 export { BURROW_BOX_KEYS, BURROW_TEXT_KEYS } from './props'

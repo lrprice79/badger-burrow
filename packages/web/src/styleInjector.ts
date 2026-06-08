@@ -14,6 +14,7 @@
  */
 
 const ATTR = 'data-bb'
+const RESPONSIVE_ATTR = 'data-bb-responsive'
 
 /** camelCase → kebab-case, e.g. backgroundColor → background-color */
 function toKebab(prop: string): string {
@@ -75,4 +76,48 @@ export function injectPseudoStyles(
     for (const [pseudo, styles] of Object.entries(pseudoStyles)) {
         injectPseudoRule(className, pseudo, styles)
     }
+}
+
+/**
+ * Inject media-query rules for responsive token props.
+ *
+ * Generates one <style> tag per className (keyed by [data-bb-responsive]).
+ * Each named breakpoint (sm/md/lg/xl) becomes an `@media (min-width: X)` block.
+ * Idempotent — re-render with the same className is a no-op.
+ * SSR safe.
+ *
+ * @param className       Scoped class name applied to the element
+ * @param bpStyles        Map of breakpoint name → resolved CSS-property object
+ * @param breakpoints     Token breakpoints map e.g. { sm: '576px', md: '768px', ... }
+ */
+export function injectResponsiveStyles(
+    className: string,
+    bpStyles: Partial<Record<string, Record<string, string | number | undefined>>>,
+    breakpoints: Record<string, string>,
+): void {
+    if (typeof document === 'undefined') return
+
+    const rules: string[] = []
+    for (const [bp, minWidth] of Object.entries(breakpoints)) {
+        const styles = bpStyles[bp]
+        if (!styles) continue
+        const css = styleObjectToCss(styles)
+        if (!css) continue
+        rules.push(`@media (min-width: ${minWidth}) { .${className} { ${css} } }`)
+    }
+
+    if (rules.length === 0) return
+
+    const content = rules.join('\n')
+    const existing = document.head.querySelector(`[${RESPONSIVE_ATTR}="${className}"]`)
+
+    if (existing) {
+        if (existing.textContent !== content) existing.textContent = content
+        return
+    }
+
+    const tag = document.createElement('style')
+    tag.setAttribute(RESPONSIVE_ATTR, className)
+    tag.textContent = content
+    document.head.appendChild(tag)
 }

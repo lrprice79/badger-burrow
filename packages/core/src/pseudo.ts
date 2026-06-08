@@ -1,7 +1,7 @@
 import type { BurrowTokens } from '@badger-burrow/tokens'
 import type { ColorMode } from './resolver'
 import { buildBoxStyles, buildTextStyles } from './buildStyles'
-import type { BurrowBoxVisualProps, BurrowTextVisualProps, PseudoBoxProps, PseudoTextProps } from './props'
+import type { BurrowBoxVisualProps, BurrowTextVisualProps, PseudoBoxProps, PseudoTextProps, RV } from './props'
 
 // ─── Shade stepping ───────────────────────────────────────────────────────────
 
@@ -102,15 +102,16 @@ export type ResolvedPseudoStyles = Record<string, Record<string, string | number
  * The hover key also incorporates any auto hover bg from `bg` / `hoverScale` / `hoverShade`.
  */
 export function buildPseudoStyles(
-    props: PseudoBoxProps & { bg?: string | number },
+    props: PseudoBoxProps & { bg?: RV },
     tokens: BurrowTokens,
     mode: ColorMode,
 ): ResolvedPseudoStyles {
     const { _hover, _focus, _active, _focusVisible, _disabled, hoverScale, hoverShade, bg } = props
     const result: ResolvedPseudoStyles = {}
 
-    // Resolve auto hover bg — only when _hover.bg hasn't already been set by the user
-    const autoBg = resolveHoverBg(bg, hoverScale, hoverShade, tokens, mode)
+    // Resolve auto hover bg — only for plain string/number bg values (not responsive objects)
+    const plainBg = typeof bg === 'object' ? undefined : bg
+    const autoBg = resolveHoverBg(plainBg, hoverScale, hoverShade, tokens, mode)
     const hoverInput: BurrowBoxVisualProps = {
         ...(_hover ?? {}),
         ...(!_hover?.bg && autoBg ? { bg: autoBg } : {}),
