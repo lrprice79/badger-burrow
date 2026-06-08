@@ -6,9 +6,19 @@ A walkthrough for setting up BadgerBurrow in a new project with your own styles.
 
 ## 1. Install
 
+**React (web):**
+
 ```bash
 npm install @badger-burrow/tokens @badger-burrow/core @badger-burrow/web
 ```
+
+**React Native:**
+
+```bash
+npm install @badger-burrow/tokens @badger-burrow/core @badger-burrow/native
+```
+
+Both packages share the same `extendBurrow()` setup and the same token props. The only difference is the component internals — `Chamber` renders `<View>` in native, `<div>` on web; `Tunnel` renders `<Text>` in native, `<span>` on web.
 
 ---
 
@@ -304,7 +314,7 @@ function Card({ title, subtitle }: { title: string; subtitle: string }) {
 }
 ```
 
-**Chamber tags:** `div` · `section` · `article` · `aside` · `header` · `footer` · `main` · `nav` · `button` · `a` · `form` · `fieldset` · `ul` · `ol` · `li` · `figure` · `figcaption` · `label`
+**Chamber tags:** `div` · `section` · `article` · `aside` · `header` · `footer` · `main` · `nav` · `button` · `a` · `form` · `fieldset` · `ul` · `ol` · `li` · `figure` · `figcaption` · `label` · `dialog` · `details` · `summary`
 
 ---
 
@@ -544,19 +554,140 @@ function Button({ size = 'md', children }) {
 
 ---
 
+## 9. React Native
+
+Everything above applies to React Native too — same `extendBurrow()`, same token paths, same prop names. Swap the import and you're done.
+
+```tsx
+// Web
+import { Chamber, Tunnel, useBurrow } from '@badger-burrow/web'
+
+// Native — same API, different import
+import { Chamber, Tunnel, useBurrow } from '@badger-burrow/native'
+```
+
+### What's different in native
+
+**Shadow** resolves to a native elevation object, not a CSS string. The default tokens include both formats:
+
+```ts
+// tokens.primitive.shadow.md
+{
+  web:    '0 4px 6px -1px rgba(0,0,0,0.1), ...',  // used by web
+  native: { elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4 }  // used by native
+}
+```
+
+Pass the same token path on both platforms — BadgerBurrow picks the right format automatically:
+
+```tsx
+<Chamber shadow="md" p="space.4" bg="color.bg.elevated">
+  {/* web: box-shadow CSS string */}
+  {/* native: elevation object spread into style */}
+</Chamber>
+```
+
+**No `as` prop on Chamber** — in React Native you always render `<View>`. For interactive surfaces use `Pressable` from react-native and wrap a Chamber inside it.
+
+**No pseudo props** — `_hover`, `_focus`, `_active` etc. don't exist on native. React Native doesn't have a DOM or CSS pseudo-classes. Use `Pressable`'s `pressed` state instead:
+
+```tsx
+import { Pressable } from 'react-native'
+import { Chamber, Tunnel } from '@badger-burrow/native'
+
+function PrimaryButton({ children, onPress }) {
+  return (
+    <Pressable onPress={onPress}>
+      {({ pressed }) => (
+        <Chamber
+          bg="color.interactive.primary"
+          px="space.4" py="space.2"
+          radius="radius.md"
+          style={{ opacity: pressed ? 0.85 : 1 }}
+        >
+          <Tunnel color="color.bg.surface" fontWeight="fontWeight.medium">
+            {children}
+          </Tunnel>
+        </Chamber>
+      )}
+    </Pressable>
+  )
+}
+```
+
+**No `as` on Tunnel** — always renders `<Text>`. Use native heading hierarchy via `accessibilityRole` if needed:
+
+```tsx
+<Tunnel
+  fontSize="fontSize.2xl"
+  fontWeight="fontWeight.bold"
+  color="color.text.primary"
+  accessibilityRole="header"
+>
+  Page title
+</Tunnel>
+```
+
+**Numeric values are unitless** — React Native styles don't use `px`. BadgerBurrow passes raw numbers through:
+
+```ts
+tokens.primitive.space[4]  // → 16  (web adds 'px' → '16px', native passes 16)
+```
+
+### Full cross-platform example
+
+The same `extendBurrow()` call at app entry works for both platforms. Import from the right package per platform and your components are automatically styled:
+
+```ts
+// app entry — same on both platforms
+import { extendBurrow } from '@badger-burrow/core'
+import { generateScale } from '@badger-burrow/tokens'
+
+extendBurrow({
+  primitive: { color: { primary: generateScale('#744577') } },
+  semantic: {
+    light: { 'color.interactive.primary': '#744577' },
+    dark:  { 'color.interactive.primary': '#c49bc6' },
+  },
+})
+```
+
+```tsx
+// Web component
+import { Chamber, Tunnel } from '@badger-burrow/web'
+
+// React Native component — identical props
+import { Chamber, Tunnel } from '@badger-burrow/native'
+
+function Card({ title }) {
+  return (
+    <Chamber bg="color.bg.elevated" p="space.4" radius="radius.md" shadow="md">
+      <Tunnel fontSize="fontSize.lg" fontWeight="fontWeight.bold" color="color.text.primary">
+        {title}
+      </Tunnel>
+    </Chamber>
+  )
+}
+```
+
+---
+
 ## Summary
 
 | Step | What you do |
 |---|---|
-| Install | `npm install @badger-burrow/tokens @badger-burrow/core @badger-burrow/web` |
+| Install (web) | `npm install @badger-burrow/tokens @badger-burrow/core @badger-burrow/web` |
+| Install (native) | `npm install @badger-burrow/tokens @badger-burrow/core @badger-burrow/native` |
 | Generate colours | `generateScale(brandHex)` → full 50–900 scale |
 | Find harmonics | `generateHarmonics(brandHex)` → complementary, analogous, triadic etc. |
-| Configure | `extendBurrow({ primitive, semantic })` once at app entry — no wrapper |
-| Layout | `<Chamber>` for boxes and containers |
-| Text | `<Tunnel>` for all text elements |
+| Configure | `extendBurrow({ primitive, semantic })` once at app entry — no wrapper, works on both platforms |
+| Layout | `<Chamber>` for boxes and containers — renders `<div>` on web, `<View>` on native |
+| Text | `<Tunnel>` for all text — renders `<span>` etc. on web, `<Text>` on native |
 | Dark mode | `useBurrow()` → `setMode('dark')` from anywhere |
-| Pseudo states | `_hover` `_focus` `_active` `_focusVisible` `_disabled` on Chamber and Tunnel |
-| Smart hover bg | Primitive bg paths auto-step one shade darker on hover |
-| Hover scale | `hoverScale="primary"` + optional `hoverShade={400}` |
+| Pseudo states (web) | `_hover` `_focus` `_active` `_focusVisible` `_disabled` on Chamber and Tunnel |
+| Interactive (native) | Use `Pressable` with pressed state — no pseudo props in React Native |
+| Shadow | Same token path on both platforms — web gets CSS string, native gets elevation object |
+| Smart hover bg | Primitive bg paths auto-step one shade darker on hover (web only) |
+| Hover scale | `hoverScale="primary"` + optional `hoverShade={400}` (web only) |
 | Escape hatch | `sx` prop for anything not covered by named props |
 | Variants | `createVariants` for reusable size/style maps |

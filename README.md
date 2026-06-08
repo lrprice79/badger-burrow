@@ -26,7 +26,7 @@ badger-burrow/
 ├── packages/tokens   Design foundation — colours, spacing, typography, motion
 ├── packages/core     Store, hook, utilities — no React dependency
 ├── packages/web      Chamber + Tunnel components for React web
-└── packages/native   Chamber + Tunnel for React Native  (coming soon)
+└── packages/native   Chamber + Tunnel for React Native
 ```
 
 ---
@@ -285,7 +285,7 @@ A styled box component. Defaults to `<div>`. Use the `as` prop to render any sem
 </Chamber>
 ```
 
-**Supported tags:** `div` · `section` · `article` · `aside` · `header` · `footer` · `main` · `nav` · `button` · `a` · `form` · `fieldset` · `ul` · `ol` · `li` · `figure` · `figcaption` · `label`
+**Supported tags:** `div` · `section` · `article` · `aside` · `header` · `footer` · `main` · `nav` · `button` · `a` · `form` · `fieldset` · `ul` · `ol` · `li` · `figure` · `figcaption` · `label` · `dialog` · `details` · `summary`
 
 #### Full prop reference
 
@@ -419,6 +419,73 @@ Defaults to `<span>`. Use `as` to change the tag — `h1`–`h6`, `p`, `label` a
 
 ---
 
+## `@badger-burrow/native`
+
+React Native components. Same token props as the web package — the same `extendBurrow()` call works across both.
+
+Install:
+
+```bash
+npm install @badger-burrow/tokens @badger-burrow/core @badger-burrow/native
+```
+
+### `useBurrow`
+
+Identical API to the web version — `useSyncExternalStore` over `BadgerBase`. Works in React Native out of the box.
+
+```tsx
+import { useBurrow } from '@badger-burrow/native'
+
+const { tokens, mode, setMode } = useBurrow()
+```
+
+### `Chamber` — renders `<View>`
+
+Same token props as web Chamber. Renders a `View`. No `as` prop needed — in React Native you always use `Pressable` for interactive surfaces.
+
+**Shadow** uses `tokens.primitive.shadow[key].native` — the elevation object (`{ elevation, shadowColor, ... }`) rather than a CSS string.
+
+```tsx
+import { Chamber, Tunnel } from '@badger-burrow/native'
+
+function Card() {
+  return (
+    <Chamber
+      bg="color.bg.elevated"
+      p="space.4"
+      radius="radius.md"
+      shadow="md"
+      display="flex"
+      flexDir="column"
+      gap="space.2"
+    >
+      <Tunnel fontSize="fontSize.lg" fontWeight="fontWeight.bold" color="color.text.primary">
+        Budget Summary
+      </Tunnel>
+      <Tunnel color="color.text.secondary" fontSize="fontSize.sm">
+        Updated today
+      </Tunnel>
+    </Chamber>
+  )
+}
+```
+
+### `Tunnel` — renders `<Text>`
+
+Same text token props as web Tunnel. No `as` prop — in React Native all text renders as `<Text>`.
+
+### Key differences from web
+
+| Web | Native |
+|---|---|
+| `Chamber` renders any HTML element via `as` | `Chamber` always renders `<View>` |
+| `Tunnel` renders `span`, `p`, `h1`–`h6`, `label` | `Tunnel` always renders `<Text>` |
+| Shadow = CSS `box-shadow` string | Shadow = native elevation object |
+| Pseudo props (`_hover` etc.) inject `<style>` tags | No pseudo props — use `Pressable` state instead |
+| `px` suffix added to numeric values | Raw numbers passed (RN uses unitless numbers) |
+
+---
+
 ## Dark mode
 
 ```tsx
@@ -453,8 +520,9 @@ raw number:      16                             → 16 (or '16px' for px props)
 |---|---|
 | `@badger-burrow/tokens` | 42 |
 | `@badger-burrow/core` | 136 |
-| `@badger-burrow/web` | 271 |
-| **Total** | **449** |
+| `@badger-burrow/web` | 273 |
+| `@badger-burrow/native` | 24 |
+| **Total** | **475** |
 
 ---
 
@@ -465,4 +533,4 @@ raw number:      16                             → 16 (or '16px' for px props)
 | `@badger-burrow/tokens` | ✅ Complete |
 | `@badger-burrow/core` | ✅ Complete |
 | `@badger-burrow/web` | ✅ Complete |
-| `@badger-burrow/native` | 🔜 Next |
+| `@badger-burrow/native` | ✅ Complete |
