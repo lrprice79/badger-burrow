@@ -33,6 +33,14 @@ export function getBreakpointOrder(breakpoints: Record<string, string>): string[
  * Returns true if the value is a responsive object (has at least one key
  * that matches a known breakpoint).
  *
+ * ASSUMPTION: only breakpoint-keyed objects are treated as responsive. This is
+ * safe because the only other object-valued props are `sx` and the pseudo props
+ * (`_hover` etc.), and those are destructured out by the components *before*
+ * splitResponsiveProps runs — so they never reach this check. If a future prop
+ * accepts a plain object whose keys could collide with a breakpoint name
+ * (`base`/`sm`/`md`/…), it must likewise be split out beforehand, or this will
+ * mis-classify it as responsive.
+ *
  * @param knownBreakpoints Optional override of the breakpoint key set.
  *   Defaults to the 5 built-in keys. Pass Object.keys(tokens.breakpoints)
  *   to support custom breakpoints.

@@ -83,7 +83,7 @@ export function buildBoxStyles(
     } = props
 
     const boxShadow = shadow !== undefined
-        ? tokens.primitive.shadow[shadow].web
+        ? tokens.primitive.shadow[shadow]?.web
         : undefined
 
     // Font/text props are valid on Chamber too — resolve them first so any box
@@ -262,10 +262,21 @@ function buildFontAndTextStyles(
     } = props
 
     return {
+        // Boolean helpers go first so any explicit prop spread below overrides
+        // them per-field (#7 — explicit props win over shorthand helpers).
+        ...(italic   === true && { fontStyle: 'italic' }),
+        ...(truncate === true && { overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }),
+        ...(nowrap   === true && { whiteSpace: 'nowrap' }),
+        ...(lineClamp !== undefined && {
+            display: '-webkit-box',
+            WebkitLineClamp: lineClamp,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+        }),
         ...(color                  !== undefined && { color:                  withPx(r(color)) }),
         ...(fontSize               !== undefined && { fontSize:               withPx(r(fontSize)) }),
         ...(fontWeight             !== undefined && { fontWeight:             asString(r(fontWeight)) }),
-        ...(fontFamily             !== undefined && { fontFamily:             withPx(r(fontFamily)) }),
+        ...(fontFamily             !== undefined && { fontFamily:             asString(r(fontFamily)) }),
         ...(fontStyle              !== undefined && { fontStyle }),
         ...(fontVariant            !== undefined && { fontVariant }),
         ...(fontStretch            !== undefined && { fontStretch }),
@@ -289,16 +300,6 @@ function buildFontAndTextStyles(
         ...(overflowWrap           !== undefined && { overflowWrap }),
         ...(verticalAlign          !== undefined && { verticalAlign }),
         ...(userSelect             !== undefined && { userSelect }),
-        // boolean helpers — explicit props win, helpers apply after
-        ...(italic   === true && fontStyle === undefined && { fontStyle: 'italic' }),
-        ...(truncate === true && { overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }),
-        ...(!truncate && nowrap === true && { whiteSpace: 'nowrap' }),
-        ...(lineClamp !== undefined && {
-            display: '-webkit-box',
-            WebkitLineClamp: lineClamp,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-        }),
     }
 }
 

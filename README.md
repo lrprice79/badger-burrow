@@ -579,10 +579,10 @@ All token types include `(string & {})` so raw CSS values (`'#ff0000'`, `'100%'`
 | Package | Tests |
 |---|---|
 | `@badger-burrow/tokens` | 42 |
-| `@badger-burrow/core` | 166 |
+| `@badger-burrow/core` | 176 |
 | `@badger-burrow/web` | 296 |
-| `@badger-burrow/native` | 67 |
-| **Total** | **571** |
+| `@badger-burrow/native` | 68 |
+| **Total** | **582** |
 
 ---
 

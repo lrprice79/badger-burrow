@@ -46,6 +46,13 @@ describe('Chamber native runtime', () => {
         expect('color' in style).toBe(false)
         expect('fontSize' in style).toBe(false)
     })
+
+    it('passes pointerEvents as a View prop, not a style key', () => {
+        const { getByTestId } = render(<Chamber testID="c" pointerEvents="none" />)
+        const el = getByTestId('c')
+        expect(el.props.pointerEvents).toBe('none')
+        expect('pointerEvents' in el.props.style).toBe(false)
+    })
 })
 
 // ─── Tunnel: text values are numbers; truncation via numberOfLines ────────────

@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, ViewStyle, useWindowDimensions } from 'react-native'
+import { View, ViewStyle, ViewProps, useWindowDimensions } from 'react-native'
 import {
     buildBoxStyles,
     resolveSx,
@@ -72,15 +72,17 @@ export function Chamber({ sx, style, children, testID, ...props }: ChamberProps)
         ? resolveNativeShadow((burrowProps as any).shadow, tokens)
         : {}
 
-    const resolvedStyle = {
+    // In React Native pointerEvents is a View *prop*, not a style key — extract
+    // it so it lands on the prop rather than the style object.
+    const { pointerEvents, ...mergedStyle } = {
         ...sxStyles,
         ...tokenStyles,
         ...nativeShadow,
         ...style,
-    } as ViewStyle
+    } as ViewStyle & { pointerEvents?: ViewProps['pointerEvents'] }
 
     return (
-        <View style={resolvedStyle} testID={testID} {...passthroughProps}>
+        <View style={mergedStyle as ViewStyle} pointerEvents={pointerEvents} testID={testID} {...passthroughProps}>
             {children}
         </View>
     )
