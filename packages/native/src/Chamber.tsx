@@ -12,6 +12,7 @@ import {
 import type { BurrowBoxProps, SxProp } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
 import type { NativeBoxCSSOverrides } from './cssOverrides'
+import { sanitizeNativeStyle } from './nativeStyle'
 
 export interface ChamberProps
     extends Omit<BurrowBoxProps, keyof NativeBoxCSSOverrides>,
@@ -58,8 +59,12 @@ export function Chamber({ sx, style, children, testID, ...props }: ChamberProps)
         if (resolved !== undefined) baseProps[key] = resolved
     }
 
-    const tokenStyles = buildBoxStyles(baseProps as BurrowBoxProps, tokens, mode)
-    const sxStyles    = sx ? resolveSx(sx, tokens, mode) : {}
+    // buildBoxStyles emits web-shaped CSS (px strings, web-only keys, a web
+    // boxShadow string, font props). Sanitize to a valid RN ViewStyle: px → number,
+    // web-only + text-only keys stripped, boxShadow dropped (native uses the
+    // elevation object below).
+    const tokenStyles = sanitizeNativeStyle(buildBoxStyles(baseProps as BurrowBoxProps, tokens, mode))
+    const sxStyles    = sx ? sanitizeNativeStyle(resolveSx(sx, tokens, mode)) : {}
 
     // Native shadow: if a shadow token resolves to a native elevation object,
     // spread it directly into the style

@@ -12,6 +12,7 @@ import {
 import type { BurrowTextProps, SxProp } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
 import type { NativeTextCSSOverrides } from './cssOverrides'
+import { sanitizeNativeStyle, nativeLineCount } from './nativeStyle'
 
 export interface TunnelProps
     extends Omit<BurrowTextProps, keyof NativeTextCSSOverrides>,
@@ -58,8 +59,14 @@ export function Tunnel({ sx, style, children, testID, ...props }: TunnelProps) {
         if (resolved !== undefined) baseProps[key] = resolved
     }
 
-    const tokenStyles = buildTextStyles(baseProps as BurrowTextProps, tokens, mode)
-    const sxStyles    = sx ? resolveSx(sx, tokens, mode) : {}
+    // buildTextStyles emits web-shaped CSS (px strings, unitless lineHeight,
+    // -webkit-box line clamp, web-only keys). Sanitize to a valid RN TextStyle:
+    // px → number, lineHeight resolved to absolute px, web-only keys stripped.
+    const tokenStyles = sanitizeNativeStyle(buildTextStyles(baseProps as BurrowTextProps, tokens, mode), { text: true })
+    const sxStyles    = sx ? sanitizeNativeStyle(resolveSx(sx, tokens, mode), { text: true }) : {}
+
+    // Native truncation is the numberOfLines prop, not a style.
+    const numberOfLines = nativeLineCount(baseProps as { truncate?: boolean; lineClamp?: number })
 
     const resolvedStyle = {
         ...sxStyles,
@@ -68,7 +75,7 @@ export function Tunnel({ sx, style, children, testID, ...props }: TunnelProps) {
     } as TextStyle
 
     return (
-        <Text style={resolvedStyle} testID={testID} {...passthroughProps}>
+        <Text style={resolvedStyle} numberOfLines={numberOfLines} testID={testID} {...passthroughProps}>
             {children}
         </Text>
     )

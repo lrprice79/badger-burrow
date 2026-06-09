@@ -89,36 +89,41 @@ describe('Chamber dark mode', () => {
 })
 
 // ─── font props ───────────────────────────────────────────────────────────────
+//
+// Chamber renders a View. React Native does NOT support text style props on a
+// View and does NOT inherit them to child Text (unlike CSS on the web). So font
+// props are accepted on the type for cross-platform API parity but are stripped
+// from the native View style — text styling on native must go on a Tunnel.
 
-describe('Chamber font props — native', () => {
-    it('resolves color token', () => {
+describe('Chamber font props — native (stripped, not inherited)', () => {
+    it('does not apply color to the View', () => {
         const { getByTestId } = render(<Chamber testID="c" color="color.text.primary" />)
-        expect(getByTestId('c').props.style?.color).toBeTruthy()
+        expect('color' in getByTestId('c').props.style).toBe(false)
     })
 
-    it('resolves fontSize token', () => {
+    it('does not apply fontSize to the View', () => {
         const { getByTestId } = render(<Chamber testID="c" fontSize="fontSize.lg" />)
-        expect(getByTestId('c').props.style?.fontSize).toBeTruthy()
+        expect('fontSize' in getByTestId('c').props.style).toBe(false)
     })
 
-    it('resolves fontWeight token', () => {
+    it('does not apply fontWeight to the View', () => {
         const { getByTestId } = render(<Chamber testID="c" fontWeight="fontWeight.bold" />)
-        expect(getByTestId('c').props.style?.fontWeight).toBeTruthy()
+        expect('fontWeight' in getByTestId('c').props.style).toBe(false)
     })
 
-    it('italic shorthand applies fontStyle', () => {
+    it('does not apply italic fontStyle to the View', () => {
         const { getByTestId } = render(<Chamber testID="c" italic />)
-        expect(getByTestId('c').props.style?.fontStyle).toBe('italic')
+        expect('fontStyle' in getByTestId('c').props.style).toBe(false)
     })
 
-    it('font props coexist with box props', () => {
+    it('box props still apply while font props are dropped', () => {
         const { getByTestId } = render(
             <Chamber testID="c" bg="color.bg.surface" p="space.4" color="color.text.primary" fontSize="fontSize.md" />
         )
         const s = getByTestId('c').props.style
         expect(s?.backgroundColor).toBeTruthy()
-        expect(s?.padding).toBeTruthy()
-        expect(s?.color).toBeTruthy()
-        expect(s?.fontSize).toBeTruthy()
+        expect(s?.padding).toBe(16)
+        expect('color' in s).toBe(false)
+        expect('fontSize' in s).toBe(false)
     })
 })

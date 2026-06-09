@@ -521,6 +521,11 @@ Same text token props as web Tunnel. No `as` prop — in React Native all text r
 | Shadow = CSS `box-shadow` string | Shadow = native elevation object |
 | Pseudo props (`_hover` etc.) inject `<style>` tags | No pseudo props — use `Pressable` state instead |
 | `px` suffix added to numeric values | Raw numbers passed (RN uses unitless numbers) |
+| Font props on `Chamber` style child text via CSS inheritance | Font props on `Chamber` are **no-ops** — RN `<View>` can't inherit text styles, so they're stripped. Put text styling on a `Tunnel`. |
+| `truncate` / `lineClamp` use `-webkit-line-clamp` CSS | `truncate` / `lineClamp` map to the `<Text numberOfLines>` prop |
+| `lineHeight` token is a unitless multiplier | Multiplier resolved against `fontSize` to an absolute px value (RN requires a number) |
+
+Native style output is sanitized before reaching `<View>` / `<Text>`: `px` strings become numbers, web-only keys (`cursor`, `filter`, `transition`, `outline`, `boxShadow`, grid, …) are stripped, and text-only props are removed from View styles.
 
 ---
 
@@ -576,8 +581,8 @@ All token types include `(string & {})` so raw CSS values (`'#ff0000'`, `'100%'`
 | `@badger-burrow/tokens` | 42 |
 | `@badger-burrow/core` | 166 |
 | `@badger-burrow/web` | 296 |
-| `@badger-burrow/native` | 34 |
-| **Total** | **538** |
+| `@badger-burrow/native` | 67 |
+| **Total** | **571** |
 
 ---
 
