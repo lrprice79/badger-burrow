@@ -42,6 +42,40 @@ describe('boolean helpers yield to explicit props', () => {
     })
 })
 
+// ─── motion token resolution ──────────────────────────────────────────────────
+
+describe('motion props resolve tokens', () => {
+    it('expands a transition duration keyword', () => {
+        const s = buildBoxStyles({ transition: 'fast' }, defaultTokens, 'light')
+        expect(s.transition).toBe('all 150ms cubic-bezier(0.4, 0, 0.2, 1)')
+    })
+
+    it('resolves transitionDuration / transitionTimingFunction tokens', () => {
+        const s = buildBoxStyles(
+            { transitionDuration: 'normal', transitionTimingFunction: 'decelerate' },
+            defaultTokens,
+            'light',
+        )
+        expect(s.transitionDuration).toBe('300ms')
+        expect(s.transitionTimingFunction).toBe('cubic-bezier(0, 0, 0.2, 1)')
+    })
+
+    it('resolves animationDuration / animationDelay tokens', () => {
+        const s = buildBoxStyles(
+            { animationDuration: 'slow', animationDelay: 'fast' },
+            defaultTokens,
+            'light',
+        )
+        expect(s.animationDuration).toBe('600ms')
+        expect(s.animationDelay).toBe('150ms')
+    })
+
+    it('passes a raw transition string through', () => {
+        const s = buildBoxStyles({ transition: 'opacity 0.2s ease' }, defaultTokens, 'light')
+        expect(s.transition).toBe('opacity 0.2s ease')
+    })
+})
+
 // ─── #9 invalid shadow key does not throw ─────────────────────────────────────
 
 describe('shadow key guard', () => {

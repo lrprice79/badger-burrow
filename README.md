@@ -223,6 +223,8 @@ import type {
   LayoutProps, FlexProps, GridProps, InsetProps, BorderProps,
   EffectProps, PositionProps, InteractionProps,
   TransitionProps, AnimationProps, ScrollProps,
+  // motion token keywords:
+  DurationToken, EasingToken,
   FontProps, TextLayoutProps, TextHelperProps,
 } from '@badger-burrow/core'
 ```
@@ -308,8 +310,10 @@ Chamber accepts **all font and typography props** as well as layout props — so
 | **Effects** | `opacity` `shadow` `transform` `filter` `backdropFilter` `mixBlendMode` |
 | **Position** | `inset` `overflow` `overflowX` `overflowY` `position` `top` `right` `bottom` `left` `zIndex` |
 | **Interaction** | `cursor` `pointerEvents` `touchAction` `userSelect` `visibility` `boxSizing` `aspectRatio` |
-| **Transition** | `transition` `transitionProperty` `transitionDuration` `transitionTimingFunction` `transitionDelay` |
-| **Animation** | `animation` `animationName` `animationDuration` `animationTimingFunction` `animationDelay` `animationIterationCount` `animationDirection` `animationFillMode` `animationPlayState` |
+| **Transition** | `transition`‡ `transitionProperty` `transitionDuration`‡ `transitionTimingFunction`‡ `transitionDelay`‡ |
+| **Animation** | `animation` `animationName` `animationDuration`‡ `animationTimingFunction`‡ `animationDelay`‡ `animationIterationCount` `animationDirection` `animationFillMode` `animationPlayState` |
+
+‡ accepts a **motion token keyword** as well as raw CSS. `transition="fast"` → `all 150ms cubic-bezier(0.4, 0, 0.2, 1)`; `transitionDuration="normal"` → `300ms`; `transitionTimingFunction="decelerate"` → its cubic-bezier. Duration keys: `instant` `fast` `normal` `slow` `glacial`. Easing keys: `standard` `decelerate` `accelerate` `sharp`. Web-only (stripped on native — use Reanimated there).
 | **Scroll** | `scrollSnapType` `scrollSnapAlign` `overscrollBehavior` `overscrollBehaviorX` `overscrollBehaviorY` `scrollBehavior` |
 | **Font** | `color` `fontSize` `fontWeight` `fontFamily` `fontStyle` `fontVariant` `fontStretch` `lineHeight` `letterSpacing` `wordSpacing` |
 | **Text layout** | `textAlign` `textTransform` `textDecoration` `textDecorationColor` `textDecorationStyle` `textDecorationThickness` `textUnderlineOffset` `textOverflow` `textShadow` `textIndent` `textWrap` `whiteSpace` `wordBreak` `overflowWrap` `verticalAlign` |
@@ -588,10 +592,10 @@ All token types include `(string & {})` so raw CSS values (`'#ff0000'`, `'100%'`
 | Package | Tests |
 |---|---|
 | `@badger-burrow/tokens` | 42 |
-| `@badger-burrow/core` | 176 |
-| `@badger-burrow/web` | 302 |
+| `@badger-burrow/core` | 190 |
+| `@badger-burrow/web` | 306 |
 | `@badger-burrow/native` | 71 |
-| **Total** | **591** |
+| **Total** | **609** |
 
 ---
 

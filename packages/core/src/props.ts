@@ -10,6 +10,8 @@ import type {
     LineHeightToken,
     LetterSpacingToken,
     FontFamilyToken,
+    DurationToken,
+    EasingToken,
 } from '@badger-burrow/tokens'
 
 // ─── shared ───────────────────────────────────────────────────────────────────
@@ -227,19 +229,26 @@ export interface InteractionProps {
 }
 
 export interface TransitionProps {
-    transition?: string
+    /** Motion duration keyword (`'fast'` → `all 150ms <standard easing>`) or a raw transition string */
+    transition?: DurationToken
     transitionProperty?: string
-    transitionDuration?: string
-    transitionTimingFunction?: string
-    transitionDelay?: string
+    /** Duration token (`'fast'` → `150ms`) or a raw CSS time */
+    transitionDuration?: DurationToken
+    /** Easing token (`'standard'` → `cubic-bezier(…)`) or a raw timing function */
+    transitionTimingFunction?: EasingToken
+    /** Duration token or a raw CSS time */
+    transitionDelay?: DurationToken
 }
 
 export interface AnimationProps {
     animation?: string
     animationName?: string
-    animationDuration?: string
-    animationTimingFunction?: string
-    animationDelay?: string
+    /** Duration token (`'fast'` → `150ms`) or a raw CSS time */
+    animationDuration?: DurationToken
+    /** Easing token (`'standard'` → `cubic-bezier(…)`) or a raw timing function */
+    animationTimingFunction?: EasingToken
+    /** Duration token or a raw CSS time */
+    animationDelay?: DurationToken
     animationIterationCount?: string | number
     animationDirection?: string
     animationFillMode?: string

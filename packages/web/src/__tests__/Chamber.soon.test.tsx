@@ -243,3 +243,29 @@ describe('animation', () => {
         expect(screen.getByTestId('b').style.animationPlayState).toBe('paused')
     })
 })
+
+// ─── motion token resolution ──────────────────────────────────────────────────
+
+describe('motion tokens', () => {
+    it('transition keyword resolves to a full shorthand', () => {
+        render(<Chamber data-testid="b" transition="fast" />)
+        const t = screen.getByTestId('b').style.transition
+        expect(t).toContain('150ms')
+        expect(t).toContain('cubic-bezier')
+    })
+
+    it('transitionDuration token resolves to ms', () => {
+        render(<Chamber data-testid="b" transitionDuration="normal" />)
+        expect(screen.getByTestId('b').style.transitionDuration).toBe('300ms')
+    })
+
+    it('transitionTimingFunction token resolves to cubic-bezier', () => {
+        render(<Chamber data-testid="b" transitionTimingFunction="sharp" />)
+        expect(screen.getByTestId('b').style.transitionTimingFunction).toContain('cubic-bezier')
+    })
+
+    it('raw transition string still works', () => {
+        render(<Chamber data-testid="b" transition="opacity 0.2s ease" />)
+        expect(screen.getByTestId('b').style.transition).toContain('opacity')
+    })
+})

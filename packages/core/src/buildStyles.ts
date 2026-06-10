@@ -3,6 +3,7 @@ import { resolveToken } from './resolver'
 import type { ColorMode } from './resolver'
 import type { BurrowBoxProps, BurrowTextProps, BurrowTextVisualProps, RV } from './props'
 import type { ResponsiveValue } from './responsive'
+import { resolveDuration, resolveEasing, resolveTransition } from './motion'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -223,18 +224,18 @@ export function buildBoxStyles(
         ...(visibility            !== undefined && { visibility }),
         ...(boxSizing             !== undefined && { boxSizing }),
         ...(aspectRatio           !== undefined && { aspectRatio }),
-        // transition
-        ...(transition            !== undefined && { transition }),
+        // transition — motion token keywords resolve, raw CSS passes through
+        ...(transition            !== undefined && { transition:               resolveTransition(transition, tokens) }),
         ...(transitionProperty    !== undefined && { transitionProperty }),
-        ...(transitionDuration    !== undefined && { transitionDuration }),
-        ...(transitionTimingFunction !== undefined && { transitionTimingFunction }),
-        ...(transitionDelay       !== undefined && { transitionDelay }),
-        // animation
+        ...(transitionDuration    !== undefined && { transitionDuration:       resolveDuration(transitionDuration, tokens) }),
+        ...(transitionTimingFunction !== undefined && { transitionTimingFunction: resolveEasing(transitionTimingFunction, tokens) }),
+        ...(transitionDelay       !== undefined && { transitionDelay:          resolveDuration(transitionDelay, tokens) }),
+        // animation — duration / easing sub-props resolve motion tokens
         ...(animation             !== undefined && { animation }),
         ...(animationName         !== undefined && { animationName }),
-        ...(animationDuration     !== undefined && { animationDuration }),
-        ...(animationTimingFunction !== undefined && { animationTimingFunction }),
-        ...(animationDelay        !== undefined && { animationDelay }),
+        ...(animationDuration     !== undefined && { animationDuration:        resolveDuration(animationDuration, tokens) }),
+        ...(animationTimingFunction !== undefined && { animationTimingFunction: resolveEasing(animationTimingFunction, tokens) }),
+        ...(animationDelay        !== undefined && { animationDelay:           resolveDuration(animationDelay, tokens) }),
         ...(animationIterationCount !== undefined && { animationIterationCount }),
         ...(animationDirection    !== undefined && { animationDirection }),
         ...(animationFillMode     !== undefined && { animationFillMode }),

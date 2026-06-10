@@ -24,7 +24,9 @@ export type { ResolvedPseudoStyles } from './pseudo'
 export type {
     ColorToken, SpaceToken, RadiusToken,
     FontSizeToken, FontWeightToken, LineHeightToken, LetterSpacingToken, FontFamilyToken,
+    DurationToken, EasingToken,
 } from '@badger-burrow/tokens'
+export { resolveDuration, resolveEasing, resolveTransition } from './motion'
 export type {
     BurrowBoxProps, BurrowBoxVisualProps, PseudoBoxProps,
     BurrowTextProps, BurrowTextVisualProps, PseudoTextProps,

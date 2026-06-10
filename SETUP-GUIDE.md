@@ -605,7 +605,43 @@ platforms.
 
 ---
 
-## 9. Reusable variants with `createVariants`
+## 9. Motion — transitions from tokens
+
+The `transition` and `animation` timing props accept **motion token keywords**
+as well as raw CSS, so you don't hand-write durations and easings.
+
+```tsx
+// Keyword — expands to `all 150ms cubic-bezier(0.4, 0, 0.2, 1)`
+<Chamber transition="fast" _hover={{ bg: 'color.interactive.primary.hover' }} />
+
+// Granular — each sub-prop resolves its own token
+<Chamber
+  transitionProperty="opacity, transform"
+  transitionDuration="normal"          // → 300ms
+  transitionTimingFunction="decelerate" // → cubic-bezier(0, 0, 0.2, 1)
+/>
+
+// Raw CSS still works — anything that isn't a known key passes through
+<Chamber transition="opacity 0.2s ease" />
+```
+
+**Duration keys** (`tokens.motion.duration`): `instant` (0) · `fast` (150) ·
+`normal` (300) · `slow` (600) · `glacial` (1000) — all in ms.
+
+**Easing keys** (`tokens.motion.easing`): `standard` · `decelerate` ·
+`accelerate` · `sharp`.
+
+These resolve for `transition`, `transitionDuration`, `transitionTimingFunction`,
+`transitionDelay`, and the matching `animation*` sub-props. Override any of them
+per project via `extendBurrow({ motion: { duration: { fast: 120 } } })`.
+
+> Motion props are **web-only** — React Native has no CSS transitions, so they're
+> stripped from native styles. Use Reanimated with `tokens.motion.spring` /
+> `tokens.motion.duration` for native animation.
+
+---
+
+## 10. Reusable variants with `createVariants`
 
 Define them once, use the resolver in any component:
 
@@ -639,7 +675,7 @@ function Button({ size = 'md', children }) {
 
 ---
 
-## 10. React Native
+## 11. React Native
 
 Everything above applies to React Native too — same `extendBurrow()`, same token paths, same prop names. Swap the import and you're done.
 
@@ -774,6 +810,7 @@ function Card({ title }) {
 | Text | `<Tunnel>` for all text — renders `<span>` etc. on web, `<Text>` on native |
 | Dark mode | `useBurrow()` → `setMode('dark')` from anywhere |
 | Responsive | Pass a breakpoint object to any token prop or layout/flex/grid prop — `flexDir={{ base: 'column', md: 'row' }}` (web `@media`, native window width) |
+| Motion (web) | `transition="fast"` and `transitionDuration`/`transitionTimingFunction` resolve motion tokens — keys `instant`/`fast`/`normal`/`slow`/`glacial`, `standard`/`decelerate`/`accelerate`/`sharp` |
 | Pseudo states (web) | `_hover` `_focus` `_active` `_focusVisible` `_disabled` on Chamber and Tunnel |
 | Interactive (native) | Use `Pressable` with pressed state — no pseudo props in React Native |
 | Shadow | Same token path on both platforms — web gets CSS string, native gets elevation object |

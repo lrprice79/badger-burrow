@@ -152,3 +152,31 @@ export type FontFamilyToken =
     | 'fontFamily.sans'
     | 'fontFamily.mono'
     | (string & {})
+
+// ─── motion ───────────────────────────────────────────────────────────────────
+
+/**
+ * Known motion duration keys. Used by `transition`, `transitionDuration`,
+ * `animationDuration`, `transitionDelay`, `animationDelay`.
+ *
+ * @example 'fast'  → 150ms
+ */
+export type DurationToken =
+    | 'instant'
+    | 'fast'
+    | 'normal'
+    | 'slow'
+    | 'glacial'
+    | (string & {})
+
+/**
+ * Known easing keys. Used by `transitionTimingFunction` / `animationTimingFunction`.
+ *
+ * @example 'standard' → cubic-bezier(0.4, 0, 0.2, 1)
+ */
+export type EasingToken =
+    | 'standard'
+    | 'decelerate'
+    | 'accelerate'
+    | 'sharp'
+    | (string & {})
