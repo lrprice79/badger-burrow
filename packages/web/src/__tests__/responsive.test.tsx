@@ -73,6 +73,60 @@ describe('Chamber responsive props', () => {
     })
 })
 
+// ─── Chamber responsive layout / grid props ───────────────────────────────────
+
+describe('Chamber responsive layout props', () => {
+    it('applies base flexDir as inline style', () => {
+        render(<Chamber data-testid="c" flexDir={{ base: 'column', md: 'row' }} />)
+        expect(screen.getByTestId('c').style.flexDirection).toBe('column')
+    })
+
+    it('injects a media query for responsive flexDir', () => {
+        render(<Chamber data-testid="c" flexDir={{ base: 'column', md: 'row' }} />)
+        const tag = document.head.querySelector('[data-bb-responsive]')
+        expect(tag?.textContent).toContain('flex-direction')
+        expect(tag?.textContent).toContain('row')
+        expect(tag?.textContent).toContain('768px')
+    })
+
+    it('injects a media query for responsive align', () => {
+        render(<Chamber data-testid="c" align={{ base: 'flex-start', lg: 'center' }} />)
+        const tag = document.head.querySelector('[data-bb-responsive]')
+        expect(tag?.textContent).toContain('align-items')
+        expect(tag?.textContent).toContain('center')
+    })
+
+    it('injects a media query for responsive justify', () => {
+        render(<Chamber data-testid="c" justify={{ base: 'flex-start', md: 'space-between' }} />)
+        const tag = document.head.querySelector('[data-bb-responsive]')
+        expect(tag?.textContent).toContain('justify-content')
+        expect(tag?.textContent).toContain('space-between')
+    })
+
+    it('supports responsive display', () => {
+        render(<Chamber data-testid="c" display={{ base: 'block', md: 'flex' }} />)
+        expect(screen.getByTestId('c').style.display).toBe('block')
+        const tag = document.head.querySelector('[data-bb-responsive]')
+        expect(tag?.textContent).toContain('display')
+    })
+})
+
+describe('Chamber responsive grid props', () => {
+    it('injects a media query for responsive gridTemplateColumns', () => {
+        render(
+            <Chamber
+                data-testid="c"
+                display="grid"
+                gridTemplateColumns={{ base: '1fr', md: '1fr 1fr' }}
+            />
+        )
+        expect(screen.getByTestId('c').style.gridTemplateColumns).toBe('1fr')
+        const tag = document.head.querySelector('[data-bb-responsive]')
+        expect(tag?.textContent).toContain('grid-template-columns')
+        expect(tag?.textContent).toContain('1fr 1fr')
+    })
+})
+
 // ─── Tunnel responsive props ──────────────────────────────────────────────────
 
 describe('Tunnel responsive props', () => {

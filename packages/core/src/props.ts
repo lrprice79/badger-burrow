@@ -95,35 +95,57 @@ export interface SizeProps {
     maxH?: RS
 }
 
+/**
+ * General layout props shared by flex and grid containers.
+ * `display` and the gap props are responsive.
+ */
 export interface LayoutProps {
-    display?: CSSProperties["display"]
-    flex?: string | number
-    flexDir?: CSSProperties["flexDirection"]
-    flexGrow?: number
-    flexShrink?: number
-    flexBasis?: RS
-    align?: CSSProperties["alignItems"]
-    alignSelf?: CSSProperties["alignSelf"]
-    alignContent?: CSSProperties["alignContent"]
-    justify?: CSSProperties["justifyContent"]
-    justifySelf?: CSSProperties["justifySelf"]
-    wrap?: CSSProperties["flexWrap"]
+    /** display — responsive; e.g. {{ base: 'block', md: 'flex' }} */
+    display?: ResponsiveValue<CSSProperties["display"]>
     gap?: RS
     columnGap?: RS
     rowGap?: RS
+}
+
+/**
+ * Flexbox container + item props. The direction/alignment props are responsive,
+ * so you can lay out as a column on mobile and a row on larger screens, or
+ * switch alignment per breakpoint:
+ *
+ *   <Chamber flexDir={{ base: 'column', md: 'row' }} align={{ base: 'flex-start', lg: 'center' }} />
+ */
+export interface FlexProps {
+    flex?: string | number
+    /** flexDirection — responsive */
+    flexDir?: ResponsiveValue<CSSProperties["flexDirection"]>
+    flexGrow?: number
+    flexShrink?: number
+    flexBasis?: RS
+    /** alignItems — responsive */
+    align?: ResponsiveValue<CSSProperties["alignItems"]>
+    alignSelf?: ResponsiveValue<CSSProperties["alignSelf"]>
+    alignContent?: ResponsiveValue<CSSProperties["alignContent"]>
+    /** justifyContent — responsive */
+    justify?: ResponsiveValue<CSSProperties["justifyContent"]>
+    justifySelf?: ResponsiveValue<CSSProperties["justifySelf"]>
+    wrap?: ResponsiveValue<CSSProperties["flexWrap"]>
     order?: number
 }
 
+/**
+ * Grid container + item props — all typed off CSSProperties for value
+ * IntelliSense, and all responsive (e.g. one column on mobile, three on desktop).
+ */
 export interface GridProps {
-    gridTemplateColumns?: string
-    gridTemplateRows?: string
-    gridTemplateAreas?: string
-    gridColumn?: string
-    gridRow?: string
-    gridArea?: string
-    gridAutoColumns?: string
-    gridAutoRows?: string
-    gridAutoFlow?: string
+    gridTemplateColumns?: ResponsiveValue<CSSProperties["gridTemplateColumns"]>
+    gridTemplateRows?: ResponsiveValue<CSSProperties["gridTemplateRows"]>
+    gridTemplateAreas?: ResponsiveValue<CSSProperties["gridTemplateAreas"]>
+    gridColumn?: ResponsiveValue<CSSProperties["gridColumn"]>
+    gridRow?: ResponsiveValue<CSSProperties["gridRow"]>
+    gridArea?: ResponsiveValue<CSSProperties["gridArea"]>
+    gridAutoColumns?: ResponsiveValue<CSSProperties["gridAutoColumns"]>
+    gridAutoRows?: ResponsiveValue<CSSProperties["gridAutoRows"]>
+    gridAutoFlow?: ResponsiveValue<CSSProperties["gridAutoFlow"]>
 }
 
 export interface InsetProps {
@@ -247,6 +269,7 @@ export interface BurrowBoxVisualProps
         MarginProps,
         SizeProps,
         LayoutProps,
+        FlexProps,
         GridProps,
         InsetProps,
         BorderProps,

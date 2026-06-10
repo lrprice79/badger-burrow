@@ -220,7 +220,7 @@ import type {
   BurrowTextProps,  // all Tunnel props
   // composable sub-groups:
   BackgroundProps, PaddingProps, MarginProps, SizeProps,
-  LayoutProps, GridProps, InsetProps, BorderProps,
+  LayoutProps, FlexProps, GridProps, InsetProps, BorderProps,
   EffectProps, PositionProps, InteractionProps,
   TransitionProps, AnimationProps, ScrollProps,
   FontProps, TextLayoutProps, TextHelperProps,
@@ -297,8 +297,11 @@ Chamber accepts **all font and typography props** as well as layout props — so
 | **Padding** | `p` `px` `py` `pt` `pb` `pl` `pr` |
 | **Margin** | `m` `mx` `my` `mt` `mb` `ml` `mr` |
 | **Size** | `w` `h` `minW` `maxW` `minH` `maxH` |
-| **Layout** | `display` `flex` `flexDir` `flexGrow` `flexShrink` `flexBasis` `align` `alignSelf` `alignContent` `justify` `justifySelf` `wrap` `gap` `columnGap` `rowGap` `order` |
-| **Grid** | `gridTemplateColumns` `gridTemplateRows` `gridTemplateAreas` `gridColumn` `gridRow` `gridArea` `gridAutoColumns` `gridAutoRows` `gridAutoFlow` |
+| **Layout** | `display`† `gap` `columnGap` `rowGap` |
+| **Flex** | `flex` `flexDir`† `flexGrow` `flexShrink` `flexBasis` `align`† `alignSelf`† `alignContent`† `justify`† `justifySelf`† `wrap`† `order` |
+| **Grid** | `gridTemplateColumns`† `gridTemplateRows`† `gridTemplateAreas`† `gridColumn`† `gridRow`† `gridArea`† `gridAutoColumns`† `gridAutoRows`† `gridAutoFlow`† |
+
+† accepts a responsive object as well as a plain value, e.g. `flexDir={{ base: 'column', md: 'row' }}`, `align={{ base: 'flex-start', lg: 'center' }}`, `gridTemplateColumns={{ base: '1fr', md: '1fr 1fr 1fr' }}`. Grid props are typed off `CSSProperties` for value autocomplete.
 | **Border** | `border` `borderStyle` `borderColor` `borderWidth` `borderTop/Right/Bottom/Left` (shorthands) `borderTopColor` `borderRightColor` `borderBottomColor` `borderLeftColor` `borderTopWidth` `borderRightWidth` `borderBottomWidth` `borderLeftWidth` `borderTopStyle` `borderRightStyle` `borderBottomStyle` `borderLeftStyle` |
 | **Radius** | `radius` (all corners) `borderTopLeftRadius` `borderTopRightRadius` `borderBottomLeftRadius` `borderBottomRightRadius` |
 | **Outline** | `outline` `outlineColor` `outlineWidth` `outlineStyle` `outlineOffset` |
@@ -383,7 +386,7 @@ Use them inside `_hover` for token-consistent hover styles:
 
 ### Responsive props
 
-Any token prop on `Chamber` or `Tunnel` (web or native) can accept a responsive object instead of a plain value.
+Any token prop on `Chamber` or `Tunnel` (web or native) can accept a responsive object instead of a plain value — as can the layout/flex/grid props marked with † in the prop reference (`flexDir`, `align`, `justify`, `display`, the grid templates, etc.).
 
 ```tsx
 // Plain value — same at all sizes
@@ -391,6 +394,12 @@ Any token prop on `Chamber` or `Tunnel` (web or native) can accept a responsive 
 
 // Responsive — breakpoint overrides cascade up (like CSS min-width)
 <Chamber p={{ base: 'space.2', md: 'space.4', lg: 'space.6' }} />
+
+// Layout that reflows: column on mobile, row from md up; alignment per breakpoint
+<Chamber
+  flexDir={{ base: 'column', md: 'row' }}
+  align={{ base: 'flex-start', lg: 'center' }}
+/>
 
 // Mix — some props plain, some responsive
 <Chamber
@@ -580,9 +589,9 @@ All token types include `(string & {})` so raw CSS values (`'#ff0000'`, `'100%'`
 |---|---|
 | `@badger-burrow/tokens` | 42 |
 | `@badger-burrow/core` | 176 |
-| `@badger-burrow/web` | 296 |
-| `@badger-burrow/native` | 68 |
-| **Total** | **582** |
+| `@badger-burrow/web` | 302 |
+| `@badger-burrow/native` | 71 |
+| **Total** | **591** |
 
 ---
 

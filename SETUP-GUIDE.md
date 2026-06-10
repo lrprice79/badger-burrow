@@ -520,7 +520,92 @@ extendBurrow({
 
 ---
 
-## 8. Reusable variants with `createVariants`
+## 8. Responsive props
+
+Any prop that takes a token (spacing, colour, size, typography…) **and** the
+layout/flex/grid props (`flexDir`, `align`, `justify`, `display`, the grid
+templates, etc.) can take a **responsive object** instead of a single value.
+Keys are breakpoint names; values cascade upward like CSS `min-width` queries —
+a breakpoint inherits the nearest smaller one that is set.
+
+```tsx
+// Plain — same at every size
+<Chamber p="space.4" />
+
+// Responsive — base everywhere, then overrides from each breakpoint up
+<Chamber p={{ base: 'space.2', md: 'space.4', lg: 'space.6' }} />
+```
+
+### Reflowing layout
+
+This is the common case: stack on mobile, lay out in a row on larger screens —
+and switch alignment to match.
+
+```tsx
+<Chamber
+  flexDir={{ base: 'column', md: 'row' }}
+  align={{ base: 'flex-start', lg: 'center' }}
+  justify={{ base: 'flex-start', md: 'space-between' }}
+  gap={{ base: 'space.2', md: 'space.6' }}
+>
+  <Tunnel fontSize={{ base: 'fontSize.lg', md: 'fontSize.2xl' }}>Heading</Tunnel>
+  <Chamber>…</Chamber>
+</Chamber>
+```
+
+Grid reflows the same way:
+
+```tsx
+<Chamber
+  display="grid"
+  gridTemplateColumns={{ base: '1fr', md: '1fr 1fr', lg: '1fr 1fr 1fr' }}
+  gap="space.4"
+/>
+```
+
+### Breakpoints
+
+Defaults (override per project via `extendBurrow({ breakpoints: … })`):
+
+| Key | Default | Applies at |
+|---|---|---|
+| `base` | — | always (the unprefixed value) |
+| `sm` | `576px` | ≥ 576 px |
+| `md` | `768px` | ≥ 768 px |
+| `lg` | `992px` | ≥ 992 px |
+| `xl` | `1200px` | ≥ 1200 px |
+
+You can add your own — `xs`, `xxl`, anything — and they're ordered automatically
+by their pixel value:
+
+```ts
+extendBurrow({
+  breakpoints: { xs: '400px', sm: '576px', md: '768px', lg: '992px', xl: '1200px', xxl: '1440px' },
+})
+
+// then, with full type-checking and autocomplete:
+<Chamber p={{ base: 'space.1', xs: 'space.2', xxl: 'space.10' }} />
+```
+
+### How it resolves per platform
+
+- **Web** — the `base` value is written as an inline style; each named
+  breakpoint injects a scoped `@media (min-width: …)` rule via a
+  `[data-bb-responsive]` style tag. Two elements with identical responsive
+  configs share a single style tag.
+- **Native** — there are no media queries, so BadgerBurrow reads the current
+  window width (via `useWindowDimensions`, so it updates on rotation) and
+  resolves each responsive prop to the single value for the active breakpoint.
+
+Either way the API is identical — write the same responsive object on both
+platforms.
+
+> Responsive objects are **not** supported inside pseudo props (`_hover` etc.) —
+> those resolve to a single state, not a breakpoint range.
+
+---
+
+## 9. Reusable variants with `createVariants`
 
 Define them once, use the resolver in any component:
 
@@ -554,7 +639,7 @@ function Button({ size = 'md', children }) {
 
 ---
 
-## 9. React Native
+## 10. React Native
 
 Everything above applies to React Native too — same `extendBurrow()`, same token paths, same prop names. Swap the import and you're done.
 
@@ -634,6 +719,10 @@ function PrimaryButton({ children, onPress }) {
 tokens.primitive.space[4]  // → 16  (web adds 'px' → '16px', native passes 16)
 ```
 
+**Responsive props** (section 8) work on native too — instead of `@media`
+queries, the active breakpoint is derived from the live window width, so the
+same `flexDir={{ base: 'column', md: 'row' }}` reflows on rotation.
+
 ### Full cross-platform example
 
 The same `extendBurrow()` call at app entry works for both platforms. Import from the right package per platform and your components are automatically styled:
@@ -684,6 +773,7 @@ function Card({ title }) {
 | Layout | `<Chamber>` for boxes and containers — renders `<div>` on web, `<View>` on native |
 | Text | `<Tunnel>` for all text — renders `<span>` etc. on web, `<Text>` on native |
 | Dark mode | `useBurrow()` → `setMode('dark')` from anywhere |
+| Responsive | Pass a breakpoint object to any token prop or layout/flex/grid prop — `flexDir={{ base: 'column', md: 'row' }}` (web `@media`, native window width) |
 | Pseudo states (web) | `_hover` `_focus` `_active` `_focusVisible` `_disabled` on Chamber and Tunnel |
 | Interactive (native) | Use `Pressable` with pressed state — no pseudo props in React Native |
 | Shadow | Same token path on both platforms — web gets CSS string, native gets elevation object |

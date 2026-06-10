@@ -29,7 +29,7 @@ export type {
     BurrowBoxProps, BurrowBoxVisualProps, PseudoBoxProps,
     BurrowTextProps, BurrowTextVisualProps, PseudoTextProps,
     BackgroundProps, PaddingProps, MarginProps, SizeProps,
-    LayoutProps, GridProps, InsetProps, BorderProps, EffectProps, PositionProps,
+    LayoutProps, FlexProps, GridProps, InsetProps, BorderProps, EffectProps, PositionProps,
     InteractionProps, TransitionProps, AnimationProps, ScrollProps,
     FontProps, TextLayoutProps, TextHelperProps,
     TokenValue, RV, ShadowKey,

@@ -47,6 +47,29 @@ describe('Chamber responsive props — native', () => {
         expect(getByTestId('c').props.style?.backgroundColor).toBeTruthy()
         expect(getByTestId('c').props.style?.padding).toBeTruthy()
     })
+
+    it('resolves responsive flexDir to column at narrow width', () => {
+        const { getByTestId } = render(
+            <Chamber testID="c" flexDir={{ base: 'column', md: 'row' }} />
+        )
+        expect(getByTestId('c').props.style?.flexDirection).toBe('column')
+    })
+
+    it('resolves responsive flexDir to row at tablet width', () => {
+        setWidth(800)
+        const { getByTestId } = render(
+            <Chamber testID="c" flexDir={{ base: 'column', md: 'row' }} />
+        )
+        expect(getByTestId('c').props.style?.flexDirection).toBe('row')
+    })
+
+    it('resolves responsive align to center at wide width', () => {
+        setWidth(1300)
+        const { getByTestId } = render(
+            <Chamber testID="c" align={{ base: 'flex-start', xl: 'center' }} />
+        )
+        expect(getByTestId('c').props.style?.alignItems).toBe('center')
+    })
 })
 
 describe('Tunnel responsive props — native', () => {

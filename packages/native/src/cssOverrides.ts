@@ -24,22 +24,24 @@
  */
 
 import type { ViewStyle, TextStyle } from 'react-native'
+import type { ResponsiveValue } from '@badger-burrow/core'
 
 // ─── box overrides (Chamber) ──────────────────────────────────────────────────
 
 export type NativeBoxCSSOverrides = {
-    /** RN: 'flex' | 'none' — no grid, block, inline-flex etc. */
-    display?: ViewStyle['display']
+    /** RN: 'flex' | 'none' — no grid, block, inline-flex etc. Responsive. */
+    display?: ResponsiveValue<ViewStyle['display']>
     /** RN: 'absolute' | 'relative' | 'static' — no fixed or sticky */
     position?: ViewStyle['position']
     /** RN: 'visible' | 'hidden' | 'scroll' */
     overflow?: ViewStyle['overflow']
-    flexDir?: ViewStyle['flexDirection']
-    align?: ViewStyle['alignItems']
-    alignSelf?: ViewStyle['alignSelf']
-    alignContent?: ViewStyle['alignContent']
-    justify?: ViewStyle['justifyContent']
-    wrap?: ViewStyle['flexWrap']
+    /** flexDirection — responsive (column on mobile, row on larger screens) */
+    flexDir?: ResponsiveValue<ViewStyle['flexDirection']>
+    align?: ResponsiveValue<ViewStyle['alignItems']>
+    alignSelf?: ResponsiveValue<ViewStyle['alignSelf']>
+    alignContent?: ResponsiveValue<ViewStyle['alignContent']>
+    justify?: ResponsiveValue<ViewStyle['justifyContent']>
+    wrap?: ResponsiveValue<ViewStyle['flexWrap']>
     /** RN values differ: 'box-none' | 'none' | 'box-only' | 'auto' */
     pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto'
     /** RN border style: 'solid' | 'dotted' | 'dashed' */

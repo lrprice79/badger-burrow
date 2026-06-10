@@ -2,6 +2,7 @@ import type { BurrowTokens } from '@badger-burrow/tokens'
 import { resolveToken } from './resolver'
 import type { ColorMode } from './resolver'
 import type { BurrowBoxProps, BurrowTextProps, BurrowTextVisualProps, RV } from './props'
+import type { ResponsiveValue } from './responsive'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -32,6 +33,18 @@ function withPx(value: string | number | undefined): string | undefined {
 function asString(value: string | number | undefined): string | undefined {
     if (value === undefined) return undefined
     return String(value)
+}
+
+/**
+ * Collapse a non-token responsive value to a plain value. Responsive objects
+ * are resolved to base/breakpoint values before buildStyles runs, so a stray
+ * object here is treated as undefined (defensive — same posture as `resolve`).
+ * Used for enum-style layout/grid props that pass straight through (no token
+ * lookup).
+ */
+function flat<T extends string | number>(value: ResponsiveValue<T> | undefined): T | undefined {
+    if (value === undefined || typeof value === 'object') return undefined
+    return value
 }
 
 // ─── box styles ───────────────────────────────────────────────────────────────
@@ -126,32 +139,32 @@ export function buildBoxStyles(
         ...(minH                  !== undefined && { minHeight:                withPx(r(minH)) }),
         ...(maxH                  !== undefined && { maxHeight:                withPx(r(maxH)) }),
         // flex / layout
-        ...(display               !== undefined && { display }),
+        ...(display               !== undefined && { display:                  flat(display) }),
         ...(flex                  !== undefined && { flex }),
-        ...(flexDir               !== undefined && { flexDirection:            flexDir }),
+        ...(flexDir               !== undefined && { flexDirection:            flat(flexDir) }),
         ...(flexGrow              !== undefined && { flexGrow }),
         ...(flexShrink            !== undefined && { flexShrink }),
         ...(flexBasis             !== undefined && { flexBasis:                withPx(r(flexBasis)) }),
-        ...(align                 !== undefined && { alignItems:               align }),
-        ...(alignSelf             !== undefined && { alignSelf }),
-        ...(alignContent          !== undefined && { alignContent }),
-        ...(justify               !== undefined && { justifyContent:           justify }),
-        ...(justifySelf           !== undefined && { justifySelf }),
-        ...(wrap                  !== undefined && { flexWrap:                 wrap }),
+        ...(align                 !== undefined && { alignItems:               flat(align) }),
+        ...(alignSelf             !== undefined && { alignSelf:                flat(alignSelf) }),
+        ...(alignContent          !== undefined && { alignContent:            flat(alignContent) }),
+        ...(justify               !== undefined && { justifyContent:           flat(justify) }),
+        ...(justifySelf           !== undefined && { justifySelf:             flat(justifySelf) }),
+        ...(wrap                  !== undefined && { flexWrap:                 flat(wrap) }),
         ...(gap                   !== undefined && { gap:                      withPx(r(gap)) }),
         ...(columnGap             !== undefined && { columnGap:                withPx(r(columnGap)) }),
         ...(rowGap                !== undefined && { rowGap:                   withPx(r(rowGap)) }),
         ...(order                 !== undefined && { order }),
         // grid
-        ...(gridTemplateColumns   !== undefined && { gridTemplateColumns }),
-        ...(gridTemplateRows      !== undefined && { gridTemplateRows }),
-        ...(gridTemplateAreas     !== undefined && { gridTemplateAreas }),
-        ...(gridColumn            !== undefined && { gridColumn }),
-        ...(gridRow               !== undefined && { gridRow }),
-        ...(gridArea              !== undefined && { gridArea }),
-        ...(gridAutoColumns       !== undefined && { gridAutoColumns }),
-        ...(gridAutoRows          !== undefined && { gridAutoRows }),
-        ...(gridAutoFlow          !== undefined && { gridAutoFlow }),
+        ...(gridTemplateColumns   !== undefined && { gridTemplateColumns:      flat(gridTemplateColumns) }),
+        ...(gridTemplateRows      !== undefined && { gridTemplateRows:         flat(gridTemplateRows) }),
+        ...(gridTemplateAreas     !== undefined && { gridTemplateAreas:        flat(gridTemplateAreas) }),
+        ...(gridColumn            !== undefined && { gridColumn:               flat(gridColumn) }),
+        ...(gridRow               !== undefined && { gridRow:                  flat(gridRow) }),
+        ...(gridArea              !== undefined && { gridArea:                 flat(gridArea) }),
+        ...(gridAutoColumns       !== undefined && { gridAutoColumns:          flat(gridAutoColumns) }),
+        ...(gridAutoRows          !== undefined && { gridAutoRows:             flat(gridAutoRows) }),
+        ...(gridAutoFlow          !== undefined && { gridAutoFlow:             flat(gridAutoFlow) }),
         // border
         ...(border                !== undefined && { border }),
         ...(borderStyle           !== undefined && { borderStyle }),
