@@ -137,3 +137,36 @@ describe('store integration', () => {
         expect(BadgerBase.getTokens().primitive.color.primary[500]).toBe('#ff0000')
     })
 })
+
+// ─── mergeBurrow — accumulative merge onto CURRENT tokens ─────────────────────
+
+import { mergeBurrow } from '../extendBurrow'
+
+describe('mergeBurrow', () => {
+    it('merges onto the current tokens, preserving earlier extendBurrow overrides', () => {
+        extendBurrow({ primitive: { color: { primary: { 500: '#111111' } } } })
+        mergeBurrow({ primitive: { radius: { md: 12 } } })
+        const tokens = BadgerBase.getTokens()
+        expect(tokens.primitive.color.primary[500]).toBe('#111111')   // kept
+        expect(tokens.primitive.radius.md).toBe(12)                   // added
+    })
+
+    it('later mergeBurrow wins on conflicting keys', () => {
+        extendBurrow({ primitive: { radius: { md: 10 } } })
+        mergeBurrow({ primitive: { radius: { md: 14 } } })
+        expect(BadgerBase.getTokens().primitive.radius.md).toBe(14)
+    })
+
+    it('notifies subscribers', () => {
+        const listener = jest.fn()
+        BadgerBase.subscribe(listener)
+        mergeBurrow({ primitive: { radius: { sm: 6 } } })
+        expect(listener).toHaveBeenCalled()
+    })
+
+    it('does not mutate defaultTokens', () => {
+        const before = defaultTokens.primitive.radius.md
+        mergeBurrow({ primitive: { radius: { md: 99 } } })
+        expect(defaultTokens.primitive.radius.md).toBe(before)
+    })
+})

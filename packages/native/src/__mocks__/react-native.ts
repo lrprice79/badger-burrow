@@ -20,6 +20,11 @@ export const Pressable  = makeComponent('Pressable')
 
 export const useWindowDimensions = () => ({ width: 375, height: 812 })
 
+export const Dimensions = {
+    get: (_dim: string) => ({ width: 375, height: 812 }),
+    addEventListener: (_type: string, _handler: unknown) => ({ remove() {} }),
+}
+
 export const StyleSheet = {
     create: (styles: Record<string, any>) => styles,
     flatten: (style: any) =>

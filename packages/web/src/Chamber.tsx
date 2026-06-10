@@ -10,7 +10,7 @@ import {
 } from '@badger-burrow/core'
 import type { BurrowBoxProps } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
-import { injectPseudoStyles, injectResponsiveStyles } from './styleInjector'
+import { injectPseudoStyles, injectResponsiveStyles, stableStringify } from './styleInjector'
 
 export type ChamberTag =
     | 'div' | 'section' | 'article' | 'aside'
@@ -79,7 +79,7 @@ export function Chamber({ as: Tag = 'div', sx, style, children, ...props }: Cham
 
     // Generate a scoped class name when pseudo or responsive styles are needed
     const className = (hasPseudo || hasResponsive)
-        ? toClassName(JSON.stringify(pseudoStyles) + JSON.stringify(responsiveProps) + mode)
+        ? toClassName(JSON.stringify(pseudoStyles) + stableStringify(responsiveProps) + mode)
         : undefined
 
     // Inject <style> tags synchronously during render — idempotent, no useEffect needed

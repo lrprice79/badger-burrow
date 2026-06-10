@@ -159,9 +159,9 @@ extendBurrow({
       'color.interactive.primary': brand[500],
       'color.interactive.accent':  palette.complementary[500],
       'color.border.default':      brand[200],
-      'color.status.success':      generateScale('#16a34a')[600],
-      'color.status.error':        generateScale('#dc2626')[600],
-      'color.status.warning':      generateScale('#d97706')[600],
+      'color.feedback.success':      generateScale('#16a34a')[600],
+      'color.feedback.error':        generateScale('#dc2626')[600],
+      'color.feedback.warning':      generateScale('#d97706')[600],
     },
     dark: {
       'color.bg.surface':          brand[950] ?? '#0a1f17',
@@ -171,9 +171,9 @@ extendBurrow({
       'color.interactive.primary': brand[400],
       'color.interactive.accent':  palette.complementary[400],
       'color.border.default':      brand[700],
-      'color.status.success':      generateScale('#16a34a')[400],
-      'color.status.error':        generateScale('#dc2626')[400],
-      'color.status.warning':      generateScale('#d97706')[400],
+      'color.feedback.success':      generateScale('#16a34a')[400],
+      'color.feedback.error':        generateScale('#dc2626')[400],
+      'color.feedback.warning':      generateScale('#d97706')[400],
     },
   },
 })
@@ -201,10 +201,15 @@ Common naming patterns:
 | `color.interactive.hover` | Hover state of primary |
 | `color.border.default` | Standard dividers and outlines |
 | `color.border.focus` | Focus ring colour |
-| `color.status.success` | Confirmations, positive states |
-| `color.status.error` | Errors, destructive actions |
-| `color.status.warning` | Caution states |
-| `color.status.info` | Informational notices |
+| `color.feedback.success` | Confirmations, positive states |
+| `color.feedback.error` | Errors, destructive actions |
+| `color.feedback.warning` | Caution states |
+| `color.feedback.info` | Informational notices |
+
+> The **default token set ships `color.feedback.*`** — those names get IDE
+> autocomplete out of the box. You're free to add your own groups
+> (`color.status.*`, `color.brand.*`, …) via `extendBurrow`; they resolve the
+> same way, just without built-in autocomplete.
 
 ---
 

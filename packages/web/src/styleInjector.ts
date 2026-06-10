@@ -16,6 +16,39 @@
 const ATTR = 'data-bb'
 const RESPONSIVE_ATTR = 'data-bb-responsive'
 
+/**
+ * Ids already injected this page-load. Class names are content-addressed
+ * (hash of resolved styles + mode), so once an id is written its rule never
+ * changes — re-renders can skip the DOM entirely.
+ */
+const _injected = new Set<string>()
+
+/** Test-only: forget what has been injected (pair with clearing head tags). */
+export function __resetStyleInjectorCache(): void {
+    _injected.clear()
+}
+
+/**
+ * JSON.stringify with object keys sorted (two levels deep) — so responsive
+ * objects written in different key order hash to the same class name.
+ */
+export function stableStringify(obj: Record<string, unknown>): string {
+    const sorted: Record<string, unknown> = {}
+    for (const key of Object.keys(obj).sort()) {
+        const value = obj[key]
+        if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+            const inner: Record<string, unknown> = {}
+            for (const k of Object.keys(value as object).sort()) {
+                inner[k] = (value as Record<string, unknown>)[k]
+            }
+            sorted[key] = inner
+        } else {
+            sorted[key] = value
+        }
+    }
+    return JSON.stringify(sorted)
+}
+
 /** camelCase → kebab-case, e.g. backgroundColor → background-color */
 function toKebab(prop: string): string {
     return prop.replace(/([A-Z])/g, '-$1').toLowerCase()
@@ -47,12 +80,16 @@ export function injectPseudoRule(
 ): void {
     if (typeof document === 'undefined') return
 
+    const id = `${className}:${pseudo}`
+    if (_injected.has(id)) return
+
     const css = styleObjectToCss(styles)
     if (!css) return
 
-    const id = `${className}:${pseudo}`
     const rule = `.${className}:${pseudoSelector(pseudo)} { ${css} }`
+    // One DOM read per unique id total (covers SSR-rendered or pre-existing tags)
     const existing = document.head.querySelector(`[${ATTR}="${id}"]`)
+    _injected.add(id)
 
     if (existing) {
         if (existing.textContent !== rule) existing.textContent = rule
@@ -97,6 +134,9 @@ export function injectResponsiveStyles(
 ): void {
     if (typeof document === 'undefined') return
 
+    const id = `resp:${className}`
+    if (_injected.has(id)) return
+
     const rules: string[] = []
     for (const [bp, minWidth] of Object.entries(breakpoints)) {
         const styles = bpStyles[bp]
@@ -109,7 +149,9 @@ export function injectResponsiveStyles(
     if (rules.length === 0) return
 
     const content = rules.join('\n')
+    // One DOM read per unique className total
     const existing = document.head.querySelector(`[${RESPONSIVE_ATTR}="${className}"]`)
+    _injected.add(id)
 
     if (existing) {
         if (existing.textContent !== content) existing.textContent = content

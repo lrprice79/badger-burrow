@@ -10,7 +10,7 @@ import {
 } from '@badger-burrow/core'
 import type { BurrowTextProps } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
-import { injectPseudoStyles, injectResponsiveStyles } from './styleInjector'
+import { injectPseudoStyles, injectResponsiveStyles, stableStringify } from './styleInjector'
 
 type TunnelTag = 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'label'
 
@@ -65,7 +65,7 @@ export function Tunnel({ as: Tag = 'span', sx, style, children, ...props }: Tunn
 
     // Generate a scoped class name when pseudo or responsive styles are needed
     const className = (hasPseudo || hasResponsive)
-        ? toClassName(JSON.stringify(pseudoStyles) + JSON.stringify(responsiveProps) + mode)
+        ? toClassName(JSON.stringify(pseudoStyles) + stableStringify(responsiveProps) + mode)
         : undefined
 
     // Inject <style> tags synchronously during render — idempotent, no useEffect needed

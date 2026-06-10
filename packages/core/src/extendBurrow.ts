@@ -26,6 +26,25 @@ export function extendBurrow(override: DeepPartial<BurrowTokens>): BurrowTokens 
     return merged
 }
 
+/**
+ * Deep-merge a partial token override onto the CURRENT token set (not
+ * defaultTokens). Use this for layering — e.g. the app sets its brand with
+ * extendBurrow, then a feature module adds its own tokens with mergeBurrow
+ * without wiping the brand.
+ *
+ * Runs the same one-shot deep merge as extendBurrow — call-time cost only,
+ * zero per-render overhead.
+ *
+ * @example
+ * extendBurrow({ primitive: { color: { primary: brandScale } } })   // app entry
+ * mergeBurrow({ primitive: { color: { chartAccent: accentScale } } }) // feature module
+ */
+export function mergeBurrow(override: DeepPartial<BurrowTokens>): BurrowTokens {
+    const merged = deepMerge(BadgerBase.getTokens(), override) as BurrowTokens
+    BadgerBase.setTokens(merged)
+    return merged
+}
+
 function deepMerge<T>(base: T, override: DeepPartial<T>): T {
     if (
         override === null ||

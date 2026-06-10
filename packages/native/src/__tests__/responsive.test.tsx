@@ -1,19 +1,15 @@
 import React from 'react'
-import { render } from '@testing-library/react-native'
+import { render, act } from '@testing-library/react-native'
 import { BadgerBase } from '@badger-burrow/core'
 import { Chamber } from '../Chamber'
 import { Tunnel } from '../Tunnel'
+import { __setWindowWidthForTests } from '../useActiveBreakpoint'
 
-// Control viewport width via our mock
+// Drive the central width store directly — same path the Dimensions change
+// handler takes at runtime.
 const setWidth = (width: number) => {
-    const rn = require('react-native')
-    rn.useWindowDimensions.mockReturnValue({ width, height: 812 })
+    act(() => { __setWindowWidthForTests(width) })
 }
-
-jest.mock('react-native', () => ({
-    ...jest.requireActual('react-native'),
-    useWindowDimensions: jest.fn(() => ({ width: 375, height: 812 })),
-}))
 
 beforeEach(() => {
     BadgerBase.reset()

@@ -1,16 +1,16 @@
 import React from 'react'
-import { Text, TextStyle, useWindowDimensions } from 'react-native'
+import { Text, TextStyle } from 'react-native'
 import {
     buildTextStyles,
     resolveSx,
     BURROW_TEXT_KEYS,
     splitResponsiveProps,
-    getActiveBreakpoint,
     getBreakpointOrder,
     resolveResponsiveValue,
 } from '@badger-burrow/core'
 import type { BurrowTextProps, SxProp } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
+import { useActiveBreakpoint } from './useActiveBreakpoint'
 import type { NativeTextCSSOverrides } from './cssOverrides'
 import { sanitizeNativeStyle, nativeLineCount } from './nativeStyle'
 
@@ -39,7 +39,6 @@ export interface TunnelProps
  */
 export function Tunnel({ sx, style, children, testID, ...props }: TunnelProps) {
     const { tokens, mode } = useBurrow()
-    const { width } = useWindowDimensions()
 
     // Split burrow props from passthrough props
     const burrowProps: Record<string, unknown> = {}
@@ -52,7 +51,7 @@ export function Tunnel({ sx, style, children, testID, ...props }: TunnelProps) {
     // Resolve responsive props to a single value based on current window width
     const breakpoints = tokens.breakpoints ?? {}
     const { baseProps, responsiveProps } = splitResponsiveProps(burrowProps, breakpoints)
-    const activeBreakpoint = getActiveBreakpoint(width, breakpoints)
+    const activeBreakpoint = useActiveBreakpoint(breakpoints)
     const bpOrder = getBreakpointOrder(breakpoints)
     for (const [key, obj] of Object.entries(responsiveProps)) {
         const resolved = resolveResponsiveValue(obj as Record<string, unknown>, activeBreakpoint, bpOrder)

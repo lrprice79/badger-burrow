@@ -5,11 +5,13 @@ import { Chamber } from '../Chamber'
 // note: act is still used in the unmount test below
 import { Tunnel } from '../Tunnel'
 import { BadgerBase } from '@badger-burrow/core'
+import { __resetStyleInjectorCache } from '../styleInjector'
 
 beforeEach(() => {
     BadgerBase.reset()
     // Clean up any injected style tags between tests
     document.head.querySelectorAll('[data-bb]').forEach(el => el.remove())
+    __resetStyleInjectorCache()
 })
 
 // ─── Chamber _hover ───────────────────────────────────────────────────────────

@@ -3,10 +3,12 @@ import { render, screen } from '@testing-library/react'
 import { BadgerBase } from '@badger-burrow/core'
 import { Chamber } from '../Chamber'
 import { Tunnel } from '../Tunnel'
+import { __resetStyleInjectorCache } from '../styleInjector'
 
 beforeEach(() => {
     BadgerBase.reset()
     document.head.querySelectorAll('[data-bb-responsive]').forEach(el => el.remove())
+    __resetStyleInjectorCache()
 })
 
 // ─── Chamber responsive props ─────────────────────────────────────────────────

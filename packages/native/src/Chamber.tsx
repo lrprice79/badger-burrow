@@ -1,16 +1,16 @@
 import React from 'react'
-import { View, ViewStyle, ViewProps, useWindowDimensions } from 'react-native'
+import { View, ViewStyle, ViewProps } from 'react-native'
 import {
     buildBoxStyles,
     resolveSx,
     BURROW_BOX_KEYS,
     splitResponsiveProps,
-    getActiveBreakpoint,
     getBreakpointOrder,
     resolveResponsiveValue,
 } from '@badger-burrow/core'
 import type { BurrowBoxProps, SxProp } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
+import { useActiveBreakpoint } from './useActiveBreakpoint'
 import type { NativeBoxCSSOverrides } from './cssOverrides'
 import { sanitizeNativeStyle } from './nativeStyle'
 
@@ -39,7 +39,6 @@ export interface ChamberProps
  */
 export function Chamber({ sx, style, children, testID, ...props }: ChamberProps) {
     const { tokens, mode } = useBurrow()
-    const { width } = useWindowDimensions()
 
     // Split burrow props from passthrough props
     const burrowProps: Record<string, unknown> = {}
@@ -52,7 +51,7 @@ export function Chamber({ sx, style, children, testID, ...props }: ChamberProps)
     // Resolve responsive props to a single value based on current window width
     const breakpoints = tokens.breakpoints ?? {}
     const { baseProps, responsiveProps } = splitResponsiveProps(burrowProps, breakpoints)
-    const activeBreakpoint = getActiveBreakpoint(width, breakpoints)
+    const activeBreakpoint = useActiveBreakpoint(breakpoints)
     const bpOrder = getBreakpointOrder(breakpoints)
     for (const [key, obj] of Object.entries(responsiveProps)) {
         const resolved = resolveResponsiveValue(obj as Record<string, unknown>, activeBreakpoint, bpOrder)
@@ -68,8 +67,9 @@ export function Chamber({ sx, style, children, testID, ...props }: ChamberProps)
 
     // Native shadow: if a shadow token resolves to a native elevation object,
     // spread it directly into the style
-    const nativeShadow = (burrowProps as any).shadow
-        ? resolveNativeShadow((burrowProps as any).shadow, tokens)
+    const shadowKey = (baseProps as BurrowBoxProps).shadow
+    const nativeShadow = shadowKey !== undefined
+        ? resolveNativeShadow(shadowKey, tokens)
         : {}
 
     // In React Native pointerEvents is a View *prop*, not a style key — extract
@@ -88,8 +88,11 @@ export function Chamber({ sx, style, children, testID, ...props }: ChamberProps)
     )
 }
 
-function resolveNativeShadow(key: string, tokens: any): Record<string, unknown> {
-    const shadow = tokens?.primitive?.shadow?.[key]?.native
+function resolveNativeShadow(
+    key: string,
+    tokens: { primitive: { shadow: Record<string, { native?: object } | undefined> } },
+): Record<string, unknown> {
+    const shadow = tokens.primitive.shadow[key]?.native
     if (!shadow || typeof shadow !== 'object') return {}
-    return shadow
+    return shadow as Record<string, unknown>
 }

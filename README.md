@@ -161,6 +161,19 @@ extendBurrow({
 })
 ```
 
+`extendBurrow` always merges against **defaultTokens** — a second call replaces the
+first call's overrides. For layering (app sets the brand, a feature module adds its
+own tokens later) use **`mergeBurrow`**, which merges onto the *current* token set:
+
+```ts
+import { extendBurrow, mergeBurrow } from '@badger-burrow/core'
+
+extendBurrow({ primitive: { color: { primary: brandScale } } })       // app entry
+mergeBurrow({ primitive: { color: { chartAccent: accentScale } } })   // feature module — brand kept
+```
+
+Both are one-shot merges at call time — zero per-render cost.
+
 ### Variants — `createVariants`
 
 Map named variant keys to token-backed styles.
@@ -577,6 +590,16 @@ development you'll get a console nudge to drop the redundant prefix. **Exception
 `sx`, `createVariants`, `resolveToken`, and `extendBurrow` token keys use full
 dotted paths (they're generic / token-tree keys, so the category can't be inferred).
 
+Two short-form behaviours worth knowing:
+
+- **Token keys shadow CSS keywords.** `lineHeight="normal"` resolves the *token*
+  (`1.5`), not the CSS keyword `normal`; `letterSpacing="normal"` → `0px`. The
+  resolved values are visually equivalent to the keywords, but if you ever need
+  the literal CSS keyword, set it via `style` or `sx`.
+- **Size props share the `space` scale.** `w`, `h`, `top`, `inset` etc resolve
+  against `space.*` — so `w="md"` → 16px. For element sizing you'll usually want
+  raw values (`w="100%"`, `w={240}`).
+
 ### IDE autocomplete
 
 Prop values are typed with string literal unions so your editor suggests valid token values as you type. Each prop accepts the tokens relevant to it:
@@ -601,10 +624,10 @@ All token types include `(string & {})` so raw CSS values (`'#ff0000'`, `'100%'`
 | Package | Tests |
 |---|---|
 | `@badger-burrow/tokens` | 42 |
-| `@badger-burrow/core` | 211 |
-| `@badger-burrow/web` | 306 |
-| `@badger-burrow/native` | 71 |
-| **Total** | **630** |
+| `@badger-burrow/core` | 215 |
+| `@badger-burrow/web` | 309 |
+| `@badger-burrow/native` | 76 |
+| **Total** | **642** |
 
 ---
 
