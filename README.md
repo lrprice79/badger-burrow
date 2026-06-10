@@ -53,18 +53,18 @@ import { Chamber, Tunnel } from '@badger-burrow/web'
 function Card() {
   return (
     <Chamber
-      bg="color.bg.surface"
-      p="space.4"
-      radius="radius.md"
+      bg="bg.surface"
+      p="4"
+      radius="md"
       shadow="md"
       display="flex"
       flexDir="column"
-      gap="space.2"
+      gap="2"
     >
-      <Tunnel as="h2" fontSize="fontSize.xl" fontWeight="fontWeight.bold" color="color.text.primary">
+      <Tunnel as="h2" fontSize="xl" fontWeight="bold" color="text.primary">
         Budget Summary
       </Tunnel>
-      <Tunnel color="color.text.secondary" fontSize="fontSize.sm">
+      <Tunnel color="text.secondary" fontSize="sm">
         Updated today
       </Tunnel>
     </Chamber>
@@ -267,10 +267,10 @@ Chamber accepts **all font and typography props** as well as layout props — so
 ```tsx
 <Chamber
   as="button"
-  bg="color.interactive.primary"
-  px="space.4" py="space.2"
-  radius="radius.md"
-  _hover={{ bg: 'color.interactive.primary.hover', cursor: 'pointer' }}
+  bg="interactive.primary"
+  px="4" py="2"
+  radius="md"
+  _hover={{ bg: 'interactive.primary.hover', cursor: 'pointer' }}
   _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
   onClick={handleClick}
 >
@@ -280,9 +280,9 @@ Chamber accepts **all font and typography props** as well as layout props — so
 <Chamber
   as="nav"
   display="flex"
-  gap="space.4"
-  p="space.3"
-  bg="color.bg.elevated"
+  gap="4"
+  p="3"
+  bg="bg.elevated"
   shadow="sm"
 >
   {children}
@@ -330,13 +330,13 @@ All pseudo props accept the same style props as Chamber itself (minus other pseu
 
 ```tsx
 <Chamber
-  bg="color.primary.500"
-  p="space.4"
-  radius="radius.md"
+  bg="primary.500"
+  p="4"
+  radius="md"
   _hover={{ shadow: 'md', cursor: 'pointer' }}
-  _focus={{ outlineStyle: 'solid', outlineColor: 'color.interactive.primary', outlineWidth: '2px' }}
+  _focus={{ outlineStyle: 'solid', outlineColor: 'interactive.primary', outlineWidth: '2px' }}
   _active={{ opacity: 0.85 }}
-  _focusVisible={{ outlineStyle: 'solid', outlineColor: 'color.interactive.primary', outlineOffset: '2px' }}
+  _focusVisible={{ outlineStyle: 'solid', outlineColor: 'interactive.primary', outlineOffset: '2px' }}
   _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
 />
 ```
@@ -346,7 +346,7 @@ All pseudo props accept the same style props as Chamber itself (minus other pseu
 When `bg` is a **primitive colour path** (e.g. `color.primary.500`), BadgerBurrow automatically steps the hover background one shade darker — no `_hover` needed:
 
 ```tsx
-<Chamber bg="color.primary.500" />
+<Chamber bg="primary.500" />
 // :hover { background-color: <color.primary.600> }  ← auto
 ```
 
@@ -354,13 +354,13 @@ When `bg` is a **primitive colour path** (e.g. `color.primary.500`), BadgerBurro
 
 ```tsx
 // Use a different scale for the hover bg — auto-steps to shade 600
-<Chamber bg="color.bg.surface" hoverScale="primary" />
+<Chamber bg="bg.surface" hoverScale="primary" />
 
 // Use a different scale at an exact shade
-<Chamber bg="color.bg.surface" hoverScale="primary" hoverShade={400} />
+<Chamber bg="bg.surface" hoverScale="primary" hoverShade={400} />
 
 // Disable the smart default
-<Chamber bg="color.primary.500" hoverScale={false} />
+<Chamber bg="primary.500" hoverScale={false} />
 ```
 
 Semantic token paths (`color.bg.surface`) are not auto-stepped — they don't encode which scale they live on. Use `hoverScale` to specify, or use `_hover` for full manual control.
@@ -383,8 +383,8 @@ Use them inside `_hover` for token-consistent hover styles:
 
 ```tsx
 <Chamber
-  bg="color.bg.surface"
-  _hover={{ bg: 'color.bg.surface.hover', borderColor: 'color.border.default.hover' }}
+  bg="bg.surface"
+  _hover={{ bg: 'bg.surface.hover', borderColor: 'border.default.hover' }}
 />
 ```
 
@@ -394,7 +394,7 @@ Any token prop on `Chamber` or `Tunnel` (web or native) can accept a responsive 
 
 ```tsx
 // Plain value — same at all sizes
-<Chamber p="space.4" />
+<Chamber p="4" />
 
 // Responsive — breakpoint overrides cascade up (like CSS min-width)
 <Chamber p={{ base: 'space.2', md: 'space.4', lg: 'space.6' }} />
@@ -407,7 +407,7 @@ Any token prop on `Chamber` or `Tunnel` (web or native) can accept a responsive 
 
 // Mix — some props plain, some responsive
 <Chamber
-  bg="color.bg.surface"
+  bg="bg.surface"
   p={{ base: 'space.2', md: 'space.6' }}
   fontSize={{ base: 'fontSize.sm', lg: 'fontSize.xl' }}
 />
@@ -435,20 +435,20 @@ If you need to lay out text next to other elements, wrap it in a `Chamber`. The 
 
 ```tsx
 // ✅ Correct — Tunnel for text, Chamber for layout
-<Chamber display="flex" align="center" gap="space.2">
-  <Tunnel color="color.text.primary" fontSize="fontSize.md">Hello world</Tunnel>
+<Chamber display="flex" align="center" gap="2">
+  <Tunnel color="text.primary" fontSize="md">Hello world</Tunnel>
 </Chamber>
 
 // ✅ Headings, labels, captions — all Tunnel
-<Tunnel as="h1" fontSize="fontSize.2xl" fontWeight="fontWeight.bold" color="color.text.primary">
+<Tunnel as="h1" fontSize="2xl" fontWeight="bold" color="text.primary">
   Page title
 </Tunnel>
 
-<Tunnel as="label" fontSize="fontSize.sm" color="color.text.secondary">
+<Tunnel as="label" fontSize="sm" color="text.secondary">
   Email address
 </Tunnel>
 
-<Tunnel as="p" fontSize="fontSize.md" lineHeight="lineHeight.relaxed" color="color.text.primary">
+<Tunnel as="p" fontSize="md" lineHeight="relaxed" color="text.primary">
   Body copy goes here.
 </Tunnel>
 ```
@@ -502,18 +502,18 @@ import { Chamber, Tunnel } from '@badger-burrow/native'
 function Card() {
   return (
     <Chamber
-      bg="color.bg.elevated"
-      p="space.4"
-      radius="radius.md"
+      bg="bg.elevated"
+      p="4"
+      radius="md"
       shadow="md"
       display="flex"
       flexDir="column"
-      gap="space.2"
+      gap="2"
     >
-      <Tunnel fontSize="fontSize.lg" fontWeight="fontWeight.bold" color="color.text.primary">
+      <Tunnel fontSize="lg" fontWeight="bold" color="text.primary">
         Budget Summary
       </Tunnel>
-      <Tunnel color="color.text.secondary" fontSize="fontSize.sm">
+      <Tunnel color="text.secondary" fontSize="sm">
         Updated today
       </Tunnel>
     </Chamber>
@@ -555,33 +555,42 @@ Semantic tokens resolve differently per mode. Primitive tokens are always the sa
 
 ---
 
-## Token paths
+## Token values — short form
 
-All props that accept a token path follow dot notation:
+Token props take the **short form** — the prop name already implies the category,
+so you drop the `color.` / `space.` / `fontSize.` prefix:
 
 ```
-primitive path:  'space.4'                      → 16
-primitive path:  'color.primary.500'            → '#744577'
-primitive path:  'radius.md'                    → 8
-semantic path:   'color.interactive.primary'    → resolves via semantic[mode] → primitive
-raw value:       '#ff0000'                      → passes through unchanged
-raw number:      16                             → 16 (or '16px' for px props)
+p="4"               → space.4   → 16   (string "4" = token; number 4 = raw 4px)
+p="md"              → space.md  → 16
+radius="md"         → radius.md → 8
+bg="primary.500"    → color.primary.500   → '#744577'
+bg="bg.surface"     → color.bg.surface    → resolves via semantic[mode] → primitive
+color="text.primary"→ color.text.primary
+fontSize="lg"       → fontSize.lg → 20
+bg="#ff0000"        → raw value, passes through unchanged
+w="100%"            → raw value, passes through unchanged
 ```
+
+The full dotted path (`p="space.4"`) still resolves for back-compat, but in
+development you'll get a console nudge to drop the redundant prefix. **Exceptions:**
+`sx`, `createVariants`, `resolveToken`, and `extendBurrow` token keys use full
+dotted paths (they're generic / token-tree keys, so the category can't be inferred).
 
 ### IDE autocomplete
 
-Prop values are typed with string literal unions so your editor suggests valid token paths as you type. Each prop accepts the tokens relevant to it:
+Prop values are typed with string literal unions so your editor suggests valid token values as you type. Each prop accepts the tokens relevant to it:
 
 | Prop group | Autocomplete | Example |
 |---|---|---|
-| `bg`, `color`, `borderColor`, `outlineColor`, … | `ColorToken` | `'color.primary.500'`, `'color.bg.surface'` |
-| `p`, `m`, `gap`, `w`, `h`, `top`, … | `SpaceToken \| number` | `'space.4'`, `'space.md'` |
-| `radius`, `border*Radius` | `RadiusToken \| number` | `'radius.md'`, `'radius.full'` |
-| `fontSize` | `FontSizeToken \| number` | `'fontSize.lg'`, `'fontSize.2xl'` |
-| `fontWeight` | `FontWeightToken \| number` | `'fontWeight.bold'` |
-| `lineHeight` | `LineHeightToken \| number` | `'lineHeight.normal'` |
-| `letterSpacing` | `LetterSpacingToken \| number` | `'letterSpacing.wide'` |
-| `fontFamily` | `FontFamilyToken` | `'fontFamily.sans'`, `'fontFamily.mono'` |
+| `bg`, `color`, `borderColor`, `outlineColor`, … | `ColorToken` | `'primary.500'`, `'bg.surface'`, `'text.primary'` |
+| `p`, `m`, `gap`, `w`, `h`, `top`, … | `SpaceToken \| number` | `'4'`, `'md'` |
+| `radius`, `border*Radius` | `RadiusToken \| number` | `'md'`, `'full'` |
+| `fontSize` | `FontSizeToken \| number` | `'lg'`, `'2xl'` |
+| `fontWeight` | `FontWeightToken \| number` | `'bold'` |
+| `lineHeight` | `LineHeightToken \| number` | `'normal'` |
+| `letterSpacing` | `LetterSpacingToken \| number` | `'wide'` |
+| `fontFamily` | `FontFamilyToken` | `'sans'`, `'mono'` |
 
 All token types include `(string & {})` so raw CSS values (`'#ff0000'`, `'100%'`, `'auto'`) and custom extended tokens are still accepted without type errors — autocomplete shows the known values first.
 
@@ -592,10 +601,10 @@ All token types include `(string & {})` so raw CSS values (`'#ff0000'`, `'100%'`
 | Package | Tests |
 |---|---|
 | `@badger-burrow/tokens` | 42 |
-| `@badger-burrow/core` | 190 |
+| `@badger-burrow/core` | 211 |
 | `@badger-burrow/web` | 306 |
 | `@badger-burrow/native` | 71 |
-| **Total** | **609** |
+| **Total** | **630** |
 
 ---
 

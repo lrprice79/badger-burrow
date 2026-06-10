@@ -94,3 +94,57 @@ export function resolveToken(
 
     return undefined
 }
+
+// ─── scoped (short-form) resolution ───────────────────────────────────────────
+
+const _warnedPrefixes = new Set<string>()
+
+/**
+ * Dev-only nudge when a value carries the redundant category prefix the prop
+ * already implies (e.g. `p="space.4"` instead of `p="4"`). Fires once per unique
+ * value, only when NODE_ENV === 'development' (silent in test and production).
+ */
+function warnRedundantPrefix(category: string, value: string): void {
+    // Read NODE_ENV via globalThis so core needs no node types (it targets the
+    // browser / React Native).
+    const env = (globalThis as { process?: { env?: { NODE_ENV?: string } } })
+        .process?.env?.NODE_ENV
+    if (env !== 'development') return
+    const key = `${category}|${value}`
+    if (_warnedPrefixes.has(key)) return
+    _warnedPrefixes.add(key)
+    const short = value.slice(category.length + 1)
+    // eslint-disable-next-line no-console
+    console.warn(
+        `[BadgerBurrow] "${value}" has a redundant "${category}." prefix — ` +
+        `the prop already implies it. Write "${short}" instead.`,
+    )
+}
+
+/**
+ * Resolve a short-form token value within a category. The prop name supplies the
+ * category, so the value omits it — `resolveScoped('space', '4', …)` resolves
+ * `space.4`, `resolveScoped('color', 'text.primary', …)` resolves
+ * `color.text.primary`.
+ *
+ * Tolerant of a redundant full prefix (`'space.4'`) for back-compat, but nudges
+ * in development. Unresolvable values (raw CSS like `'#fff'`, `'100%'`) pass
+ * through unchanged.
+ */
+export function resolveScoped(
+    category: string,
+    value: string,
+    tokens: BurrowTokens,
+    mode: ColorMode = 'light',
+): string | number | undefined {
+    let path: string
+    if (value.startsWith(`${category}.`)) {
+        warnRedundantPrefix(category, value)
+        path = value
+    } else {
+        path = `${category}.${value}`
+    }
+
+    const resolved = resolveToken(path, tokens, mode)
+    return resolved !== undefined ? resolved : value
+}

@@ -1,5 +1,5 @@
 import type { BurrowTokens } from '@badger-burrow/tokens'
-import { resolveToken } from './resolver'
+import { resolveScoped } from './resolver'
 import type { ColorMode } from './resolver'
 import type { BurrowBoxProps, BurrowTextProps, BurrowTextVisualProps, RV } from './props'
 import type { ResponsiveValue } from './responsive'
@@ -8,12 +8,16 @@ import { resolveDuration, resolveEasing, resolveTransition } from './motion'
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 /**
- * Resolve a token value to a CSS-ready string or number.
- * Accepts RV (ResponsiveValue<TokenValue>) — responsive objects are never
- * expected here (splitResponsiveProps resolves them before buildStyles runs),
- * but if one does arrive it returns undefined gracefully rather than throwing.
+ * Resolve a short-form token value within a category to a CSS-ready value.
+ * The prop's category (e.g. 'space', 'color') is supplied by the caller so the
+ * value omits the redundant prefix — `p="4"` resolves `space.4`.
+ *
+ * Responsive objects are resolved before buildStyles runs; a stray one here is
+ * ignored gracefully. Numbers are raw values. Anything unresolvable (raw CSS)
+ * passes through.
  */
-function resolve(
+function resolveIn(
+    category: string,
     value: RV | undefined,
     tokens: BurrowTokens,
     mode: ColorMode
@@ -22,8 +26,7 @@ function resolve(
     // Responsive object that wasn't pre-resolved — ignore gracefully
     if (typeof value === 'object') return undefined
     if (typeof value === 'number') return value
-    const resolved = resolveToken(value, tokens, mode)
-    return resolved !== undefined ? resolved : value
+    return resolveScoped(category, value, tokens, mode)
 }
 
 function withPx(value: string | number | undefined): string | undefined {
@@ -55,7 +58,9 @@ export function buildBoxStyles(
     tokens: BurrowTokens,
     mode: ColorMode
 ): Record<string, string | number | undefined> {
-    const r = (v: RV | undefined) => resolve(v, tokens, mode)
+    const rColor  = (v: RV | undefined) => resolveIn('color', v, tokens, mode)
+    const rSpace  = (v: RV | undefined) => resolveIn('space', v, tokens, mode)
+    const rRadius = (v: RV | undefined) => resolveIn('radius', v, tokens, mode)
 
     const {
         bg,
@@ -107,7 +112,7 @@ export function buildBoxStyles(
     return {
         ...fontStyles,
         // background
-        ...(bg                    !== undefined && { backgroundColor:         withPx(r(bg)) }),
+        ...(bg                    !== undefined && { backgroundColor:         withPx(rColor(bg)) }),
         ...(backgroundImage       !== undefined && { backgroundImage }),
         ...(backgroundSize        !== undefined && { backgroundSize }),
         ...(backgroundPosition    !== undefined && { backgroundPosition }),
@@ -117,44 +122,44 @@ export function buildBoxStyles(
         ...(backgroundOrigin      !== undefined && { backgroundOrigin }),
         ...(backgroundBlendMode   !== undefined && { backgroundBlendMode }),
         // padding
-        ...(p                     !== undefined && { padding:                  withPx(r(p)) }),
-        ...(px                    !== undefined && { paddingLeft:              withPx(r(px)), paddingRight:  withPx(r(px)) }),
-        ...(py                    !== undefined && { paddingTop:               withPx(r(py)), paddingBottom: withPx(r(py)) }),
-        ...(pt                    !== undefined && { paddingTop:               withPx(r(pt)) }),
-        ...(pb                    !== undefined && { paddingBottom:            withPx(r(pb)) }),
-        ...(pl                    !== undefined && { paddingLeft:              withPx(r(pl)) }),
-        ...(pr                    !== undefined && { paddingRight:             withPx(r(pr)) }),
+        ...(p                     !== undefined && { padding:                  withPx(rSpace(p)) }),
+        ...(px                    !== undefined && { paddingLeft:              withPx(rSpace(px)), paddingRight:  withPx(rSpace(px)) }),
+        ...(py                    !== undefined && { paddingTop:               withPx(rSpace(py)), paddingBottom: withPx(rSpace(py)) }),
+        ...(pt                    !== undefined && { paddingTop:               withPx(rSpace(pt)) }),
+        ...(pb                    !== undefined && { paddingBottom:            withPx(rSpace(pb)) }),
+        ...(pl                    !== undefined && { paddingLeft:              withPx(rSpace(pl)) }),
+        ...(pr                    !== undefined && { paddingRight:             withPx(rSpace(pr)) }),
         // margin
-        ...(m                     !== undefined && { margin:                   withPx(r(m)) }),
-        ...(mx                    !== undefined && { marginLeft:               withPx(r(mx)), marginRight:  withPx(r(mx)) }),
-        ...(my                    !== undefined && { marginTop:                withPx(r(my)), marginBottom: withPx(r(my)) }),
-        ...(mt                    !== undefined && { marginTop:                withPx(r(mt)) }),
-        ...(mb                    !== undefined && { marginBottom:             withPx(r(mb)) }),
-        ...(ml                    !== undefined && { marginLeft:               withPx(r(ml)) }),
-        ...(mr                    !== undefined && { marginRight:              withPx(r(mr)) }),
+        ...(m                     !== undefined && { margin:                   withPx(rSpace(m)) }),
+        ...(mx                    !== undefined && { marginLeft:               withPx(rSpace(mx)), marginRight:  withPx(rSpace(mx)) }),
+        ...(my                    !== undefined && { marginTop:                withPx(rSpace(my)), marginBottom: withPx(rSpace(my)) }),
+        ...(mt                    !== undefined && { marginTop:                withPx(rSpace(mt)) }),
+        ...(mb                    !== undefined && { marginBottom:             withPx(rSpace(mb)) }),
+        ...(ml                    !== undefined && { marginLeft:               withPx(rSpace(ml)) }),
+        ...(mr                    !== undefined && { marginRight:              withPx(rSpace(mr)) }),
         // dimensions
-        ...(w                     !== undefined && { width:                    withPx(r(w)) }),
-        ...(h                     !== undefined && { height:                   withPx(r(h)) }),
-        ...(minW                  !== undefined && { minWidth:                 withPx(r(minW)) }),
-        ...(maxW                  !== undefined && { maxWidth:                 withPx(r(maxW)) }),
-        ...(minH                  !== undefined && { minHeight:                withPx(r(minH)) }),
-        ...(maxH                  !== undefined && { maxHeight:                withPx(r(maxH)) }),
+        ...(w                     !== undefined && { width:                    withPx(rSpace(w)) }),
+        ...(h                     !== undefined && { height:                   withPx(rSpace(h)) }),
+        ...(minW                  !== undefined && { minWidth:                 withPx(rSpace(minW)) }),
+        ...(maxW                  !== undefined && { maxWidth:                 withPx(rSpace(maxW)) }),
+        ...(minH                  !== undefined && { minHeight:                withPx(rSpace(minH)) }),
+        ...(maxH                  !== undefined && { maxHeight:                withPx(rSpace(maxH)) }),
         // flex / layout
         ...(display               !== undefined && { display:                  flat(display) }),
         ...(flex                  !== undefined && { flex }),
         ...(flexDir               !== undefined && { flexDirection:            flat(flexDir) }),
         ...(flexGrow              !== undefined && { flexGrow }),
         ...(flexShrink            !== undefined && { flexShrink }),
-        ...(flexBasis             !== undefined && { flexBasis:                withPx(r(flexBasis)) }),
+        ...(flexBasis             !== undefined && { flexBasis:                withPx(rSpace(flexBasis)) }),
         ...(align                 !== undefined && { alignItems:               flat(align) }),
         ...(alignSelf             !== undefined && { alignSelf:                flat(alignSelf) }),
         ...(alignContent          !== undefined && { alignContent:            flat(alignContent) }),
         ...(justify               !== undefined && { justifyContent:           flat(justify) }),
         ...(justifySelf           !== undefined && { justifySelf:             flat(justifySelf) }),
         ...(wrap                  !== undefined && { flexWrap:                 flat(wrap) }),
-        ...(gap                   !== undefined && { gap:                      withPx(r(gap)) }),
-        ...(columnGap             !== undefined && { columnGap:                withPx(r(columnGap)) }),
-        ...(rowGap                !== undefined && { rowGap:                   withPx(r(rowGap)) }),
+        ...(gap                   !== undefined && { gap:                      withPx(rSpace(gap)) }),
+        ...(columnGap             !== undefined && { columnGap:                withPx(rSpace(columnGap)) }),
+        ...(rowGap                !== undefined && { rowGap:                   withPx(rSpace(rowGap)) }),
         ...(order                 !== undefined && { order }),
         // grid
         ...(gridTemplateColumns   !== undefined && { gridTemplateColumns:      flat(gridTemplateColumns) }),
@@ -169,16 +174,16 @@ export function buildBoxStyles(
         // border
         ...(border                !== undefined && { border }),
         ...(borderStyle           !== undefined && { borderStyle }),
-        ...(borderColor           !== undefined && { borderColor:              withPx(r(borderColor)) }),
+        ...(borderColor           !== undefined && { borderColor:              withPx(rColor(borderColor)) }),
         ...(borderWidth           !== undefined && { borderWidth:              `${borderWidth}px` }),
         ...(borderTop             !== undefined && { borderTop }),
         ...(borderRight           !== undefined && { borderRight }),
         ...(borderBottom          !== undefined && { borderBottom }),
         ...(borderLeft            !== undefined && { borderLeft }),
-        ...(borderTopColor        !== undefined && { borderTopColor:           withPx(r(borderTopColor)) }),
-        ...(borderRightColor      !== undefined && { borderRightColor:         withPx(r(borderRightColor)) }),
-        ...(borderBottomColor     !== undefined && { borderBottomColor:        withPx(r(borderBottomColor)) }),
-        ...(borderLeftColor       !== undefined && { borderLeftColor:          withPx(r(borderLeftColor)) }),
+        ...(borderTopColor        !== undefined && { borderTopColor:           withPx(rColor(borderTopColor)) }),
+        ...(borderRightColor      !== undefined && { borderRightColor:         withPx(rColor(borderRightColor)) }),
+        ...(borderBottomColor     !== undefined && { borderBottomColor:        withPx(rColor(borderBottomColor)) }),
+        ...(borderLeftColor       !== undefined && { borderLeftColor:          withPx(rColor(borderLeftColor)) }),
         ...(borderTopWidth        !== undefined && { borderTopWidth:           `${borderTopWidth}px` }),
         ...(borderRightWidth      !== undefined && { borderRightWidth:         `${borderRightWidth}px` }),
         ...(borderBottomWidth     !== undefined && { borderBottomWidth:        `${borderBottomWidth}px` }),
@@ -187,17 +192,17 @@ export function buildBoxStyles(
         ...(borderRightStyle      !== undefined && { borderRightStyle }),
         ...(borderBottomStyle     !== undefined && { borderBottomStyle }),
         ...(borderLeftStyle       !== undefined && { borderLeftStyle }),
-        ...(radius                !== undefined && { borderRadius:             withPx(r(radius)) }),
-        ...(borderTopLeftRadius   !== undefined && { borderTopLeftRadius:      withPx(r(borderTopLeftRadius)) }),
-        ...(borderTopRightRadius  !== undefined && { borderTopRightRadius:     withPx(r(borderTopRightRadius)) }),
-        ...(borderBottomLeftRadius  !== undefined && { borderBottomLeftRadius:  withPx(r(borderBottomLeftRadius)) }),
-        ...(borderBottomRightRadius !== undefined && { borderBottomRightRadius: withPx(r(borderBottomRightRadius)) }),
+        ...(radius                !== undefined && { borderRadius:             withPx(rRadius(radius)) }),
+        ...(borderTopLeftRadius   !== undefined && { borderTopLeftRadius:      withPx(rRadius(borderTopLeftRadius)) }),
+        ...(borderTopRightRadius  !== undefined && { borderTopRightRadius:     withPx(rRadius(borderTopRightRadius)) }),
+        ...(borderBottomLeftRadius  !== undefined && { borderBottomLeftRadius:  withPx(rRadius(borderBottomLeftRadius)) }),
+        ...(borderBottomRightRadius !== undefined && { borderBottomRightRadius: withPx(rRadius(borderBottomRightRadius)) }),
         // outline
         ...(outline               !== undefined && { outline }),
-        ...(outlineColor          !== undefined && { outlineColor:             withPx(r(outlineColor)) }),
-        ...(outlineWidth          !== undefined && { outlineWidth:             withPx(r(outlineWidth)) }),
+        ...(outlineColor          !== undefined && { outlineColor:             withPx(rColor(outlineColor)) }),
+        ...(outlineWidth          !== undefined && { outlineWidth:             withPx(rSpace(outlineWidth)) }),
         ...(outlineStyle          !== undefined && { outlineStyle }),
-        ...(outlineOffset         !== undefined && { outlineOffset:            withPx(r(outlineOffset)) }),
+        ...(outlineOffset         !== undefined && { outlineOffset:            withPx(rSpace(outlineOffset)) }),
         // effects
         ...(opacity               !== undefined && { opacity }),
         ...(boxShadow             !== undefined && { boxShadow }),
@@ -206,15 +211,15 @@ export function buildBoxStyles(
         ...(backdropFilter        !== undefined && { backdropFilter }),
         ...(mixBlendMode          !== undefined && { mixBlendMode }),
         // inset / overflow / position
-        ...(inset                 !== undefined && { inset:                    withPx(r(inset)) }),
+        ...(inset                 !== undefined && { inset:                    withPx(rSpace(inset)) }),
         ...(overflow              !== undefined && { overflow }),
         ...(overflowX             !== undefined && { overflowX }),
         ...(overflowY             !== undefined && { overflowY }),
         ...(position              !== undefined && { position }),
-        ...(top                   !== undefined && { top:                      withPx(r(top)) }),
-        ...(right                 !== undefined && { right:                    withPx(r(right)) }),
-        ...(bottom                !== undefined && { bottom:                   withPx(r(bottom)) }),
-        ...(left                  !== undefined && { left:                     withPx(r(left)) }),
+        ...(top                   !== undefined && { top:                      withPx(rSpace(top)) }),
+        ...(right                 !== undefined && { right:                    withPx(rSpace(right)) }),
+        ...(bottom                !== undefined && { bottom:                   withPx(rSpace(bottom)) }),
+        ...(left                  !== undefined && { left:                     withPx(rSpace(left)) }),
         ...(zIndex                !== undefined && { zIndex }),
         // interaction
         ...(cursor                !== undefined && { cursor }),
@@ -262,7 +267,13 @@ function buildFontAndTextStyles(
     tokens: BurrowTokens,
     mode: ColorMode,
 ): Record<string, string | number | undefined> {
-    const r = (v: RV | undefined) => resolve(v, tokens, mode)
+    const rColor         = (v: RV | undefined) => resolveIn('color', v, tokens, mode)
+    const rSpace         = (v: RV | undefined) => resolveIn('space', v, tokens, mode)
+    const rFontSize      = (v: RV | undefined) => resolveIn('fontSize', v, tokens, mode)
+    const rFontWeight    = (v: RV | undefined) => resolveIn('fontWeight', v, tokens, mode)
+    const rLineHeight    = (v: RV | undefined) => resolveIn('lineHeight', v, tokens, mode)
+    const rLetterSpacing = (v: RV | undefined) => resolveIn('letterSpacing', v, tokens, mode)
+    const rFontFamily    = (v: RV | undefined) => resolveIn('fontFamily', v, tokens, mode)
 
     const {
         color, fontSize, fontWeight, fontFamily, fontStyle, fontVariant, fontStretch,
@@ -287,26 +298,26 @@ function buildFontAndTextStyles(
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
         }),
-        ...(color                  !== undefined && { color:                  withPx(r(color)) }),
-        ...(fontSize               !== undefined && { fontSize:               withPx(r(fontSize)) }),
-        ...(fontWeight             !== undefined && { fontWeight:             asString(r(fontWeight)) }),
-        ...(fontFamily             !== undefined && { fontFamily:             asString(r(fontFamily)) }),
+        ...(color                  !== undefined && { color:                  withPx(rColor(color)) }),
+        ...(fontSize               !== undefined && { fontSize:               withPx(rFontSize(fontSize)) }),
+        ...(fontWeight             !== undefined && { fontWeight:             asString(rFontWeight(fontWeight)) }),
+        ...(fontFamily             !== undefined && { fontFamily:             asString(rFontFamily(fontFamily)) }),
         ...(fontStyle              !== undefined && { fontStyle }),
         ...(fontVariant            !== undefined && { fontVariant }),
         ...(fontStretch            !== undefined && { fontStretch }),
-        ...(lineHeight             !== undefined && { lineHeight:             asString(r(lineHeight)) }),
-        ...(letterSpacing          !== undefined && { letterSpacing:          withPx(r(letterSpacing)) }),
-        ...(wordSpacing            !== undefined && { wordSpacing:            withPx(r(wordSpacing)) }),
+        ...(lineHeight             !== undefined && { lineHeight:             asString(rLineHeight(lineHeight)) }),
+        ...(letterSpacing          !== undefined && { letterSpacing:          withPx(rLetterSpacing(letterSpacing)) }),
+        ...(wordSpacing            !== undefined && { wordSpacing:            withPx(rSpace(wordSpacing)) }),
         ...(textAlign              !== undefined && { textAlign }),
         ...(textTransform          !== undefined && { textTransform }),
         ...(textDecoration         !== undefined && { textDecoration }),
-        ...(textDecorationColor    !== undefined && { textDecorationColor:    withPx(r(textDecorationColor)) }),
+        ...(textDecorationColor    !== undefined && { textDecorationColor:    withPx(rColor(textDecorationColor)) }),
         ...(textDecorationStyle    !== undefined && { textDecorationStyle }),
-        ...(textDecorationThickness !== undefined && { textDecorationThickness: withPx(r(textDecorationThickness)) }),
-        ...(textUnderlineOffset    !== undefined && { textUnderlineOffset:    withPx(r(textUnderlineOffset)) }),
+        ...(textDecorationThickness !== undefined && { textDecorationThickness: withPx(rSpace(textDecorationThickness)) }),
+        ...(textUnderlineOffset    !== undefined && { textUnderlineOffset:    withPx(rSpace(textUnderlineOffset)) }),
         ...(textOverflow           !== undefined && { textOverflow }),
         ...(textShadow             !== undefined && { textShadow }),
-        ...(textIndent             !== undefined && { textIndent:             withPx(r(textIndent)) }),
+        ...(textIndent             !== undefined && { textIndent:             withPx(rSpace(textIndent)) }),
         ...(textWrap               !== undefined && { textWrap }),
         ...(whiteSpace             !== undefined && { whiteSpace }),
         ...(overflow               !== undefined && { overflow }),

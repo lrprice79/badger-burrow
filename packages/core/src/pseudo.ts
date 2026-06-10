@@ -32,11 +32,22 @@ export function stepShade(shade: number, steps = 1): number {
 function parsePrimitiveBgPath(bg: string | number): { scale: string; shade: number } | null {
     if (typeof bg !== 'string') return null
     const parts = bg.split('.')
-    // Must be exactly "color.{scale}.{shade}" where shade is a valid SHADES value
-    if (parts.length !== 3 || parts[0] !== 'color') return null
-    const shade = parseInt(parts[2], 10)
+    // Accept short form "{scale}.{shade}" (e.g. 'primary.500') and the tolerant
+    // full form "color.{scale}.{shade}". Semantic paths (e.g. 'bg.surface',
+    // 'text.primary') fall out because their last segment isn't a valid shade.
+    let scale: string
+    let shadeStr: string
+    if (parts.length === 2) {
+        ;[scale, shadeStr] = parts
+    } else if (parts.length === 3 && parts[0] === 'color') {
+        scale = parts[1]
+        shadeStr = parts[2]
+    } else {
+        return null
+    }
+    const shade = parseInt(shadeStr, 10)
     if (!SHADES.includes(shade as Shade)) return null
-    return { scale: parts[1], shade }
+    return { scale, shade }
 }
 
 // ─── Hover bg resolution ──────────────────────────────────────────────────────

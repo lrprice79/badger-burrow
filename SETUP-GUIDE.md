@@ -265,6 +265,13 @@ That's your entire setup. No `<ThemeProvider>` anywhere in your app.
 
 Chamber defaults to `<div>` but renders as any semantic element via the `as` prop. This matters for accessibility — a button should be a `<button>`, a link should be an `<a>`.
 
+> **Token values use the short form.** The prop name already says the category, so
+> you write `bg="primary.500"`, `p="4"`, `fontSize="lg"` — not `"color.primary.500"`
+> or `"space.4"`. A raw number (`p={4}`) is raw pixels; a string (`p="4"`) is the
+> token. Raw CSS (`bg="#fff"`, `w="100%"`) passes straight through. The only places
+> that keep the full dotted path are `sx`, `createVariants`, and `extendBurrow`
+> token keys (they're generic, so the category can't be inferred).
+
 ```tsx
 import { Chamber, Tunnel } from '@badger-burrow/web'
 
@@ -273,15 +280,15 @@ function PrimaryButton({ children, onClick, disabled }) {
   return (
     <Chamber
       as="button"
-      bg="color.interactive.primary"
-      px="space.4" py="space.2"
-      radius="radius.md"
-      _hover={{ bg: 'color.interactive.primary.hover', cursor: 'pointer' }}
+      bg="interactive.primary"
+      px="4" py="2"
+      radius="md"
+      _hover={{ bg: 'interactive.primary.hover', cursor: 'pointer' }}
       _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
       onClick={onClick}
       disabled={disabled}
     >
-      <Tunnel color="color.text.inverse" fontWeight="fontWeight.medium">
+      <Tunnel color="text.inverse" fontWeight="medium">
         {children}
       </Tunnel>
     </Chamber>
@@ -293,20 +300,20 @@ function Card({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <Chamber
       as="article"
-      bg="color.bg.elevated"
-      p="space.6"
-      radius="radius.md"
+      bg="bg.elevated"
+      p="6"
+      radius="md"
       shadow="md"
       display="flex"
       flexDir="column"
-      gap="space.2"
+      gap="2"
       border="1px solid"
-      borderColor="color.border.default"
+      borderColor="border.default"
     >
-      <Tunnel as="h2" fontSize="fontSize.lg" fontWeight="fontWeight.bold" color="color.text.primary">
+      <Tunnel as="h2" fontSize="lg" fontWeight="bold" color="text.primary">
         {title}
       </Tunnel>
-      <Tunnel color="color.text.secondary" fontSize="fontSize.sm">
+      <Tunnel color="text.secondary" fontSize="sm">
         {subtitle}
       </Tunnel>
     </Chamber>
@@ -326,11 +333,11 @@ function Card({ title, subtitle }: { title: string; subtitle: string }) {
 
 ```tsx
 // ✅ Right
-<Chamber as="section" p="space.6" display="flex" flexDir="column" gap="space.3">
-  <Tunnel as="h2" fontSize="fontSize.xl" fontWeight="fontWeight.bold" color="color.text.primary">
+<Chamber as="section" p="6" display="flex" flexDir="column" gap="3">
+  <Tunnel as="h2" fontSize="xl" fontWeight="bold" color="text.primary">
     Account settings
   </Tunnel>
-  <Tunnel as="p" fontSize="fontSize.md" color="color.text.secondary" lineHeight="lineHeight.relaxed">
+  <Tunnel as="p" fontSize="md" color="text.secondary" lineHeight="relaxed">
     Update your name, email, and preferences.
   </Tunnel>
 </Chamber>
@@ -339,7 +346,7 @@ function Card({ title, subtitle }: { title: string; subtitle: string }) {
 <Chamber>Account settings</Chamber>
 
 // ❌ Wrong — don't use Tunnel as a layout wrapper
-<Tunnel display="flex" gap="space.4">...</Tunnel>
+<Tunnel display="flex" gap="4">...</Tunnel>
 ```
 
 ---
@@ -354,14 +361,14 @@ function DarkModeToggle() {
 
   return (
     <Chamber
-      px="space.4"
-      py="space.2"
-      bg="color.interactive.primary"
-      radius="radius.full"
+      px="4"
+      py="2"
+      bg="interactive.primary"
+      radius="full"
       cursor="pointer"
       onClick={() => setMode(mode === 'light' ? 'dark' : 'light')}
     >
-      <Tunnel color="color.bg.surface" fontWeight="fontWeight.medium">
+      <Tunnel color="bg.surface" fontWeight="medium">
         {mode === 'light' ? '🌙 Dark' : '☀️ Light'}
       </Tunnel>
     </Chamber>
@@ -379,8 +386,8 @@ Use `sx` for anything not covered by named props:
 
 ```tsx
 <Chamber
-  bg="color.bg.surface"
-  p="space.4"
+  bg="bg.surface"
+  p="4"
   sx={{
     WebkitAppRegion: 'drag',
     contain: 'layout',
@@ -412,12 +419,12 @@ Each pseudo prop accepts the same style props as Chamber/Tunnel itself:
 
 ```tsx
 <Chamber
-  bg="color.bg.elevated"
-  p="space.4"
-  radius="radius.md"
+  bg="bg.elevated"
+  p="4"
+  radius="md"
   transition="all 0.15s ease"
   _hover={{ shadow: 'md', cursor: 'pointer' }}
-  _focus={{ outlineStyle: 'solid', outlineColor: 'color.interactive.primary', outlineWidth: '2px', outlineOffset: '2px' }}
+  _focus={{ outlineStyle: 'solid', outlineColor: 'interactive.primary', outlineWidth: '2px', outlineOffset: '2px' }}
   _active={{ opacity: 0.85 }}
   _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
 />
@@ -430,7 +437,7 @@ Token paths resolve inside pseudo props exactly as they do on the main props.
 When `bg` is a **primitive colour path**, the hover background auto-steps one shade darker with no extra code:
 
 ```tsx
-<Chamber bg="color.primary.500" />
+<Chamber bg="primary.500" />
 // On hover: background becomes color.primary.600  ← automatic
 ```
 
@@ -441,7 +448,7 @@ The shade scale steps: `50 → 100 → 200 → 300 → 400 → 500 → 600 → 7
 When `bg` is a semantic token (e.g. `color.bg.surface`), BadgerBurrow can't auto-detect the scale. Use `hoverScale` to tell it which one to step on:
 
 ```tsx
-<Chamber bg="color.bg.surface" hoverScale="primary" />
+<Chamber bg="bg.surface" hoverScale="primary" />
 // On hover: background becomes color.primary.100
 // (primary scale, shade is inferred from bg's resolved shade or defaults to 500→600)
 ```
@@ -451,14 +458,14 @@ When `bg` is a semantic token (e.g. `color.bg.surface`), BadgerBurrow can't auto
 Pin the hover to a specific shade instead of auto-stepping:
 
 ```tsx
-<Chamber bg="color.bg.surface" hoverScale="primary" hoverShade={400} />
+<Chamber bg="bg.surface" hoverScale="primary" hoverShade={400} />
 // On hover: background-color = color.primary.400
 ```
 
 ### Disable the smart default
 
 ```tsx
-<Chamber bg="color.primary.500" hoverScale={false} />
+<Chamber bg="primary.500" hoverScale={false} />
 // No auto hover bg — you control it fully via _hover
 ```
 
@@ -468,12 +475,12 @@ The default token set includes ready-made hover variants. Use them inside `_hove
 
 ```tsx
 <Chamber
-  bg="color.bg.surface"
-  borderColor="color.border.default"
+  bg="bg.surface"
+  borderColor="border.default"
   border="1px solid"
   _hover={{
-    bg: 'color.bg.surface.hover',
-    borderColor: 'color.border.default.hover',
+    bg: 'bg.surface.hover',
+    borderColor: 'border.default.hover',
     shadow: 'sm',
   }}
 />
@@ -508,9 +515,9 @@ extendBurrow({
 
 ```tsx
 <Tunnel
-  color="color.interactive.primary"
-  fontWeight="fontWeight.medium"
-  _hover={{ color: 'color.interactive.primary.hover', textDecoration: 'underline' }}
+  color="interactive.primary"
+  fontWeight="medium"
+  _hover={{ color: 'interactive.primary.hover', textDecoration: 'underline' }}
   onClick={handleClick}
   sx={{ cursor: 'pointer' }}
 >
@@ -530,7 +537,7 @@ a breakpoint inherits the nearest smaller one that is set.
 
 ```tsx
 // Plain — same at every size
-<Chamber p="space.4" />
+<Chamber p="4" />
 
 // Responsive — base everywhere, then overrides from each breakpoint up
 <Chamber p={{ base: 'space.2', md: 'space.4', lg: 'space.6' }} />
@@ -559,7 +566,7 @@ Grid reflows the same way:
 <Chamber
   display="grid"
   gridTemplateColumns={{ base: '1fr', md: '1fr 1fr', lg: '1fr 1fr 1fr' }}
-  gap="space.4"
+  gap="4"
 />
 ```
 
@@ -612,7 +619,7 @@ as well as raw CSS, so you don't hand-write durations and easings.
 
 ```tsx
 // Keyword — expands to `all 150ms cubic-bezier(0.4, 0, 0.2, 1)`
-<Chamber transition="fast" _hover={{ bg: 'color.interactive.primary.hover' }} />
+<Chamber transition="fast" _hover={{ bg: 'interactive.primary.hover' }} />
 
 // Granular — each sub-prop resolves its own token
 <Chamber
@@ -661,11 +668,11 @@ function Button({ size = 'md', children }) {
 
   return (
     <Chamber
-      bg="color.interactive.primary"
-      radius="radius.md"
+      bg="interactive.primary"
+      radius="md"
       style={sizeStyles}
     >
-      <Tunnel color="color.bg.surface" fontWeight="fontWeight.medium">
+      <Tunnel color="bg.surface" fontWeight="medium">
         {children}
       </Tunnel>
     </Chamber>
@@ -702,7 +709,7 @@ import { Chamber, Tunnel, useBurrow } from '@badger-burrow/native'
 Pass the same token path on both platforms — BadgerBurrow picks the right format automatically:
 
 ```tsx
-<Chamber shadow="md" p="space.4" bg="color.bg.elevated">
+<Chamber shadow="md" p="4" bg="bg.elevated">
   {/* web: box-shadow CSS string */}
   {/* native: elevation object spread into style */}
 </Chamber>
@@ -721,12 +728,12 @@ function PrimaryButton({ children, onPress }) {
     <Pressable onPress={onPress}>
       {({ pressed }) => (
         <Chamber
-          bg="color.interactive.primary"
-          px="space.4" py="space.2"
-          radius="radius.md"
+          bg="interactive.primary"
+          px="4" py="2"
+          radius="md"
           style={{ opacity: pressed ? 0.85 : 1 }}
         >
-          <Tunnel color="color.bg.surface" fontWeight="fontWeight.medium">
+          <Tunnel color="bg.surface" fontWeight="medium">
             {children}
           </Tunnel>
         </Chamber>
@@ -740,9 +747,9 @@ function PrimaryButton({ children, onPress }) {
 
 ```tsx
 <Tunnel
-  fontSize="fontSize.2xl"
-  fontWeight="fontWeight.bold"
-  color="color.text.primary"
+  fontSize="2xl"
+  fontWeight="bold"
+  color="text.primary"
   accessibilityRole="header"
 >
   Page title
@@ -786,8 +793,8 @@ import { Chamber, Tunnel } from '@badger-burrow/native'
 
 function Card({ title }) {
   return (
-    <Chamber bg="color.bg.elevated" p="space.4" radius="radius.md" shadow="md">
-      <Tunnel fontSize="fontSize.lg" fontWeight="fontWeight.bold" color="color.text.primary">
+    <Chamber bg="bg.elevated" p="4" radius="md" shadow="md">
+      <Tunnel fontSize="lg" fontWeight="bold" color="text.primary">
         {title}
       </Tunnel>
     </Chamber>

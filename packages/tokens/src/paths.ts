@@ -11,38 +11,45 @@
 type ColorScale = 'primary' | 'secondary' | 'neutral' | 'success' | 'error' | 'warning' | 'info'
 type ColorShade = '50' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
 
-/** Primitive colour paths — e.g. 'color.primary.500', 'color.neutral.100' */
-type ColorPrimitivePath = `color.${ColorScale}.${ColorShade}`
+/**
+ * Short-form token values. The prop name supplies the category, so the value
+ * omits the redundant prefix — `color="text.primary"`, `p="4"`, `fontSize="md"`.
+ * Each type stays open (`string & {}`) so raw CSS (`#fff`, `100%`) and custom
+ * extended tokens still type-check.
+ */
 
-/** Semantic colour paths from the default token set */
+/** Primitive colour values — e.g. 'primary.500', 'neutral.100' */
+type ColorPrimitivePath = `${ColorScale}.${ColorShade}`
+
+/** Semantic colour values from the default token set */
 type SemanticColorPath =
-    | 'color.interactive.primary'
-    | 'color.interactive.primary.hover'
-    | 'color.interactive.secondary'
-    | 'color.interactive.secondary.hover'
-    | 'color.bg.surface'
-    | 'color.bg.surface.hover'
-    | 'color.bg.elevated'
-    | 'color.bg.elevated.hover'
-    | 'color.bg.overlay'
-    | 'color.text.primary'
-    | 'color.text.primary.hover'
-    | 'color.text.secondary'
-    | 'color.text.secondary.hover'
-    | 'color.text.inverse'
-    | 'color.border.default'
-    | 'color.border.default.hover'
-    | 'color.feedback.success'
-    | 'color.feedback.error'
-    | 'color.feedback.warning'
-    | 'color.feedback.info'
+    | 'interactive.primary'
+    | 'interactive.primary.hover'
+    | 'interactive.secondary'
+    | 'interactive.secondary.hover'
+    | 'bg.surface'
+    | 'bg.surface.hover'
+    | 'bg.elevated'
+    | 'bg.elevated.hover'
+    | 'bg.overlay'
+    | 'text.primary'
+    | 'text.primary.hover'
+    | 'text.secondary'
+    | 'text.secondary.hover'
+    | 'text.inverse'
+    | 'border.default'
+    | 'border.default.hover'
+    | 'feedback.success'
+    | 'feedback.error'
+    | 'feedback.warning'
+    | 'feedback.info'
 
 /**
- * Any known colour token path — primitive or semantic — plus any string for
- * raw CSS values and custom extended tokens.
+ * Any known colour token — primitive or semantic — plus any string for raw CSS
+ * values and custom extended tokens. No `color.` prefix — the prop implies it.
  *
- * @example 'color.primary.500'
- * @example 'color.bg.surface'
+ * @example 'primary.500'
+ * @example 'bg.surface'
  * @example '#ff0000'
  */
 export type ColorToken = ColorPrimitivePath | SemanticColorPath | (string & {})
@@ -50,107 +57,74 @@ export type ColorToken = ColorPrimitivePath | SemanticColorPath | (string & {})
 // ─── space ────────────────────────────────────────────────────────────────────
 
 /**
- * Known space token paths.
+ * Known space token values (no `space.` prefix).
  *
- * @example 'space.4'  → 16px
- * @example 'space.md' → 16px
+ * @example '4'  → 16px
+ * @example 'md' → 16px
  */
 export type SpaceToken =
-    | 'space.0'
-    | 'space.1'
-    | 'space.2'
-    | 'space.3'
-    | 'space.4'
-    | 'space.5'
-    | 'space.6'
-    | 'space.8'
-    | 'space.10'
-    | 'space.12'
-    | 'space.16'
-    | 'space.sm'
-    | 'space.md'
-    | 'space.lg'
-    | 'space.xl'
+    | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '8' | '10' | '12' | '16'
+    | 'sm' | 'md' | 'lg' | 'xl'
     | (string & {})
 
 // ─── radius ───────────────────────────────────────────────────────────────────
 
 /**
- * Known radius token paths.
+ * Known radius token values (no `radius.` prefix).
  *
- * @example 'radius.md' → 8px
- * @example 'radius.full' → 9999px
+ * @example 'md' → 8px
+ * @example 'full' → 9999px
  */
 export type RadiusToken =
-    | 'radius.none'
-    | 'radius.sm'
-    | 'radius.md'
-    | 'radius.lg'
-    | 'radius.xl'
-    | 'radius.full'
+    | 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
     | (string & {})
 
 // ─── typography ───────────────────────────────────────────────────────────────
 
 /**
- * Known fontSize token paths.
+ * Known fontSize token values (no `fontSize.` prefix).
  *
- * @example 'fontSize.lg' → 20px
+ * @example 'lg' → 20px
  */
 export type FontSizeToken =
-    | 'fontSize.xs'
-    | 'fontSize.sm'
-    | 'fontSize.md'
-    | 'fontSize.lg'
-    | 'fontSize.xl'
-    | 'fontSize.2xl'
-    | 'fontSize.3xl'
+    | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
     | (string & {})
 
 /**
- * Known fontWeight token paths.
+ * Known fontWeight token values (no `fontWeight.` prefix).
  *
- * @example 'fontWeight.bold' → 700
+ * @example 'bold' → 700
  */
 export type FontWeightToken =
-    | 'fontWeight.normal'
-    | 'fontWeight.medium'
-    | 'fontWeight.semibold'
-    | 'fontWeight.bold'
+    | 'normal' | 'medium' | 'semibold' | 'bold'
     | (string & {})
 
 /**
- * Known lineHeight token paths.
+ * Known lineHeight token values (no `lineHeight.` prefix).
  *
- * @example 'lineHeight.normal' → 1.5
+ * @example 'normal' → 1.5
  */
 export type LineHeightToken =
-    | 'lineHeight.tight'
-    | 'lineHeight.normal'
-    | 'lineHeight.relaxed'
+    | 'tight' | 'normal' | 'relaxed'
     | (string & {})
 
 /**
- * Known letterSpacing token paths.
+ * Known letterSpacing token values (no `letterSpacing.` prefix).
  *
- * @example 'letterSpacing.wide' → 0.5px
+ * @example 'wide' → 0.5px
  */
 export type LetterSpacingToken =
-    | 'letterSpacing.tight'
-    | 'letterSpacing.normal'
-    | 'letterSpacing.wide'
-    | 'letterSpacing.wider'
+    | 'tight' | 'normal' | 'wide' | 'wider'
     | (string & {})
 
 /**
- * Known fontFamily token paths.
+ * Known fontFamily token values (no `fontFamily.` prefix).
  *
- * @example 'fontFamily.sans'
- * @example 'fontFamily.mono'
+ * @example 'sans'
+ * @example 'mono'
  */
 export type FontFamilyToken =
-    | 'fontFamily.sans'
-    | 'fontFamily.mono'
+    | 'sans' | 'mono'
     | (string & {})
 
 // ─── motion ───────────────────────────────────────────────────────────────────
