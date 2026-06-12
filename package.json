@@ -5,7 +5,9 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "dev": "turbo run dev --parallel"
+    "dev": "turbo run dev --parallel",
+    "storybook": "pnpm --filter @badger-burrow/storybook storybook",
+    "build-storybook": "pnpm --filter @badger-burrow/storybook build-storybook"
   },
   "devDependencies": {
     "turbo": "^2.0.0",

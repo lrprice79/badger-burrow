@@ -1,0 +1,100 @@
+import type { Meta, StoryObj } from '@storybook/react'
+import { Chamber, Tunnel } from '@badger-burrow/web'
+
+const meta: Meta = {
+    title: 'Features',
+    parameters: {
+        docs: {
+            description: { component: 'Cross-cutting features: motion tokens, pseudo states, smart hover, responsive token objects.' },
+        },
+    },
+}
+export default meta
+type Story = StoryObj
+
+// ─── motion ───────────────────────────────────────────────────────────────────
+
+export const Motion: Story = {
+    name: 'Motion tokens',
+    render: () => (
+        <Chamber display="flex" flexDir="column" gap="4">
+            <Tunnel color="text.secondary">Hover the boxes — each uses a motion-token transition keyword.</Tunnel>
+            <Chamber display="flex" gap="4" wrap="wrap">
+                {(['fast', 'normal', 'slow', 'glacial'] as const).map((speed) => (
+                    <Chamber key={speed} as="button" bg="interactive.primary" color="text.inverse"
+                        px="5" py="4" radius="md" fontWeight="semibold" transition={speed}
+                        _hover={{ bg: 'interactive.primary.hover', cursor: 'pointer', transform: 'translateY(-4px)' }}>
+                        transition="{speed}"
+                    </Chamber>
+                ))}
+            </Chamber>
+        </Chamber>
+    ),
+}
+
+// ─── smart hover ──────────────────────────────────────────────────────────────
+
+export const SmartHover: Story = {
+    name: 'Smart hover (auto shade-step)',
+    render: () => (
+        <Chamber display="flex" flexDir="column" gap="3" maxW="420px">
+            <Tunnel color="text.secondary">
+                Give a primitive <Tunnel as="span" fontFamily="mono">bg</Tunnel> and hover auto-steps one shade darker —
+                no <Tunnel as="span" fontFamily="mono">_hover</Tunnel> needed.
+            </Tunnel>
+            <Chamber display="flex" gap="3" wrap="wrap">
+                {(['primary.400', 'success.500', 'error.500', 'warning.500'] as const).map((bg) => (
+                    <Chamber key={bg} as="button" bg={bg} color="text.inverse" px="5" py="3" radius="md" fontWeight="semibold"
+                        _hover={{ cursor: 'pointer' }}>
+                        {bg}
+                    </Chamber>
+                ))}
+            </Chamber>
+        </Chamber>
+    ),
+}
+
+// ─── responsive ───────────────────────────────────────────────────────────────
+
+export const ResponsiveProps: Story = {
+    name: 'Responsive props',
+    parameters: { layout: 'fullscreen' },
+    render: () => (
+        <Chamber p="6" display="flex" flexDir="column" gap="4">
+            <Tunnel as="h3" fontSize={{ base: 'lg', md: '2xl' }} fontWeight="bold">
+                fontSize grows at the md breakpoint
+            </Tunnel>
+            <Chamber display="grid"
+                gridTemplateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
+                gap={{ base: '2', md: '4' }}>
+                {Array.from({ length: 8 }).map((_, i) => (
+                    <Chamber key={i} bg="interactive.primary" color="text.inverse" p="4" radius="md" textAlign="center" fontWeight="bold">
+                        {i + 1}
+                    </Chamber>
+                ))}
+            </Chamber>
+            <Tunnel fontSize="sm" color="text.secondary">1 column → 2 (sm) → 4 (lg). Resize the preview.</Tunnel>
+        </Chamber>
+    ),
+}
+
+// ─── pseudo matrix ────────────────────────────────────────────────────────────
+
+export const PseudoMatrix: Story = {
+    name: 'Pseudo states',
+    render: () => (
+        <Chamber display="flex" flexDir="column" gap="4" maxW="480px">
+            <Chamber as="button" bg="interactive.primary" color="text.inverse" px="5" py="3" radius="md" fontWeight="semibold"
+                _hover={{ bg: 'interactive.primary.hover' }}
+                _active={{ opacity: 0.85 }}
+                _focusVisible={{ outlineStyle: 'solid', outlineWidth: '3px', outlineColor: 'feedback.info', outlineOffset: '2px' }}
+                style={{ cursor: 'pointer' }}>
+                Hover · Active · Focus-visible
+            </Chamber>
+            <Chamber bg="bg.elevated" borderWidth={1} borderColor="border.default" p="4" radius="md"
+                _hover={{ borderColor: 'interactive.primary', shadow: 'md' }}>
+                <Tunnel>Card that lifts its border + shadow on hover</Tunnel>
+            </Chamber>
+        </Chamber>
+    ),
+}

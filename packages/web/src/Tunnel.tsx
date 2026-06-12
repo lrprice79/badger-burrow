@@ -39,7 +39,10 @@ export interface TunnelProps
  *   Body copy here.
  * </Tunnel>
  */
-export function Tunnel({ as: Tag = 'span', sx, style, children, ...props }: TunnelProps) {
+export const Tunnel = React.forwardRef<HTMLElement, TunnelProps>(function Tunnel(
+    { as: Tag = 'span', sx, style, children, ...props },
+    ref,
+) {
     const { tokens, mode } = useBurrow()
 
     // Split props into burrow props vs plain HTML props
@@ -91,13 +94,16 @@ export function Tunnel({ as: Tag = 'span', sx, style, children, ...props }: Tunn
         injectResponsiveStyles(className, bpStyles, breakpoints)
     }
 
+    // Cast to ElementType so the dynamic tag union doesn't explode the ref/prop types.
+    const Component = Tag as React.ElementType
     return (
-        <Tag
+        <Component
+            ref={ref}
             className={className}
             style={{ ...sxStyles, ...tokenStyles, ...style } as React.CSSProperties}
             {...(htmlProps as React.HTMLAttributes<HTMLElement>)}
         >
             {children}
-        </Tag>
+        </Component>
     )
-}
+})

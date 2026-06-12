@@ -19,6 +19,9 @@ export type ChamberTag =
     | 'ul' | 'ol' | 'li'
     | 'figure' | 'figcaption' | 'label'
     | 'dialog' | 'details' | 'summary'
+    // inline-level box — valid phrasing content (badges, inline wrappers inside
+    // <p>/<button>/<a> where a <div> would be invalid HTML)
+    | 'span'
 
 export interface ChamberProps
     extends Omit<React.HTMLAttributes<HTMLElement>, 'color'>,
@@ -52,7 +55,10 @@ export interface ChamberProps
  *   onClick={handleClick}
  * />
  */
-export function Chamber({ as: Tag = 'div', sx, style, children, ...props }: ChamberProps) {
+export const Chamber = React.forwardRef<HTMLElement, ChamberProps>(function Chamber(
+    { as: Tag = 'div', sx, style, children, ...props },
+    ref,
+) {
     const { tokens, mode } = useBurrow()
 
     // Split props into burrow props vs plain HTML props
@@ -106,13 +112,17 @@ export function Chamber({ as: Tag = 'div', sx, style, children, ...props }: Cham
         injectResponsiveStyles(className, bpStyles, breakpoints)
     }
 
+    // Cast to ElementType so the dynamic tag union doesn't explode the ref/prop
+    // types (a union of every element's ref is both incompatible and "too complex").
+    const Component = Tag as React.ElementType
     return (
-        <Tag
+        <Component
+            ref={ref}
             className={className}
             style={{ ...sxStyles, ...tokenStyles, ...style } as React.CSSProperties}
             {...(htmlProps as React.HTMLAttributes<HTMLElement>)}
         >
             {children}
-        </Tag>
+        </Component>
     )
-}
+})

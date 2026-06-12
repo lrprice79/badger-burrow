@@ -1,0 +1,30 @@
+{
+  "name": "@badger-burrow/storybook",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@badger-burrow/tokens": "workspace:*",
+    "@badger-burrow/core": "workspace:*",
+    "@badger-burrow/web": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^8.6.18",
+    "@storybook/addon-essentials": "^8.6.18",
+    "@storybook/blocks": "^8.6.18",
+    "@storybook/react": "^8.6.18",
+    "@storybook/react-vite": "^8.6.18",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "storybook": "^8.6.18",
+    "vite": "^5.4.0"
+  }
+}

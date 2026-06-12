@@ -39,9 +39,9 @@ export const defaultTokens: BurrowTokens = {
     light: {
       // interactive
       'color.interactive.primary':              '{color.primary.500}',
-      'color.interactive.primary.hover':        '{color.primary.600}',
+      'color.interactive.primary.hover':        '{color.primary.700}',
       'color.interactive.secondary':            '{color.secondary.500}',
-      'color.interactive.secondary.hover':      '{color.secondary.600}',
+      'color.interactive.secondary.hover':      '{color.secondary.700}',
       // backgrounds
       'color.bg.surface':                       '{color.neutral.50}',
       'color.bg.surface.hover':                 '{color.neutral.100}',
@@ -66,9 +66,9 @@ export const defaultTokens: BurrowTokens = {
     dark: {
       // interactive
       'color.interactive.primary':              '{color.primary.400}',
-      'color.interactive.primary.hover':        '{color.primary.300}',
+      'color.interactive.primary.hover':        '{color.primary.200}',
       'color.interactive.secondary':            '{color.secondary.400}',
-      'color.interactive.secondary.hover':      '{color.secondary.300}',
+      'color.interactive.secondary.hover':      '{color.secondary.200}',
       // backgrounds
       'color.bg.surface':                       '{color.neutral.900}',
       'color.bg.surface.hover':                 '{color.neutral.800}',

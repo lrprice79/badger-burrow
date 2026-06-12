@@ -1,5 +1,6 @@
 import { defaultTokens } from '@badger-burrow/tokens'
 import { stepShade, resolveHoverBg, buildPseudoStyles } from '../pseudo'
+import { resolveToken } from '../resolver'
 
 // ─── stepShade ────────────────────────────────────────────────────────────────
 
@@ -31,21 +32,21 @@ describe('resolveHoverBg', () => {
         expect(resolveHoverBg(undefined, undefined, undefined, defaultTokens, 'light')).toBeUndefined()
     })
 
-    it('auto-steps a primitive bg path one shade darker', () => {
-        // color.primary.500 → should return color.primary.600
+    it('auto-steps a primitive bg path two shades darker (default)', () => {
+        // color.primary.500 → should return color.primary.700 (2-shade default)
         const result = resolveHoverBg('color.primary.500', undefined, undefined, defaultTokens, 'light')
-        expect(result).toBe(defaultTokens.primitive.color.primary[600])
+        expect(result).toBe(defaultTokens.primitive.color.primary[700])
     })
 
     it('auto-steps from shade 50', () => {
         const result = resolveHoverBg('color.neutral.50', undefined, undefined, defaultTokens, 'light')
-        expect(result).toBe(defaultTokens.primitive.color.neutral[100])
+        expect(result).toBe(defaultTokens.primitive.color.neutral[200])
     })
 
     it('uses hoverScale with auto-step from bg shade', () => {
-        // bg is primary.500 but hoverScale is secondary → step on secondary at shade 600
+        // bg is primary.500 but hoverScale is secondary → step on secondary at shade 700
         const result = resolveHoverBg('color.primary.500', 'secondary', undefined, defaultTokens, 'light')
-        expect(result).toBe(defaultTokens.primitive.color.secondary[600])
+        expect(result).toBe(defaultTokens.primitive.color.secondary[700])
     })
 
     it('uses hoverScale + explicit hoverShade exactly', () => {
@@ -100,7 +101,7 @@ describe('buildPseudoStyles', () => {
             'light'
         )
         expect(result.hover).toBeDefined()
-        expect(result.hover?.backgroundColor).toBe(defaultTokens.primitive.color.primary[600])
+        expect(result.hover?.backgroundColor).toBe(defaultTokens.primitive.color.primary[700])
     })
 
     it('_hover.bg overrides the auto bg', () => {
@@ -171,7 +172,7 @@ describe('buildPseudoStyles', () => {
             defaultTokens,
             'light'
         )
-        expect(result.hover?.backgroundColor).toBe(defaultTokens.primitive.color.secondary[600])
+        expect(result.hover?.backgroundColor).toBe(defaultTokens.primitive.color.secondary[700])
     })
 
     it('uses hoverScale + hoverShade for exact hover bg', () => {
@@ -200,5 +201,19 @@ describe('buildPseudoStyles', () => {
         )
         expect(result.hover).toBeUndefined()
         expect(result.focus).toBeDefined()
+    })
+})
+
+// ─── 2-shade default (interactive hover tokens + smart hover) ─────────────────
+
+describe('default hover depth (2 shades)', () => {
+    it('interactive.primary.hover resolves two shades darker than primary', () => {
+        const hover = resolveToken('color.interactive.primary.hover', defaultTokens, 'light')
+        expect(hover).toBe(defaultTokens.primitive.color.primary[700])
+    })
+
+    it('interactive.secondary.hover resolves two shades darker than secondary', () => {
+        const hover = resolveToken('color.interactive.secondary.hover', defaultTokens, 'light')
+        expect(hover).toBe(defaultTokens.primitive.color.secondary[700])
     })
 })

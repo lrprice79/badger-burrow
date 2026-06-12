@@ -108,9 +108,9 @@ describe('tolerant of full paths (back-compat)', () => {
 // ─── smart hover works with short form ────────────────────────────────────────
 
 describe('smart hover with short-form bg', () => {
-    it('auto-steps a short primitive bg one shade darker', () => {
+    it('auto-steps a short primitive bg two shades darker', () => {
         const result = buildPseudoStyles({ bg: 'primary.500' }, defaultTokens, 'light')
-        expect(result.hover?.backgroundColor).toBe(defaultTokens.primitive.color.primary[600])
+        expect(result.hover?.backgroundColor).toBe(defaultTokens.primitive.color.primary[700])
     })
 })
 

@@ -439,11 +439,11 @@ Token paths resolve inside pseudo props exactly as they do on the main props.
 
 ### Smart hover background — automatic shade stepping
 
-When `bg` is a **primitive colour path**, the hover background auto-steps one shade darker with no extra code:
+When `bg` is a **primitive colour path**, the hover background auto-steps two shades darker with no extra code:
 
 ```tsx
 <Chamber bg="primary.500" />
-// On hover: background becomes color.primary.600  ← automatic
+// On hover: background becomes color.primary.700  ← automatic
 ```
 
 The shade scale steps: `50 → 100 → 200 → 300 → 400 → 500 → 600 → 700 → 800 → 900`. Clamps at `900`.
@@ -495,7 +495,7 @@ Available hover tokens:
 
 | Token | Light | Dark |
 |---|---|---|
-| `color.interactive.primary.hover` | primary.600 | primary.300 |
+| `color.interactive.primary.hover` | primary.700 | primary.200 |
 | `color.interactive.secondary.hover` | secondary.600 | secondary.300 |
 | `color.bg.surface.hover` | neutral.100 | neutral.800 |
 | `color.bg.elevated.hover` | neutral.50 | neutral.700 |
@@ -826,7 +826,7 @@ function Card({ title }) {
 | Pseudo states (web) | `_hover` `_focus` `_active` `_focusVisible` `_disabled` on Chamber and Tunnel |
 | Interactive (native) | Use `Pressable` with pressed state — no pseudo props in React Native |
 | Shadow | Same token path on both platforms — web gets CSS string, native gets elevation object |
-| Smart hover bg | Primitive bg paths auto-step one shade darker on hover (web only) |
+| Smart hover bg | Primitive bg paths auto-step two shades darker on hover (web only) |
 | Hover scale | `hoverScale="primary"` + optional `hoverShade={400}` (web only) |
 | Escape hatch | `sx` prop for anything not covered by named props |
 | Variants | `createVariants` for reusable size/style maps |

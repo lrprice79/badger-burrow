@@ -302,7 +302,9 @@ Chamber accepts **all font and typography props** as well as layout props — so
 </Chamber>
 ```
 
-**Supported tags:** `div` · `section` · `article` · `aside` · `header` · `footer` · `main` · `nav` · `button` · `a` · `form` · `fieldset` · `ul` · `ol` · `li` · `figure` · `figcaption` · `label` · `dialog` · `details` · `summary`
+**Supported tags:** `div` · `section` · `article` · `aside` · `header` · `footer` · `main` · `nav` · `button` · `a` · `form` · `fieldset` · `ul` · `ol` · `li` · `figure` · `figcaption` · `label` · `dialog` · `details` · `summary` · `span` (inline-level box — valid phrasing content for badges/inline wrappers inside `<p>`/`<button>`/`<a>`)
+
+**Refs:** both `Chamber` and `Tunnel` forward refs to the rendered element (`<Chamber ref={…} as="button" />` gives you the `<button>`). Implemented with `forwardRef`, so it works on React 18 and 19 alike.
 
 #### Full prop reference
 
@@ -356,17 +358,17 @@ All pseudo props accept the same style props as Chamber itself (minus other pseu
 
 #### Smart hover background
 
-When `bg` is a **primitive colour path** (e.g. `color.primary.500`), BadgerBurrow automatically steps the hover background one shade darker — no `_hover` needed:
+When `bg` is a **primitive colour path** (e.g. `color.primary.500`), BadgerBurrow automatically steps the hover background two shades darker — no `_hover` needed:
 
 ```tsx
 <Chamber bg="primary.500" />
-// :hover { background-color: <color.primary.600> }  ← auto
+// :hover { background-color: <color.primary.700> }  ← auto
 ```
 
 **Control it with `hoverScale` and `hoverShade`:**
 
 ```tsx
-// Use a different scale for the hover bg — auto-steps to shade 600
+// Use a different scale for the hover bg — auto-steps two shades darker
 <Chamber bg="bg.surface" hoverScale="primary" />
 
 // Use a different scale at an exact shade
@@ -383,8 +385,8 @@ Semantic token paths (`color.bg.surface`) are not auto-stepped — they don't en
 The default token set includes pre-built hover variants for common semantic colours:
 
 ```
-color.interactive.primary.hover   → primary.600 (light) / primary.300 (dark)
-color.interactive.secondary.hover → secondary.600 (light) / secondary.300 (dark)
+color.interactive.primary.hover   → primary.700 (light) / primary.200 (dark)
+color.interactive.secondary.hover → secondary.700 (light) / secondary.200 (dark)
 color.bg.surface.hover            → neutral.100 (light) / neutral.800 (dark)
 color.bg.elevated.hover           → neutral.50 (light) / neutral.700 (dark)
 color.text.primary.hover          → neutral.700 (light) / neutral.200 (dark)
@@ -619,15 +621,40 @@ All token types include `(string & {})` so raw CSS values (`'#ff0000'`, `'100%'`
 
 ---
 
+## Storybook
+
+A full interactive Storybook lives in `storybook/` (Storybook 8 + Vite),
+resolving the packages from source so edits reflect live.
+
+```bash
+pnpm storybook          # dev server on :6006
+pnpm build-storybook    # static build
+```
+
+Two global toolbar controls drive the whole library through the BadgerBurrow
+store (no provider): **Mode** (light / dark) and **Brand** (recolours everything
+from one hex by regenerating the `primary` scale). Story groups:
+
+- **Theme** — colour scales, light/dark swatches, brand presets, spacing,
+  typography, radii, shadows.
+- **Components** — `Chamber` and `Tunnel` playgrounds with every prop wired as a
+  live Control (token dropdowns), plus `as`-element, flex, grid, pseudo and
+  responsive stories.
+- **Patterns** — buttons, badges, cards, alerts, list rows, stat tiles built
+  purely from the two primitives.
+- **Features** — motion tokens, smart hover, responsive props, pseudo states.
+
+---
+
 ## Test coverage
 
 | Package | Tests |
 |---|---|
 | `@badger-burrow/tokens` | 42 |
-| `@badger-burrow/core` | 215 |
-| `@badger-burrow/web` | 309 |
+| `@badger-burrow/core` | 217 |
+| `@badger-burrow/web` | 315 |
 | `@badger-burrow/native` | 76 |
-| **Total** | **642** |
+| **Total** | **650** |
 
 ---
 

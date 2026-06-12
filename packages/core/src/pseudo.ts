@@ -9,6 +9,13 @@ const SHADES = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900] as const
 type Shade = typeof SHADES[number]
 
 /**
+ * Default depth (in shade steps) for the smart auto hover background — how much
+ * darker a hovered primitive bg becomes when no explicit _hover is given.
+ * Kept in sync with the semantic `*.hover` tokens, which also step by 2.
+ */
+const DEFAULT_HOVER_STEP = 2
+
+/**
  * Step a shade one increment darker (toward 900).
  * Clamps at 900 — if already at darkest, returns 900.
  * Returns the original value unchanged if it is not a recognised shade.
@@ -85,7 +92,7 @@ export function resolveHoverBg(
     if (hoverScale) {
         const parsed = bg !== undefined ? parsePrimitiveBgPath(bg) : null
         const currentShade = parsed?.shade ?? 500
-        const nextShade = stepShade(currentShade)
+        const nextShade = stepShade(currentShade, DEFAULT_HOVER_STEP)
         return tokens.primitive.color[hoverScale]?.[nextShade] as string | undefined
     }
 
@@ -93,7 +100,7 @@ export function resolveHoverBg(
     if (bg !== undefined) {
         const parsed = parsePrimitiveBgPath(bg)
         if (!parsed) return undefined
-        const nextShade = stepShade(parsed.shade)
+        const nextShade = stepShade(parsed.shade, DEFAULT_HOVER_STEP)
         return tokens.primitive.color[parsed.scale]?.[nextShade] as string | undefined
     }
 
