@@ -57,8 +57,15 @@ export const Tunnel = React.forwardRef<HTMLElement, TunnelProps>(function Tunnel
     const { baseProps, responsiveProps } = splitResponsiveProps(burrowProps, tokens.breakpoints)
     const textPropsTyped = baseProps as BurrowTextProps
 
-    // Resolve inline styles from base props
-    const tokenStyles = buildTextStyles(textPropsTyped, tokens, mode)
+    // Inline styles cover ONLY non-responsive props. A responsive prop's base
+    // value must NOT go inline — inline styles outrank @media rules in the
+    // cascade, so an inline base would suppress every breakpoint override. Each
+    // responsive prop (base included) is emitted as a class rule below instead.
+    const inlineProps: Record<string, unknown> = {}
+    for (const key in baseProps) {
+        if (!(key in responsiveProps)) inlineProps[key] = baseProps[key]
+    }
+    const tokenStyles = buildTextStyles(inlineProps as BurrowTextProps, tokens, mode)
     const sxStyles    = sx ? resolveSx(sx, tokens, mode) : {}
 
     // Resolve pseudo styles
@@ -81,7 +88,9 @@ export const Tunnel = React.forwardRef<HTMLElement, TunnelProps>(function Tunnel
         const breakpoints = tokens.breakpoints ?? {}
         const bpOrder = getBreakpointOrder(breakpoints)
         const bpStyles: Partial<Record<string, Record<string, string | number | undefined>>> = {}
-        for (const bp of bpOrder.filter(b => b !== 'base')) {
+        // Include 'base' — it is emitted as an unwrapped class rule, with the
+        // named breakpoints overriding it via ascending min-width media queries.
+        for (const bp of bpOrder) {
             const bpProps: Record<string, unknown> = {}
             for (const [key, obj] of Object.entries(responsiveProps)) {
                 const bpObj = obj as Record<string, unknown>

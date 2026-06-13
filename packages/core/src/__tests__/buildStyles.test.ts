@@ -95,3 +95,51 @@ describe('shadow key guard', () => {
         expect(s.boxShadow).toBeTruthy()
     })
 })
+
+// ─── border width implies a visible border-style ──────────────────────────────
+// CSS border-style defaults to `none`, so width+color alone renders no border.
+// A utility box prop should make a border visible without forcing borderStyle.
+
+describe('border width defaults border-style to solid', () => {
+    it('borderWidth alone gets borderStyle: solid', () => {
+        const s = buildBoxStyles({ borderWidth: 1 }, defaultTokens, 'light')
+        expect(s.borderWidth).toBe('1px')
+        expect(s.borderStyle).toBe('solid')
+    })
+
+    it('borderWidth + borderColor gets borderStyle: solid', () => {
+        const s = buildBoxStyles({ borderWidth: 1, borderColor: 'border.default' }, defaultTokens, 'light')
+        expect(s.borderStyle).toBe('solid')
+    })
+
+    it('explicit borderStyle is not overridden', () => {
+        const s = buildBoxStyles({ borderWidth: 2, borderStyle: 'dashed' }, defaultTokens, 'light')
+        expect(s.borderStyle).toBe('dashed')
+    })
+
+    it('borderWidth: 0 does not add a border-style', () => {
+        const s = buildBoxStyles({ borderWidth: 0 }, defaultTokens, 'light')
+        expect('borderStyle' in s).toBe(false)
+    })
+
+    it('per-side width gets a matching per-side style', () => {
+        const s = buildBoxStyles({ borderLeftWidth: 4 }, defaultTokens, 'light')
+        expect(s.borderLeftWidth).toBe('4px')
+        expect(s.borderLeftStyle).toBe('solid')
+    })
+
+    it('explicit per-side style is not overridden', () => {
+        const s = buildBoxStyles({ borderLeftWidth: 4, borderLeftStyle: 'dotted' }, defaultTokens, 'light')
+        expect(s.borderLeftStyle).toBe('dotted')
+    })
+
+    it('border shorthand suppresses the auto style default', () => {
+        const s = buildBoxStyles({ border: '1px solid red', borderWidth: 2 }, defaultTokens, 'light')
+        expect('borderStyle' in s).toBe(false)
+    })
+
+    it('no border props means no border-style is emitted', () => {
+        const s = buildBoxStyles({ bg: 'primary.500' }, defaultTokens, 'light')
+        expect('borderStyle' in s).toBe(false)
+    })
+})

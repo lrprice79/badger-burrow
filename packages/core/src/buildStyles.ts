@@ -334,13 +334,43 @@ function applyTable(
     return result
 }
 
+/**
+ * Width→style pairs. CSS `border-style` defaults to `none`, so a border given
+ * only a width (and colour) renders nothing. When a width is set without an
+ * explicit style — and the `border` shorthand (which carries its own style)
+ * isn't in play — default the style to `solid` so the border is visible. This
+ * also matches React Native, whose default `borderStyle` is already `solid`.
+ */
+const BORDER_WIDTH_STYLE_PAIRS: ReadonlyArray<readonly [string, string]> = [
+    ['borderWidth', 'borderStyle'],
+    ['borderTopWidth', 'borderTopStyle'],
+    ['borderRightWidth', 'borderRightStyle'],
+    ['borderBottomWidth', 'borderBottomStyle'],
+    ['borderLeftWidth', 'borderLeftStyle'],
+]
+
+function applyBorderStyleDefaults(
+    result: Record<string, string | number | undefined>,
+): void {
+    // The `border` shorthand already sets a style for all sides — don't fight it.
+    if (result.border !== undefined) return
+    for (const [widthKey, styleKey] of BORDER_WIDTH_STYLE_PAIRS) {
+        const width = result[widthKey]
+        if (width === undefined || width === 0 || width === '0px') continue
+        if (result[styleKey] !== undefined) continue
+        result[styleKey] = 'solid'
+    }
+}
+
 /** Build the resolved style object for box (Chamber) props. */
 export function buildBoxStyles(
     props: BurrowBoxProps,
     tokens: BurrowTokens,
     mode: ColorMode
 ): Record<string, string | number | undefined> {
-    return applyTable(BOX_TABLE, props as Record<string, unknown>, { tokens, mode })
+    const result = applyTable(BOX_TABLE, props as Record<string, unknown>, { tokens, mode })
+    applyBorderStyleDefaults(result)
+    return result
 }
 
 /** Build the resolved style object for text (Tunnel) props. */

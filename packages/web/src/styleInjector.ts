@@ -119,12 +119,19 @@ export function injectPseudoStyles(
  * Inject media-query rules for responsive token props.
  *
  * Generates one <style> tag per className (keyed by [data-bb-responsive]).
- * Each named breakpoint (sm/md/lg/xl) becomes an `@media (min-width: X)` block.
- * Idempotent — re-render with the same className is a no-op.
- * SSR safe.
+ * The `base` entry (if present) becomes an unwrapped `.className { … }` rule;
+ * each named breakpoint (sm/md/lg/xl) becomes an `@media (min-width: X)` block.
+ *
+ * The base value MUST be emitted as a class rule here rather than as an inline
+ * style on the element: inline styles outrank any `@media` rule in the cascade,
+ * so a base applied inline would suppress every breakpoint override. Keeping
+ * base and the breakpoints at the same (class) specificity lets the natural
+ * source-order cascade — base first, then ascending min-width — pick the winner.
+ *
+ * Idempotent — re-render with the same className is a no-op. SSR safe.
  *
  * @param className       Scoped class name applied to the element
- * @param bpStyles        Map of breakpoint name → resolved CSS-property object
+ * @param bpStyles        Map of breakpoint name (incl. 'base') → resolved CSS object
  * @param breakpoints     Token breakpoints map e.g. { sm: '576px', md: '768px', ... }
  */
 export function injectResponsiveStyles(
@@ -138,7 +145,20 @@ export function injectResponsiveStyles(
     if (_injected.has(id)) return
 
     const rules: string[] = []
-    for (const [bp, minWidth] of Object.entries(breakpoints)) {
+
+    // Base rule first (no media) so the ascending media rules below override it.
+    const baseStyles = bpStyles.base
+    if (baseStyles) {
+        const css = styleObjectToCss(baseStyles)
+        if (css) rules.push(`.${className} { ${css} }`)
+    }
+
+    // Media rules in ascending min-width order so larger breakpoints win,
+    // independent of the breakpoints map's key insertion order.
+    const ordered = Object.entries(breakpoints)
+        .map(([bp, minWidth]) => ({ bp, minWidth, px: parseInt(minWidth, 10) }))
+        .sort((a, b) => a.px - b.px)
+    for (const { bp, minWidth } of ordered) {
         const styles = bpStyles[bp]
         if (!styles) continue
         const css = styleObjectToCss(styles)

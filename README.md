@@ -348,6 +348,8 @@ Chamber accepts **all font and typography props** as well as layout props — so
 † accepts a responsive object as well as a plain value, e.g. `flexDir={{ base: 'column', md: 'row' }}`, `align={{ base: 'flex-start', lg: 'center' }}`, `gridTemplateColumns={{ base: '1fr', md: '1fr 1fr 1fr' }}`. Grid props are typed off `CSSProperties` for value autocomplete.
 | **Border** | `border` `borderStyle` `borderColor` `borderWidth` `borderTop/Right/Bottom/Left` (shorthands) `borderTopColor` `borderRightColor` `borderBottomColor` `borderLeftColor` `borderTopWidth` `borderRightWidth` `borderBottomWidth` `borderLeftWidth` `borderTopStyle` `borderRightStyle` `borderBottomStyle` `borderLeftStyle` |
 | **Radius** | `radius` (all corners) `borderTopLeftRadius` `borderTopRightRadius` `borderBottomLeftRadius` `borderBottomRightRadius` |
+
+> Setting `borderWidth` (or any per-side width) makes the border visible on its own — the style defaults to `solid` when you don't set one, matching React Native. Pass `borderStyle="dashed"` (or a per-side style) to override.
 | **Outline** | `outline` `outlineColor` `outlineWidth` `outlineStyle` `outlineOffset` |
 | **Effects** | `opacity` `shadow` `transform` `filter` `backdropFilter` `mixBlendMode` |
 | **Position** | `inset` `overflow` `overflowX` `overflowY` `position` `top` `right` `bottom` `left` `zIndex` |

@@ -45,7 +45,7 @@ export const SmartHover: Story = {
     render: () => (
         <Chamber display="flex" flexDir="column" gap="3" maxW="420px">
             <Tunnel color="text.secondary">
-                Give a primitive <Tunnel as="span" fontFamily="mono">bg</Tunnel> and hover auto-steps one shade darker —
+                Give a primitive <Tunnel as="span" fontFamily="mono">bg</Tunnel> and hover auto-steps two shades darker —
                 no <Tunnel as="span" fontFamily="mono">_hover</Tunnel> needed.
             </Tunnel>
             <Chamber display="flex" gap="3" wrap="wrap">
