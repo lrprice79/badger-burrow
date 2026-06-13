@@ -37,11 +37,11 @@ export const defaultTokens: BurrowTokens = {
   },
   semantic: {
     light: {
-      // interactive
-      'color.interactive.primary':              '{color.primary.500}',
-      'color.interactive.primary.hover':        '{color.primary.700}',
-      'color.interactive.secondary':            '{color.secondary.500}',
-      'color.interactive.secondary.hover':      '{color.secondary.700}',
+      // interactive — primary.600 in both modes so a white label always meets AA
+      'color.interactive.primary':              '{color.primary.600}',
+      'color.interactive.primary.hover':        '{color.primary.800}',
+      'color.interactive.secondary':            '{color.secondary.600}',
+      'color.interactive.secondary.hover':      '{color.secondary.800}',
       // backgrounds — page is a light grey so white cards lift clearly
       'color.bg.surface':                       '{color.neutral.100}',
       'color.bg.surface.hover':                 '{color.neutral.200}',
@@ -64,11 +64,11 @@ export const defaultTokens: BurrowTokens = {
       'color.feedback.info':                    '{color.info.500}',
     },
     dark: {
-      // interactive
-      'color.interactive.primary':              '{color.primary.400}',
-      'color.interactive.primary.hover':        '{color.primary.200}',
-      'color.interactive.secondary':            '{color.secondary.400}',
-      'color.interactive.secondary.hover':      '{color.secondary.200}',
+      // interactive — same primary.600 as light; white label, consistent across modes
+      'color.interactive.primary':              '{color.primary.600}',
+      'color.interactive.primary.hover':        '{color.primary.800}',
+      'color.interactive.secondary':            '{color.secondary.600}',
+      'color.interactive.secondary.hover':      '{color.secondary.800}',
       // backgrounds
       'color.bg.surface':                       '{color.neutral.900}',
       'color.bg.surface.hover':                 '{color.neutral.800}',
@@ -80,7 +80,7 @@ export const defaultTokens: BurrowTokens = {
       'color.text.primary.hover':               '{color.ink.200}',
       'color.text.secondary':                   '{color.ink.400}',
       'color.text.secondary.hover':             '{color.ink.200}',
-      'color.text.inverse':                     '{color.ink.900}',
+      'color.text.inverse':                     '#ffffff',
       // borders
       'color.border.default':                   '{color.neutral.700}',
       'color.border.default.hover':             '{color.neutral.500}',

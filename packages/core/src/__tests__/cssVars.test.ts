@@ -90,8 +90,8 @@ describe('buildCssVarMap', () => {
     it('light and dark produce different semantic values', () => {
         const light = buildCssVarMap(defaultTokens, 'light')
         const dark  = buildCssVarMap(defaultTokens, 'dark')
-        expect(light['--badger-color-interactive-primary']).not.toBe(
-            dark['--badger-color-interactive-primary']
+        expect(light['--badger-color-text-primary']).not.toBe(
+            dark['--badger-color-text-primary']
         )
     })
 

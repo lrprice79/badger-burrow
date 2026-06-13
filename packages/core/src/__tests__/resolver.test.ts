@@ -61,8 +61,8 @@ describe('resolveToken — semantic references', () => {
     })
 
     it('light and dark resolve to different values for mode-specific tokens', () => {
-        const light = resolveToken('color.interactive.primary', defaultTokens, 'light')
-        const dark  = resolveToken('color.interactive.primary', defaultTokens, 'dark')
+        const light = resolveToken('color.text.primary', defaultTokens, 'light')
+        const dark  = resolveToken('color.text.primary', defaultTokens, 'dark')
         expect(light).not.toBe(dark)
     })
 

@@ -212,7 +212,7 @@ role to a shade. Use it as a starting recipe and go a step darker/lighter to tas
 | `border.default` | `neutral.200` | `neutral.700` |
 | `text.primary` | `ink.900` | `ink.50` |
 | `text.secondary` | `ink.600` | `ink.400` |
-| `text.inverse` (on brand bg) | `#ffffff` | `ink.900` |
+| `text.inverse` (on brand bg) | `#ffffff` | `#ffffff` |
 
 > Tip: there's nothing lighter than `50`, so a *brighter* surface comes from a
 > *lighter scale* (a lighter base hex), not from picking a different shade. For
@@ -532,8 +532,8 @@ Available hover tokens:
 
 | Token | Light | Dark |
 |---|---|---|
-| `color.interactive.primary.hover` | primary.700 | primary.200 |
-| `color.interactive.secondary.hover` | secondary.600 | secondary.300 |
+| `color.interactive.primary.hover` | primary.800 | primary.800 |
+| `color.interactive.secondary.hover` | secondary.800 | secondary.800 |
 | `color.bg.surface.hover` | neutral.200 | neutral.800 |
 | `color.bg.elevated.hover` | neutral.50 | neutral.700 |
 | `color.text.primary.hover` | neutral.700 | neutral.200 |

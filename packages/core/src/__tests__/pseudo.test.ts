@@ -209,11 +209,11 @@ describe('buildPseudoStyles', () => {
 describe('default hover depth (2 shades)', () => {
     it('interactive.primary.hover resolves two shades darker than primary', () => {
         const hover = resolveToken('color.interactive.primary.hover', defaultTokens, 'light')
-        expect(hover).toBe(defaultTokens.primitive.color.primary[700])
+        expect(hover).toBe(defaultTokens.primitive.color.primary[800])
     })
 
     it('interactive.secondary.hover resolves two shades darker than secondary', () => {
         const hover = resolveToken('color.interactive.secondary.hover', defaultTokens, 'light')
-        expect(hover).toBe(defaultTokens.primitive.color.secondary[700])
+        expect(hover).toBe(defaultTokens.primitive.color.secondary[800])
     })
 })

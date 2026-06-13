@@ -149,7 +149,7 @@ extendBurrow({ primitive: { color: {
 | `border.default` | `neutral.200` | `neutral.700` |
 | `text.primary` | `ink.900` | `ink.50` |
 | `text.secondary` | `ink.600` | `ink.400` |
-| `text.inverse` | `#ffffff` | `ink.900` |
+| `text.inverse` | `#ffffff` | `#ffffff` |
 
 ---
 
@@ -412,8 +412,8 @@ Semantic token paths (`color.bg.surface`) are not auto-stepped — they don't en
 The default token set includes pre-built hover variants for common semantic colours:
 
 ```
-color.interactive.primary.hover   → primary.700 (light) / primary.200 (dark)
-color.interactive.secondary.hover → secondary.700 (light) / secondary.200 (dark)
+color.interactive.primary.hover   → primary.800 (both modes)
+color.interactive.secondary.hover → secondary.800 (both modes)
 color.bg.surface.hover            → neutral.200 (light) / neutral.800 (dark)
 color.bg.elevated.hover           → neutral.50 (light) / neutral.700 (dark)
 color.text.primary.hover          → neutral.700 (light) / neutral.200 (dark)

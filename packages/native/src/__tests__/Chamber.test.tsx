@@ -78,11 +78,11 @@ describe('Chamber shadow', () => {
 describe('Chamber dark mode', () => {
     it('re-renders when mode changes', () => {
         const { getByTestId, rerender } = render(
-            <Chamber testID="c" bg="color.interactive.primary" />
+            <Chamber testID="c" bg="color.bg.surface" />
         )
         const lightBg = getByTestId('c').props.style?.backgroundColor
         act(() => { BadgerBase.setMode('dark') })
-        rerender(<Chamber testID="c" bg="color.interactive.primary" />)
+        rerender(<Chamber testID="c" bg="color.bg.surface" />)
         const darkBg = getByTestId('c').props.style?.backgroundColor
         expect(darkBg).not.toBe(lightBg)
     })

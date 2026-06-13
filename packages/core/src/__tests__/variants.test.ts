@@ -72,7 +72,7 @@ describe('token path resolution', () => {
 
     it('resolves a semantic token path in dark mode', () => {
         const v = createVariants({
-            interactive: { color: 'color.interactive.primary' },
+            interactive: { color: 'color.text.primary' },
         })
         const light = v('interactive', defaultTokens, 'light')
         const dark  = v('interactive', defaultTokens, 'dark')
