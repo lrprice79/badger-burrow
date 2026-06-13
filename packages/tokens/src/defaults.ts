@@ -42,17 +42,17 @@ export const defaultTokens: BurrowTokens = {
       'color.interactive.primary.hover':        '{color.primary.700}',
       'color.interactive.secondary':            '{color.secondary.500}',
       'color.interactive.secondary.hover':      '{color.secondary.700}',
-      // backgrounds
-      'color.bg.surface':                       '{color.neutral.50}',
-      'color.bg.surface.hover':                 '{color.neutral.100}',
+      // backgrounds — page is a light grey so white cards lift clearly
+      'color.bg.surface':                       '{color.neutral.100}',
+      'color.bg.surface.hover':                 '{color.neutral.200}',
       'color.bg.elevated':                      '#ffffff',
       'color.bg.elevated.hover':                '{color.neutral.50}',
       'color.bg.overlay':                       'rgba(0,0,0,0.5)',
-      // text
-      'color.text.primary':                     '{color.neutral.900}',
-      'color.text.primary.hover':               '{color.neutral.700}',
-      'color.text.secondary':                   '{color.neutral.500}',
-      'color.text.secondary.hover':             '{color.neutral.700}',
+      // text — from the dedicated `ink` scale
+      'color.text.primary':                     '{color.ink.900}',
+      'color.text.primary.hover':               '{color.ink.700}',
+      'color.text.secondary':                   '{color.ink.600}',
+      'color.text.secondary.hover':             '{color.ink.700}',
       'color.text.inverse':                     '#ffffff',
       // borders
       'color.border.default':                   '{color.neutral.200}',
@@ -75,12 +75,12 @@ export const defaultTokens: BurrowTokens = {
       'color.bg.elevated':                      '{color.neutral.800}',
       'color.bg.elevated.hover':                '{color.neutral.700}',
       'color.bg.overlay':                       'rgba(0,0,0,0.7)',
-      // text
-      'color.text.primary':                     '{color.neutral.50}',
-      'color.text.primary.hover':               '{color.neutral.200}',
-      'color.text.secondary':                   '{color.neutral.400}',
-      'color.text.secondary.hover':             '{color.neutral.200}',
-      'color.text.inverse':                     '{color.neutral.900}',
+      // text — from the dedicated `ink` scale
+      'color.text.primary':                     '{color.ink.50}',
+      'color.text.primary.hover':               '{color.ink.200}',
+      'color.text.secondary':                   '{color.ink.400}',
+      'color.text.secondary.hover':             '{color.ink.200}',
+      'color.text.inverse':                     '{color.ink.900}',
       // borders
       'color.border.default':                   '{color.neutral.700}',
       'color.border.default.hover':             '{color.neutral.500}',

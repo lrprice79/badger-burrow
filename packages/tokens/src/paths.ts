@@ -8,7 +8,7 @@
 
 // ─── colour ───────────────────────────────────────────────────────────────────
 
-type ColorScale = 'primary' | 'secondary' | 'neutral' | 'success' | 'error' | 'warning' | 'info'
+type ColorScale = 'primary' | 'secondary' | 'neutral' | 'ink' | 'success' | 'error' | 'warning' | 'info'
 type ColorShade = '50' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
 
 /**

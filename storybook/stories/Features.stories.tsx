@@ -16,6 +16,9 @@ type Story = StoryObj
 
 export const Motion: Story = {
     name: 'Motion tokens',
+    parameters: {
+        docs: { description: { story: '`transition="fast"` expands a duration keyword to a full CSS transition (`all 150ms cubic-bezier(…)`). Keywords: instant · fast · normal · slow · glacial. Raw CSS still works.' } },
+    },
     render: () => (
         <Chamber display="flex" flexDir="column" gap="4">
             <Tunnel color="text.secondary">Hover the boxes — each uses a motion-token transition keyword.</Tunnel>
@@ -36,6 +39,9 @@ export const Motion: Story = {
 
 export const SmartHover: Story = {
     name: 'Smart hover (auto shade-step)',
+    parameters: {
+        docs: { description: { story: 'Give a Chamber a primitive `bg` (e.g. `primary.400`) and on hover it auto-steps two shades darker — no `_hover` needed. Semantic backgrounds (`bg.surface`) aren’t auto-stepped; use `hoverScale` or an explicit `_hover`.' } },
+    },
     render: () => (
         <Chamber display="flex" flexDir="column" gap="3" maxW="420px">
             <Tunnel color="text.secondary">
@@ -58,7 +64,10 @@ export const SmartHover: Story = {
 
 export const ResponsiveProps: Story = {
     name: 'Responsive props',
-    parameters: { layout: 'fullscreen' },
+    parameters: {
+        layout: 'fullscreen',
+        docs: { description: { story: 'Any token prop (and layout props like `flexDir`, `gridTemplateColumns`) accepts a breakpoint object: `{ base, sm, md, lg, xl }`. On web these inject `@media` rules; values cascade up like CSS min-width. Resize the preview.' } },
+    },
     render: () => (
         <Chamber p="6" display="flex" flexDir="column" gap="4">
             <Tunnel as="h3" fontSize={{ base: 'lg', md: '2xl' }} fontWeight="bold">

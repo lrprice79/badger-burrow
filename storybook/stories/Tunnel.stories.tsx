@@ -19,6 +19,9 @@ export default meta
 type Story = StoryObj<typeof Tunnel>
 
 export const Playground: Story = {
+    parameters: {
+        docs: { description: { story: 'Live text sandbox. `as` picks the element (`h1`–`h6`, `p`, `span`, `label`); font/typography props take short-form tokens (`fontSize="lg"`, `fontWeight="bold"`). Tunnel has no layout props — wrap it in a Chamber to position it.' } },
+    },
     args: {
         as: 'p',
         color: 'text.primary',

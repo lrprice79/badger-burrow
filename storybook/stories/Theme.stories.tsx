@@ -19,13 +19,34 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
+// ─── what each semantic token means ───────────────────────────────────────────
+
+const MEANINGS: Record<string, string> = {
+    'bg.surface': 'Page / app background — the base layer everything sits on',
+    'bg.elevated': 'Raised surfaces above the page — cards, modals, dropdowns',
+    'bg.overlay': 'Scrims behind modals (semi-transparent black)',
+    'text.primary': 'Main body & heading text',
+    'text.secondary': 'Supporting text — captions, labels, placeholders',
+    'text.inverse': 'Text that sits on a coloured / brand background (e.g. a primary button)',
+    'interactive.primary': 'Primary actions — main buttons, links, focus rings',
+    'interactive.secondary': 'Secondary actions — the harmonic partner colour',
+    'border.default': 'Dividers, outlines, card borders',
+    'feedback.success': 'Positive / confirmation states',
+    'feedback.error': 'Errors & destructive actions',
+    'feedback.warning': 'Caution states',
+    'feedback.info': 'Informational notices',
+}
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
-function Swatch({ token, label }: { token: string; label?: string }) {
+function Swatch({ token, label, desc }: { token: string; label?: string; desc?: boolean }) {
     return (
         <Chamber display="flex" flexDir="column" gap="1">
-            <Chamber bg={token} h="56px" radius="md" borderWidth={1} borderColor="border.default" />
-            <Tunnel fontSize="xs" fontFamily="mono">{label ?? token}</Tunnel>
+            <Chamber bg={token} h="56px" radius="md" borderWidth={1} borderColor="border.default" shadow="sm" />
+            <Tunnel fontSize="xs" fontFamily="mono" fontWeight="medium">{label ?? token}</Tunnel>
+            {desc && MEANINGS[token] && (
+                <Tunnel fontSize="xs" color="text.secondary" lineHeight="tight">{MEANINGS[token]}</Tunnel>
+            )}
         </Chamber>
     )
 }
@@ -38,29 +59,88 @@ function Grid({ children, cols = 4 }: { children: React.ReactNode; cols?: number
     )
 }
 
+// ─── naming explainer ─────────────────────────────────────────────────────────
+
+export const TokenNaming: Story = {
+    name: 'Token Naming',
+    parameters: {
+        docs: { description: { story: 'How BadgerBurrow token names are structured, and what each part means.' } },
+    },
+    render: () => (
+        <Chamber display="flex" flexDir="column" gap="5" maxW="640px">
+            <Tunnel as="h3" fontSize="xl" fontWeight="bold">How token names work</Tunnel>
+
+            <Chamber display="flex" flexDir="column" gap="2">
+                <Tunnel fontWeight="semibold">Two layers</Tunnel>
+                <Tunnel color="text.secondary">
+                    <Tunnel as="span" fontWeight="medium" color="text.primary">Primitive</Tunnel> tokens are raw scale values —
+                    <Tunnel as="span" fontFamily="mono"> primary.500</Tunnel>, <Tunnel as="span" fontFamily="mono">neutral.100</Tunnel>.
+                    Ten shades (50 → 900) per colour.
+                </Tunnel>
+                <Tunnel color="text.secondary">
+                    <Tunnel as="span" fontWeight="medium" color="text.primary">Semantic</Tunnel> tokens point at primitives by
+                    <Tunnel as="span" fontWeight="medium" color="text.primary"> role</Tunnel>, not hue —
+                    <Tunnel as="span" fontFamily="mono"> bg.surface</Tunnel>, <Tunnel as="span" fontFamily="mono">text.primary</Tunnel>.
+                    Dark mode swaps the semantic layer only, so your components never mention a raw colour.
+                </Tunnel>
+            </Chamber>
+
+            <Chamber display="flex" flexDir="column" gap="2">
+                <Tunnel fontWeight="semibold">The category prefix tells you the role</Tunnel>
+                {([
+                    ['bg.*', 'Backgrounds / surfaces'],
+                    ['text.*', 'Text colours'],
+                    ['interactive.*', 'Actionable things — buttons, links, focus'],
+                    ['border.*', 'Borders & dividers'],
+                    ['feedback.*', 'Status — success / error / warning / info'],
+                ] as const).map(([name, meaning]) => (
+                    <Chamber key={name} display="flex" gap="3" align="baseline">
+                        <Chamber w="130px"><Tunnel fontFamily="mono" fontSize="sm" color="interactive.primary">{name}</Tunnel></Chamber>
+                        <Tunnel fontSize="sm" color="text.secondary">{meaning}</Tunnel>
+                    </Chamber>
+                ))}
+            </Chamber>
+
+            <Chamber display="flex" flexDir="column" gap="2">
+                <Tunnel fontWeight="semibold">In props you drop the category</Tunnel>
+                <Tunnel color="text.secondary">
+                    The prop name already implies it, so you write <Tunnel as="span" fontFamily="mono">bg="bg.surface"</Tunnel>,
+                    <Tunnel as="span" fontFamily="mono"> color="text.primary"</Tunnel>,
+                    <Tunnel as="span" fontFamily="mono"> p="4"</Tunnel> — never the full
+                    <Tunnel as="span" fontFamily="mono"> color.</Tunnel> / <Tunnel as="span" fontFamily="mono">space.</Tunnel> path.
+                </Tunnel>
+            </Chamber>
+        </Chamber>
+    ),
+}
+
 // ─── light & dark ─────────────────────────────────────────────────────────────
 
 export const LightAndDark: Story = {
     name: 'Light & Dark',
+    parameters: {
+        docs: { description: { story: 'Every semantic colour with a plain-English note on its role. Toggle the Mode toolbar to see the same names resolve to different values in light vs dark.' } },
+    },
     render: () => (
         <Chamber display="flex" flexDir="column" gap="5">
             <Tunnel as="h3" fontSize="xl" fontWeight="bold">Semantic colours — toggle Mode in the toolbar ↑</Tunnel>
-            <Grid cols={4}>
-                <Swatch token="bg.surface" />
-                <Swatch token="bg.elevated" />
-                <Swatch token="text.primary" />
-                <Swatch token="text.secondary" />
-                <Swatch token="interactive.primary" />
-                <Swatch token="interactive.secondary" />
-                <Swatch token="border.default" />
-                <Swatch token="text.inverse" />
+            <Tunnel color="text.secondary">Each name is a role; the value behind it changes with the mode. Hover descriptions explain what each is for.</Tunnel>
+            <Grid cols={3}>
+                <Swatch token="bg.surface" desc />
+                <Swatch token="bg.elevated" desc />
+                <Swatch token="border.default" desc />
+                <Swatch token="text.primary" desc />
+                <Swatch token="text.secondary" desc />
+                <Swatch token="text.inverse" desc />
+                <Swatch token="interactive.primary" desc />
+                <Swatch token="interactive.secondary" desc />
             </Grid>
             <Tunnel as="h3" fontSize="lg" fontWeight="semibold">Feedback</Tunnel>
             <Grid cols={4}>
-                <Swatch token="feedback.success" />
-                <Swatch token="feedback.error" />
-                <Swatch token="feedback.warning" />
-                <Swatch token="feedback.info" />
+                <Swatch token="feedback.success" desc />
+                <Swatch token="feedback.error" desc />
+                <Swatch token="feedback.warning" desc />
+                <Swatch token="feedback.info" desc />
             </Grid>
         </Chamber>
     ),
@@ -180,7 +260,7 @@ export const Harmonics: Story = {
 
 // ─── colour scales ────────────────────────────────────────────────────────────
 
-const SCALES = ['primary', 'secondary', 'neutral', 'success', 'error', 'warning', 'info'] as const
+const SCALES = ['primary', 'secondary', 'neutral', 'ink', 'success', 'error', 'warning', 'info'] as const
 const SHADES = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'] as const
 
 export const ColourScales: Story = {

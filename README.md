@@ -82,7 +82,7 @@ The design foundation. Pure TypeScript — no React dependency.
 
 | Category | Contents |
 |---|---|
-| `primitive.color` | 7 colour scales — `primary`, `secondary`, `neutral`, `success`, `error`, `warning`, `info` — each with 10 shades (50–900) |
+| `primitive.color` | 8 colour scales — `primary`, `secondary`, `neutral` (surfaces/borders), `ink` (text), `success`, `error`, `warning`, `info` — each with 10 shades (50–900) |
 | `primitive.space` | Spacing scale — numeric keys (`0`–`16`) and named keys (`sm`, `md`, `lg`, `xl`) |
 | `primitive.radius` | Border radii — `none`, `sm`, `md`, `lg`, `xl`, `full` |
 | `primitive.fontSize` | `xs` → `3xl` |
@@ -123,6 +123,33 @@ const harmonics = generateHarmonics('#744577')
 ```
 
 Each value is a ready-to-use colour scale. Drop straight into `extendBurrow`.
+
+### Surfaces vs text — `neutral` and `ink`
+
+Greys do two different jobs, so they get two scales:
+
+- **`neutral`** — surfaces, panels and borders. A clean pure grey with a near-white `50` (`#f7f7f7`), so page backgrounds stay bright.
+- **`ink`** — text. A faintly cool dark scale, kept *separate* so making surfaces lighter never weakens text contrast.
+
+Override either independently:
+
+```ts
+extendBurrow({ primitive: { color: {
+  neutral: generateScale('#737373'),   // your surface grey
+  ink:     generateScale('#1e1e24'),   // your text colour (warm/cool/branded)
+} } })
+```
+
+**Recommended semantic → shade mapping** (how the defaults wire roles to shades — handy when building a theme; go darker/lighter to taste):
+
+| Role | Light | Dark |
+|---|---|---|
+| `bg.surface` | `neutral.100` | `neutral.900` |
+| `bg.elevated` | `#ffffff` | `neutral.800` |
+| `border.default` | `neutral.200` | `neutral.700` |
+| `text.primary` | `ink.900` | `ink.50` |
+| `text.secondary` | `ink.600` | `ink.400` |
+| `text.inverse` | `#ffffff` | `ink.900` |
 
 ---
 
@@ -387,7 +414,7 @@ The default token set includes pre-built hover variants for common semantic colo
 ```
 color.interactive.primary.hover   → primary.700 (light) / primary.200 (dark)
 color.interactive.secondary.hover → secondary.700 (light) / secondary.200 (dark)
-color.bg.surface.hover            → neutral.100 (light) / neutral.800 (dark)
+color.bg.surface.hover            → neutral.200 (light) / neutral.800 (dark)
 color.bg.elevated.hover           → neutral.50 (light) / neutral.700 (dark)
 color.text.primary.hover          → neutral.700 (light) / neutral.200 (dark)
 color.text.secondary.hover        → neutral.700 (light) / neutral.200 (dark)
@@ -651,10 +678,10 @@ from one hex by regenerating the `primary` scale). Story groups:
 | Package | Tests |
 |---|---|
 | `@badger-burrow/tokens` | 42 |
-| `@badger-burrow/core` | 217 |
+| `@badger-burrow/core` | 224 |
 | `@badger-burrow/web` | 315 |
 | `@badger-burrow/native` | 76 |
-| **Total** | **650** |
+| **Total** | **657** |
 
 ---
 

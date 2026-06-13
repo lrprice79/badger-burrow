@@ -21,6 +21,9 @@ type Story = StoryObj<typeof Chamber>
 // ─── interactive playground ───────────────────────────────────────────────────
 
 export const Playground: Story = {
+    parameters: {
+        docs: { description: { story: 'The live sandbox. Each control is a real prop: token dropdowns (`bg`, `p`, `radius`, `shadow`…) take short-form token values, `as` switches the rendered element. Numbers like `borderWidth` are raw pixels.' } },
+    },
     args: {
         bg: 'bg.elevated',
         color: 'text.primary',

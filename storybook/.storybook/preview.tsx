@@ -37,7 +37,7 @@ const preview: Preview = {
                 order: [
                     'Introduction',
                     'Theme',
-                    ['Light & Dark', 'Theme Palette', 'Colour Harmonics', 'Colour Scales', 'Spacing', 'Typography', 'Radii', 'Shadows'],
+                    ['Token Naming', 'Light & Dark', 'Theme Palette', 'Colour Harmonics', 'Colour Scales', 'Spacing', 'Typography', 'Radii', 'Shadows'],
                     'Components',
                     ['Chamber', 'Tunnel'],
                     'Patterns',

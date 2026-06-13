@@ -183,6 +183,43 @@ Now you have a full design-system-quality palette — primary, accent, warm, coo
 
 ---
 
+### Greys: `neutral` (surfaces) vs `ink` (text)
+
+Greys do two jobs that pull in opposite directions — surfaces want a bright,
+near-white light end, while text wants strong, dark, high-contrast values. So
+they're **two separate scales**, and you can tune each independently:
+
+```ts
+extendBurrow({
+  primitive: {
+    color: {
+      neutral: generateScale('#808080'),  // surfaces & borders — clean grey, near-white 50
+      ink:     generateScale('#71717A'),   // text — slightly cool, rich dark end
+    },
+  },
+})
+```
+
+Want warmer text on cool panels? Branded text? Just change `ink` — surfaces stay put.
+
+**Recommended role → shade mapping.** This is how the defaults wire each semantic
+role to a shade. Use it as a starting recipe and go a step darker/lighter to taste:
+
+| Role | Light shade | Dark shade |
+|---|---|---|
+| `bg.surface` (page) | `neutral.100` | `neutral.900` |
+| `bg.elevated` (cards) | `#ffffff` | `neutral.800` |
+| `border.default` | `neutral.200` | `neutral.700` |
+| `text.primary` | `ink.900` | `ink.50` |
+| `text.secondary` | `ink.600` | `ink.400` |
+| `text.inverse` (on brand bg) | `#ffffff` | `ink.900` |
+
+> Tip: there's nothing lighter than `50`, so a *brighter* surface comes from a
+> *lighter scale* (a lighter base hex), not from picking a different shade. For
+> everything else, going up/down a shade is exactly the knob.
+
+---
+
 ### Choosing semantic token names
 
 Semantic tokens decouple your components from specific colours. Instead of hardcoding `green[500]`, your components say `color.interactive.primary` — which means you can swap the whole palette in one `extendBurrow()` call.
@@ -497,7 +534,7 @@ Available hover tokens:
 |---|---|---|
 | `color.interactive.primary.hover` | primary.700 | primary.200 |
 | `color.interactive.secondary.hover` | secondary.600 | secondary.300 |
-| `color.bg.surface.hover` | neutral.100 | neutral.800 |
+| `color.bg.surface.hover` | neutral.200 | neutral.800 |
 | `color.bg.elevated.hover` | neutral.50 | neutral.700 |
 | `color.text.primary.hover` | neutral.700 | neutral.200 |
 | `color.text.secondary.hover` | neutral.700 | neutral.200 |
