@@ -317,8 +317,19 @@ export interface PseudoBoxProps {
     hoverShade?: number
 }
 
+/**
+ * Dev-only debugging, mixed into both component prop types.
+ */
+export interface DebugProps {
+    /**
+     * Dev-only: highlight this element and log what BadgerBurrow resolved for it
+     * (resolved styles, render count, size). A no-op in production builds.
+     */
+    __debug?: boolean
+}
+
 /** All box props combined — used by Chamber (web) and Chamber (native) */
-export interface BurrowBoxProps extends BurrowBoxVisualProps, PseudoBoxProps {
+export interface BurrowBoxProps extends BurrowBoxVisualProps, PseudoBoxProps, DebugProps {
     sx?: SxProp
 }
 
@@ -388,7 +399,7 @@ export interface PseudoTextProps {
 }
 
 /** All text props combined — used by Tunnel (web) and Tunnel (native) */
-export interface BurrowTextProps extends BurrowTextVisualProps, PseudoTextProps {
+export interface BurrowTextProps extends BurrowTextVisualProps, PseudoTextProps, DebugProps {
     sx?: SxProp
 }
 

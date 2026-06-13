@@ -11,6 +11,7 @@ import {
 import type { BurrowBoxProps } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
 import { injectPseudoStyles, injectResponsiveStyles, stableStringify } from './styleInjector'
+import { useDebug, mergeRefs } from './useDebug'
 
 export type ChamberTag =
     | 'div' | 'section' | 'article' | 'aside'
@@ -56,7 +57,7 @@ export interface ChamberProps
  * />
  */
 export const Chamber = React.forwardRef<HTMLElement, ChamberProps>(function Chamber(
-    { as: Tag = 'div', sx, style, children, ...props },
+    { as: Tag = 'div', sx, style, children, __debug, ...props },
     ref,
 ) {
     const { tokens, mode } = useBurrow()
@@ -121,14 +122,18 @@ export const Chamber = React.forwardRef<HTMLElement, ChamberProps>(function Cham
         injectResponsiveStyles(className, bpStyles, breakpoints)
     }
 
+    const resolvedStyle = { ...sxStyles, ...tokenStyles, ...style } as React.CSSProperties
+    const dbg = useDebug(__debug, { component: 'Chamber', tag: String(Tag), mode, style: resolvedStyle })
+
     // Cast to ElementType so the dynamic tag union doesn't explode the ref/prop
     // types (a union of every element's ref is both incompatible and "too complex").
     const Component = Tag as React.ElementType
     return (
         <Component
-            ref={ref}
+            ref={mergeRefs(ref, dbg.debugRef)}
             className={className}
-            style={{ ...sxStyles, ...tokenStyles, ...style } as React.CSSProperties}
+            style={dbg.outline ? { ...resolvedStyle, outline: dbg.outline } : resolvedStyle}
+            {...(dbg.attr ? { 'data-bb-debug': dbg.attr } : {})}
             {...(htmlProps as React.HTMLAttributes<HTMLElement>)}
         >
             {children}

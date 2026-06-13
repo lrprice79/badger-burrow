@@ -11,6 +11,7 @@ import {
 import type { BurrowTextProps } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
 import { injectPseudoStyles, injectResponsiveStyles, stableStringify } from './styleInjector'
+import { useDebug, mergeRefs } from './useDebug'
 
 type TunnelTag = 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'label'
 
@@ -40,7 +41,7 @@ export interface TunnelProps
  * </Tunnel>
  */
 export const Tunnel = React.forwardRef<HTMLElement, TunnelProps>(function Tunnel(
-    { as: Tag = 'span', sx, style, children, ...props },
+    { as: Tag = 'span', sx, style, children, __debug, ...props },
     ref,
 ) {
     const { tokens, mode } = useBurrow()
@@ -103,13 +104,17 @@ export const Tunnel = React.forwardRef<HTMLElement, TunnelProps>(function Tunnel
         injectResponsiveStyles(className, bpStyles, breakpoints)
     }
 
+    const resolvedStyle = { ...sxStyles, ...tokenStyles, ...style } as React.CSSProperties
+    const dbg = useDebug(__debug, { component: 'Tunnel', tag: String(Tag), mode, style: resolvedStyle })
+
     // Cast to ElementType so the dynamic tag union doesn't explode the ref/prop types.
     const Component = Tag as React.ElementType
     return (
         <Component
-            ref={ref}
+            ref={mergeRefs(ref, dbg.debugRef)}
             className={className}
-            style={{ ...sxStyles, ...tokenStyles, ...style } as React.CSSProperties}
+            style={dbg.outline ? { ...resolvedStyle, outline: dbg.outline } : resolvedStyle}
+            {...(dbg.attr ? { 'data-bb-debug': dbg.attr } : {})}
             {...(htmlProps as React.HTMLAttributes<HTMLElement>)}
         >
             {children}

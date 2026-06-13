@@ -11,6 +11,7 @@ import {
 import type { BurrowTextProps, SxProp } from '@badger-burrow/core'
 import { useBurrow } from './useBurrow'
 import { useActiveBreakpoint } from './useActiveBreakpoint'
+import { useDebug } from './useDebug'
 import type { NativeTextCSSOverrides } from './cssOverrides'
 import { sanitizeNativeStyle, nativeLineCount } from './nativeStyle'
 
@@ -37,7 +38,7 @@ export interface TunnelProps
  *   Page title
  * </Tunnel>
  */
-export function Tunnel({ sx, style, children, testID, ...props }: TunnelProps) {
+export function Tunnel({ sx, style, children, testID, __debug, ...props }: TunnelProps) {
     const { tokens, mode } = useBurrow()
 
     // Split burrow props from passthrough props
@@ -73,8 +74,10 @@ export function Tunnel({ sx, style, children, testID, ...props }: TunnelProps) {
         ...style,
     } as TextStyle
 
+    const { onLayout } = useDebug(__debug, { component: 'Tunnel', mode, style: resolvedStyle })
+
     return (
-        <Text style={resolvedStyle} numberOfLines={numberOfLines} testID={testID} {...passthroughProps}>
+        <Text style={resolvedStyle} numberOfLines={numberOfLines} onLayout={onLayout} testID={testID} {...passthroughProps}>
             {children}
         </Text>
     )

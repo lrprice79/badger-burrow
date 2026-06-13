@@ -34,6 +34,6 @@ export type {
     LayoutProps, FlexProps, GridProps, InsetProps, BorderProps, EffectProps, PositionProps,
     InteractionProps, TransitionProps, AnimationProps, ScrollProps,
     FontProps, TextLayoutProps, TextHelperProps,
-    TokenValue, RV, ShadowKey,
+    TokenValue, RV, ShadowKey, DebugProps,
 } from './props'
 export { BURROW_BOX_KEYS, BURROW_TEXT_KEYS } from './props'

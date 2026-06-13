@@ -13,6 +13,7 @@ import { useBurrow } from './useBurrow'
 import { useActiveBreakpoint } from './useActiveBreakpoint'
 import type { NativeBoxCSSOverrides } from './cssOverrides'
 import { sanitizeNativeStyle } from './nativeStyle'
+import { useDebug } from './useDebug'
 
 export interface ChamberProps
     extends Omit<BurrowBoxProps, keyof NativeBoxCSSOverrides>,
@@ -37,7 +38,7 @@ export interface ChamberProps
  *   <Tunnel>Hello</Tunnel>
  * </Chamber>
  */
-export function Chamber({ sx, style, children, testID, ...props }: ChamberProps) {
+export function Chamber({ sx, style, children, testID, __debug, ...props }: ChamberProps) {
     const { tokens, mode } = useBurrow()
 
     // Split burrow props from passthrough props
@@ -81,8 +82,10 @@ export function Chamber({ sx, style, children, testID, ...props }: ChamberProps)
         ...style,
     } as ViewStyle & { pointerEvents?: ViewProps['pointerEvents'] }
 
+    const { onLayout } = useDebug(__debug, { component: 'Chamber', mode, style: mergedStyle })
+
     return (
-        <View style={mergedStyle as ViewStyle} pointerEvents={pointerEvents} testID={testID} {...passthroughProps}>
+        <View style={mergedStyle as ViewStyle} pointerEvents={pointerEvents} onLayout={onLayout} testID={testID} {...passthroughProps}>
             {children}
         </View>
     )

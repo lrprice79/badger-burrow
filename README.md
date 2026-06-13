@@ -599,6 +599,30 @@ Semantic tokens resolve differently per mode. Primitive tokens are always the sa
 
 ---
 
+## Debugging — `__debug`
+
+Add `__debug` to any `Chamber` or `Tunnel` and it reveals what BadgerBurrow
+actually did with it — the questions inspect-element can't answer:
+
+```tsx
+<Chamber __debug bg="primary.500" p="4">…</Chamber>
+```
+
+- **outlines** the element (dashed magenta) so you can see which one it is;
+- exposes a **`data-bb-debug="⟳N"`** render counter (visible in devtools — handy
+  for catching needless re-renders);
+- logs a collapsed **console group** each render with the **resolved styles**
+  (`primary.500 → #723dd7`, `p="4" → 16px`), render count, size and mode.
+
+On native it logs the resolved style + size (via `onLayout`) to the console.
+
+It's **dev-only** — guarded by `process.env.NODE_ENV`, so the whole thing is a
+no-op and tree-shaken out of production builds. Catching a silent token typo is
+the headline use: a misspelled `fontSize="larg"` shows up as the raw string
+`"larg"` instead of a `px` value, so you spot it instantly.
+
+---
+
 ## Token values — short form
 
 Token props take the **short form** — the prop name already implies the category,
@@ -680,10 +704,10 @@ from one hex by regenerating the `primary` scale). Story groups:
 | Package | Tests |
 |---|---|
 | `@badger-burrow/tokens` | 42 |
-| `@badger-burrow/core` | 224 |
-| `@badger-burrow/web` | 315 |
-| `@badger-burrow/native` | 76 |
-| **Total** | **657** |
+| `@badger-burrow/core` | 236 |
+| `@badger-burrow/web` | 325 |
+| `@badger-burrow/native` | 82 |
+| **Total** | **685** |
 
 ---
 

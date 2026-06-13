@@ -107,3 +107,21 @@ export const PseudoMatrix: Story = {
         </Chamber>
     ),
 }
+
+// ─── __debug ──────────────────────────────────────────────────────────────────
+
+export const Debug: Story = {
+    name: 'Debug (__debug)',
+    parameters: {
+        docs: { description: { story: 'Add `__debug` to any Chamber/Tunnel: it outlines the element, exposes a `data-bb-debug="⟳N"` render counter (inspect it in devtools), and logs the resolved styles to a collapsed console group. Open the browser console and look at the elements panel. Dev-only — tree-shaken in production.' } },
+    },
+    render: () => (
+        <Chamber display="flex" flexDir="column" gap="4" maxW="420px">
+            <Tunnel color="text.secondary">Outlined in magenta · open the console + inspect <Tunnel as="span" fontFamily="mono">data-bb-debug</Tunnel></Tunnel>
+            <Chamber __debug bg="primary.500" color="text.inverse" p="5" radius="lg">
+                <Tunnel>Chamber with __debug</Tunnel>
+            </Chamber>
+            <Tunnel __debug fontSize="lg" fontWeight="bold" color="text.primary">Tunnel with __debug</Tunnel>
+        </Chamber>
+    ),
+}
