@@ -2,8 +2,32 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
 import React from 'react'
 import { Chamber, Tunnel, useBurrow } from '@badger-burrow/web'
-import { generateHarmonics } from '@badger-burrow/tokens'
+import { generateHarmonics, generateScale } from '@badger-burrow/tokens'
 import { getTheme } from '../.storybook/themes'
+
+/** Storybook's colour control can hand back hex or rgb(a) — normalise to #rrggbb. */
+function normalizeHex(input: string): string {
+    if (/^#[0-9a-fA-F]{6}$/.test(input)) return input.toLowerCase()
+    const m = input.match(/(\d+)\D+(\d+)\D+(\d+)/)
+    if (m) {
+        const h = (n: string) => Math.max(0, Math.min(255, parseInt(n, 10))).toString(16).padStart(2, '0')
+        return `#${h(m[1])}${h(m[2])}${h(m[3])}`
+    }
+    return '#8b5cf6'
+}
+
+const ALL_SHADES = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'] as const
+
+function ScaleStrip({ label, scale }: { label: string; scale: Record<string, string> }) {
+    return (
+        <Chamber display="flex" align="center" gap="3">
+            <Chamber w="120px"><Tunnel fontFamily="mono" fontSize="sm" color="text.secondary">{label}</Tunnel></Chamber>
+            <Chamber display="flex" flex="1" radius="md" overflow="hidden" borderWidth={1} borderColor="border.default">
+                {ALL_SHADES.map((s) => <Chamber key={s} bg={scale[s]} h="36px" flex="1" />)}
+            </Chamber>
+        </Chamber>
+    )
+}
 
 const meta: Meta = {
     title: 'Theme',
@@ -253,6 +277,56 @@ export const Harmonics: Story = {
                 <HarmonyRow label="triadic" hexes={h.triadic} active={theme.harmony === 'triadic'} />
                 <HarmonyRow label="splitComplementary" hexes={h.splitComplementary} active={theme.harmony === 'splitComplementary'} />
                 <HarmonyRow label="tetradic" hexes={h.tetradic} />
+            </Chamber>
+        )
+    },
+}
+
+// ─── interactive harmonics explorer ───────────────────────────────────────────
+
+export const HarmonicsExplorer: Story = {
+    name: 'Harmonics Explorer',
+    argTypes: { base: { control: 'color', name: 'Base colour' } },
+    args: { base: '#8B5CF6' },
+    parameters: {
+        docs: { description: { story: 'Pick any colour in the Controls panel — its complementary (and the other harmonies) are generated live with `generateHarmonics`. The two full scales are ready to drop straight into `extendBurrow`.' } },
+    },
+    render: (args) => {
+        const base = normalizeHex(String((args as { base?: string }).base ?? '#8b5cf6'))
+        const hexes = generateHarmonics(base, { scales: false }) as unknown as HexHarmonics
+        const baseScale = generateScale(base) as unknown as Record<string, string>
+        const compScale = generateScale(hexes.complementary) as unknown as Record<string, string>
+        return (
+            <Chamber display="flex" flexDir="column" gap="6" maxW="760px">
+                <Tunnel as="h3" fontSize="xl" fontWeight="bold">Pick a colour in the Controls panel → find its complement</Tunnel>
+
+                <Chamber display="flex" gap="6" align="center" wrap="wrap">
+                    <Chamber display="flex" flexDir="column" gap="1" align="center">
+                        <Chamber bg={base} w="120px" h="80px" radius="lg" shadow="sm" borderWidth={1} borderColor="border.default" />
+                        <Tunnel fontWeight="semibold">Your colour</Tunnel>
+                        <Tunnel fontFamily="mono" fontSize="sm" color="text.secondary">{base}</Tunnel>
+                    </Chamber>
+                    <Tunnel fontSize="2xl" color="text.secondary">+180° →</Tunnel>
+                    <Chamber display="flex" flexDir="column" gap="1" align="center">
+                        <Chamber bg={hexes.complementary} w="120px" h="80px" radius="lg" shadow="sm" borderWidth={1} borderColor="border.default" />
+                        <Tunnel fontWeight="semibold">Complementary</Tunnel>
+                        <Tunnel fontFamily="mono" fontSize="sm" color="text.secondary">{hexes.complementary}</Tunnel>
+                    </Chamber>
+                </Chamber>
+
+                <Chamber display="flex" flexDir="column" gap="2">
+                    <Tunnel fontWeight="semibold">Generated scales — ready for <Tunnel as="span" fontFamily="mono">extendBurrow</Tunnel></Tunnel>
+                    <ScaleStrip label="base → primary" scale={baseScale} />
+                    <ScaleStrip label="complementary" scale={compScale} />
+                </Chamber>
+
+                <Chamber display="flex" flexDir="column" gap="3">
+                    <Tunnel fontWeight="semibold">Other harmonies of your colour</Tunnel>
+                    <HarmonyRow label="analogous" hexes={hexes.analogous} />
+                    <HarmonyRow label="triadic" hexes={hexes.triadic} />
+                    <HarmonyRow label="splitComplementary" hexes={hexes.splitComplementary} />
+                    <HarmonyRow label="tetradic" hexes={hexes.tetradic} />
+                </Chamber>
             </Chamber>
         )
     },
