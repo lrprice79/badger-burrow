@@ -1,10 +1,42 @@
 # BadgerBurrow — Setup Guide
 
-A walkthrough for setting up BadgerBurrow in a new project with your own styles.
+Plain-English guide: what BadgerBurrow is, what the pieces are, and how to set it up.
 
 ---
 
-## 1. Install
+## What it is, in one minute
+
+BadgerBurrow lets you style React and React Native apps with **props instead of CSS files**. You write `<Chamber bg="bg.surface" p="4">` and it just works — in light mode, dark mode, on web and on native.
+
+All the colours, spacing and font sizes come from a central set of **design tokens** — named values like `bg.surface` or `space.4`. You set those once when your app starts; change one and everything using it updates.
+
+There's **no `<ThemeProvider>`** to wrap your app in. You call one function at startup and you're done.
+
+---
+
+## The building blocks
+
+There are really only four things to learn:
+
+| Thing | What it is |
+|---|---|
+| **`Chamber`** | A box. Layout, containers, cards, buttons — anything that *holds* things. Renders a `<div>` on web, `<View>` on native. |
+| **`Tunnel`** | Text. Every bit of visible text goes in a Tunnel — headings, labels, paragraphs. Renders a `<span>` on web, `<Text>` on native. |
+| **Tokens** | Named design values — colours (`primary.500`, `text.primary`), spacing (`4`, `md`), radius, font sizes. You use them as prop values. |
+| **`extendBurrow()`** | The one function you call at startup to set *your* colours / spacing / fonts. |
+
+**The golden rule:** if it's visible text → `Tunnel`. If it's a box or container → `Chamber`.
+
+### Two kinds of token
+
+- **Primitive** tokens are the raw palette — `primary.500`, `neutral.100`. Ten shades (50 → 900) per colour.
+- **Semantic** tokens describe a *job*, not a colour — `bg.surface` (the page), `text.primary` (body text), `interactive.primary` (buttons). They point at primitives, and **dark mode simply re-points them**. Your components only ever name the job, so they work in both modes with no extra code.
+
+Greys are split in two: a **`neutral`** scale for surfaces/borders and an **`ink`** scale for text (more on that under “Greys” below).
+
+---
+
+## Install
 
 **React (web):**
 
@@ -22,7 +54,49 @@ Both packages share the same `extendBurrow()` setup and the same token props. Th
 
 ---
 
-## 2. Build your colour palette
+## The simplest setup
+
+You can get a fully themed, dark-mode-ready app with **two bits of code**.
+
+**1. Set your brand colour once, at app startup** (`main.tsx` / `App.tsx`):
+
+```ts
+import { extendBurrow } from '@badger-burrow/core'
+import { generateScale } from '@badger-burrow/tokens'
+
+// one hex → a full 50–900 scale → becomes your `primary`
+extendBurrow({ primitive: { color: { primary: generateScale('#8B5CF6') } } })
+```
+
+That's the whole setup. No wrapper, no provider. Everything you don't set keeps a sensible default.
+
+**2. Build UI with `Chamber` (boxes) and `Tunnel` (text):**
+
+```tsx
+import { Chamber, Tunnel } from '@badger-burrow/web'
+
+function Hello() {
+  return (
+    <Chamber bg="bg.surface" p="6" display="flex" flexDir="column" gap="3">
+      <Tunnel as="h1" fontSize="2xl" fontWeight="bold" color="text.primary">
+        Hello, badger
+      </Tunnel>
+      <Chamber as="button" bg="interactive.primary" color="text.inverse" px="5" py="3" radius="md">
+        Click me
+      </Chamber>
+    </Chamber>
+  )
+}
+```
+
+That's a complete, themeable app. **Everything below is optional depth** — richer palettes, dark-mode toggles, hover states, responsive props, motion — reach for it when you need it.
+
+---
+
+## Build your colour palette
+
+> *Optional.* You only need this if you want BadgerBurrow to generate full,
+> harmonious colour scales for you. To just get going, the [simplest setup](#the-simplest-setup) above is enough.
 
 ### `generateScale` — one hex colour → a full 50–900 scale
 
@@ -250,7 +324,7 @@ Common naming patterns:
 
 ---
 
-## 3. Extend at app entry — once, no wrapper
+## Extend at app entry — once, no wrapper
 
 In your root file (`main.tsx`, `index.tsx`, `App.tsx` — wherever your app starts):
 
@@ -303,7 +377,7 @@ That's your entire setup. No `<ThemeProvider>` anywhere in your app.
 
 ---
 
-## 4. Use it in components
+## Use it in components
 
 Chamber defaults to `<div>` but renders as any semantic element via the `as` prop. This matters for accessibility — a button should be a `<button>`, a link should be an `<a>`.
 
@@ -393,7 +467,7 @@ function Card({ title, subtitle }: { title: string; subtitle: string }) {
 
 ---
 
-## 5. Dark mode toggle — anywhere in your app
+## Dark mode toggle — anywhere in your app
 
 ```tsx
 import { useBurrow } from '@badger-burrow/web'
@@ -422,7 +496,7 @@ No provider. No context passing. `setMode` reaches the store directly and only c
 
 ---
 
-## 6. One-off styles that don't fit the props
+## One-off styles that don't fit the props
 
 Use `sx` for anything not covered by named props:
 
@@ -451,7 +525,7 @@ Token paths work inside `sx` too:
 
 ---
 
-## 7. Hover and pseudo-state styles
+## Hover and pseudo-state styles
 
 Inline styles can't do `:hover`, `:focus` etc — the browser doesn't support it. BadgerBurrow solves this by generating a scoped class name and injecting a `<style>` tag automatically. You never touch a CSS file.
 
@@ -569,7 +643,7 @@ extendBurrow({
 
 ---
 
-## 8. Responsive props
+## Responsive props
 
 Any prop that takes a token (spacing, colour, size, typography…) **and** the
 layout/flex/grid props (`flexDir`, `align`, `justify`, `display`, the grid
@@ -654,7 +728,7 @@ platforms.
 
 ---
 
-## 9. Motion — transitions from tokens
+## Motion — transitions from tokens
 
 The `transition` and `animation` timing props accept **motion token keywords**
 as well as raw CSS, so you don't hand-write durations and easings.
@@ -690,7 +764,7 @@ per project via `extendBurrow({ motion: { duration: { fast: 120 } } })`.
 
 ---
 
-## 10. Reusable variants with `createVariants`
+## Reusable variants with `createVariants`
 
 Define them once, use the resolver in any component:
 
@@ -724,7 +798,7 @@ function Button({ size = 'md', children }) {
 
 ---
 
-## 11. React Native
+## React Native
 
 Everything above applies to React Native too — same `extendBurrow()`, same token paths, same prop names. Swap the import and you're done.
 
@@ -804,7 +878,7 @@ function PrimaryButton({ children, onPress }) {
 tokens.primitive.space[4]  // → 16  (web adds 'px' → '16px', native passes 16)
 ```
 
-**Responsive props** (section 8) work on native too — instead of `@media`
+**Responsive props** (see “Responsive props” above) work on native too — instead of `@media`
 queries, the active breakpoint is derived from the live window width, so the
 same `flexDir={{ base: 'column', md: 'row' }}` reflows on rotation.
 
