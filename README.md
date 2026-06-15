@@ -1,4 +1,11 @@
-# BadgerBurrow
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/badger-inverse.png">
+    <img src="assets/badger.png" width="160" alt="BadgerBurrow">
+  </picture>
+</p>
+
+<h1 align="center">BadgerBurrow</h1>
 
 > *No ThemeProvider. No Context. No cascade re-renders. Your theme lives in the burrow.*
 
