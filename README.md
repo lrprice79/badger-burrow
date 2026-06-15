@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/badger-inverse.png">
-    <img src="assets/badger.png" width="160" alt="BadgerBurrow">
-  </picture>
+  <img src="assets/badger-logo.png" width="140" alt="BadgerBurrow">
 </p>
 
 <h1 align="center">BadgerBurrow</h1>
