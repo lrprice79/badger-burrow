@@ -1,5 +1,5 @@
 import { resolveToken, resolvePrimitive } from '../resolver'
-import { defaultTokens } from '@badger-burrow/tokens'
+import { defaultTokens } from '@badger-eco/burrow-tokens'
 
 // ─── resolvePrimitive ────────────────────────────────────────────────────────
 

@@ -18,9 +18,9 @@ const config: StorybookConfig = {
         vite.resolve = vite.resolve ?? {}
         vite.resolve.alias = {
             ...(vite.resolve.alias as Record<string, string>),
-            '@badger-burrow/tokens': pkg('tokens'),
-            '@badger-burrow/core': pkg('core'),
-            '@badger-burrow/web': pkg('web'),
+            '@badger-eco/burrow-tokens': pkg('tokens'),
+            '@badger-eco/burrow-core': pkg('core'),
+            '@badger-eco/burrow-web': pkg('web'),
         }
         return vite
     },

@@ -1,5 +1,5 @@
 {
-  "name": "@badger-burrow/storybook",
+  "name": "@badger-eco/burrow-storybook",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -8,9 +8,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@badger-burrow/tokens": "workspace:*",
-    "@badger-burrow/core": "workspace:*",
-    "@badger-burrow/web": "workspace:*",
+    "@badger-eco/burrow-tokens": "workspace:*",
+    "@badger-eco/burrow-core": "workspace:*",
+    "@badger-eco/burrow-web": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

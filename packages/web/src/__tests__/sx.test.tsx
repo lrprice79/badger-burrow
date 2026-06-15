@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { act } from 'react'
 import { Chamber } from '../Chamber'
 import { Tunnel } from '../Tunnel'
-import { BadgerBase, extendBurrow } from '@badger-burrow/core'
+import { BadgerBase, extendBurrow } from '@badger-eco/burrow-core'
 
 beforeEach(() => {
     BadgerBase.reset()

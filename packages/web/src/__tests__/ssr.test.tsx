@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-import { BadgerBase } from '@badger-burrow/core'
+import { BadgerBase } from '@badger-eco/burrow-core'
 import { Chamber } from '../Chamber'
 import {
     createStyleRegistry,

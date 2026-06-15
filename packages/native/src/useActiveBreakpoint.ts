@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { Dimensions } from 'react-native'
-import { getActiveBreakpoint } from '@badger-burrow/core'
+import { getActiveBreakpoint } from '@badger-eco/burrow-core'
 
 /**
  * Central window-width store for breakpoint resolution.

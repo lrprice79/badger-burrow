@@ -7,8 +7,8 @@ import {
     splitResponsiveProps,
     getBreakpointOrder,
     resolveResponsiveValue,
-} from '@badger-burrow/core'
-import type { BurrowBoxProps, SxProp } from '@badger-burrow/core'
+} from '@badger-eco/burrow-core'
+import type { BurrowBoxProps, SxProp } from '@badger-eco/burrow-core'
 import { useBurrow } from './useBurrow'
 import { useActiveBreakpoint } from './useActiveBreakpoint'
 import type { NativeBoxCSSOverrides } from './cssOverrides'

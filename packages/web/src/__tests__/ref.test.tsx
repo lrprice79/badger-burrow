@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { Chamber } from '../Chamber'
 import { Tunnel } from '../Tunnel'
-import { BadgerBase } from '@badger-burrow/core'
+import { BadgerBase } from '@badger-eco/burrow-core'
 
 beforeEach(() => { BadgerBase.reset() })
 

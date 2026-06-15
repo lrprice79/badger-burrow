@@ -1,4 +1,4 @@
-import { defaultTokens } from '@badger-burrow/tokens'
+import { defaultTokens } from '@badger-eco/burrow-tokens'
 import { buildBoxStyles, buildTextStyles } from '../buildStyles'
 
 // ─── #7 explicit props win over boolean helpers ──────────────────────────────

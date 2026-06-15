@@ -1,4 +1,4 @@
-import { defaultTokens } from '@badger-burrow/tokens'
+import { defaultTokens } from '@badger-eco/burrow-tokens'
 import { stepShade, resolveHoverBg, buildPseudoStyles } from '../pseudo'
 import { resolveToken } from '../resolver'
 

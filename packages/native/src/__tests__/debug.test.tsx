@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react-native'
-import { BadgerBase } from '@badger-burrow/core'
+import { BadgerBase } from '@badger-eco/burrow-core'
 import { Chamber } from '../Chamber'
 import { Tunnel } from '../Tunnel'
 

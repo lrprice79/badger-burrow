@@ -1,5 +1,5 @@
 {
-  "name": "@badger-burrow/web",
+  "name": "@badger-eco/burrow-web",
   "version": "0.0.1",
   "private": true,
   "main": "./dist/index.mjs",
@@ -16,8 +16,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@badger-burrow/core": "workspace:*",
-    "@badger-burrow/tokens": "workspace:*"
+    "@badger-eco/burrow-core": "workspace:*",
+    "@badger-eco/burrow-tokens": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",

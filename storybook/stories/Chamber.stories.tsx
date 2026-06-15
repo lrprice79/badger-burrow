@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Chamber, Tunnel } from '@badger-burrow/web'
+import { Chamber, Tunnel } from '@badger-eco/burrow-web'
 import { chamberArgTypes } from './_controls'
 
 const meta: Meta<typeof Chamber> = {

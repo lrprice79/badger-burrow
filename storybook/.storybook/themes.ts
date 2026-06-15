@@ -1,7 +1,7 @@
-import { generateScale, generateHarmonics } from '@badger-burrow/tokens'
-import type { PrimitiveColorScale } from '@badger-burrow/tokens'
-import { extendBurrow, BadgerBase } from '@badger-burrow/core'
-import type { ColorMode } from '@badger-burrow/core'
+import { generateScale, generateHarmonics } from '@badger-eco/burrow-tokens'
+import type { PrimitiveColorScale } from '@badger-eco/burrow-tokens'
+import { extendBurrow, BadgerBase } from '@badger-eco/burrow-core'
+import type { ColorMode } from '@badger-eco/burrow-core'
 
 /**
  * Storybook themes — each is a single brand hex plus a colour-harmony strategy.

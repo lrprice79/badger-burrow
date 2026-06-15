@@ -1,5 +1,5 @@
 {
-  "name": "@badger-burrow/tokens",
+  "name": "@badger-eco/burrow-tokens",
   "version": "0.0.1",
   "private": true,
   "main": "./dist/index.mjs",

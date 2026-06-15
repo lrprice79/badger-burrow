@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
 import React from 'react'
-import { Chamber, Tunnel } from '@badger-burrow/web'
+import { Chamber, Tunnel } from '@badger-eco/burrow-web'
 
 const meta: Meta = {
     title: 'Patterns',

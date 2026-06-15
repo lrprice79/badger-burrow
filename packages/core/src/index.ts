@@ -1,4 +1,4 @@
-// @badger-burrow/core — pub/sub store, token resolution, React hook
+// @badger-eco/burrow-core — pub/sub store, token resolution, React hook
 // Exports added as each task is completed
 export { fnv1a, toClassName } from './hash'
 export { resolveToken, resolvePrimitive } from './resolver'
@@ -25,7 +25,7 @@ export type {
     ColorToken, SpaceToken, RadiusToken,
     FontSizeToken, FontWeightToken, LineHeightToken, LetterSpacingToken, FontFamilyToken,
     DurationToken, EasingToken,
-} from '@badger-burrow/tokens'
+} from '@badger-eco/burrow-tokens'
 export { resolveDuration, resolveEasing, resolveTransition } from './motion'
 export type {
     BurrowBoxProps, BurrowBoxVisualProps, PseudoBoxProps,

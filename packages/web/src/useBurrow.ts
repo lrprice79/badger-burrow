@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react'
-import { BadgerBase } from '@badger-burrow/core'
-import type { BurrowSnapshot } from '@badger-burrow/core'
-import type { ColorMode } from '@badger-burrow/core'
+import { BadgerBase } from '@badger-eco/burrow-core'
+import type { BurrowSnapshot } from '@badger-eco/burrow-core'
+import type { ColorMode } from '@badger-eco/burrow-core'
 
 export interface UseBurrowResult extends BurrowSnapshot {
     setMode: (mode: ColorMode) => void

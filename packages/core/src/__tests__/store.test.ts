@@ -1,5 +1,5 @@
 import { BadgerBase } from '../store'
-import { defaultTokens } from '@badger-burrow/tokens'
+import { defaultTokens } from '@badger-eco/burrow-tokens'
 
 beforeEach(() => {
     BadgerBase.reset()

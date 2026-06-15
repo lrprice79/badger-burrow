@@ -1,4 +1,4 @@
-import type { BurrowTokens } from '@badger-burrow/tokens'
+import type { BurrowTokens } from '@badger-eco/burrow-tokens'
 
 export type ColorMode = 'light' | 'dark'
 

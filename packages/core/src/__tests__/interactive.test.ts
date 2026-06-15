@@ -1,4 +1,4 @@
-import { defaultTokens } from '@badger-burrow/tokens'
+import { defaultTokens } from '@badger-eco/burrow-tokens'
 import { resolveToken } from '../resolver'
 
 const primary = defaultTokens.primitive.color.primary

@@ -1,5 +1,5 @@
-import { defaultTokens } from '@badger-burrow/tokens'
-import type { BurrowTokens } from '@badger-burrow/tokens'
+import { defaultTokens } from '@badger-eco/burrow-tokens'
+import type { BurrowTokens } from '@badger-eco/burrow-tokens'
 import type { ColorMode } from './resolver'
 
 export interface BurrowSnapshot {

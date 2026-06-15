@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import type { Preview, Decorator } from '@storybook/react'
-import { Chamber } from '@badger-burrow/web'
+import { Chamber } from '@badger-eco/burrow-web'
 import { THEMES, applyTheme } from './themes'
 
 const withBurrowTheme: Decorator = (Story, context) => {
