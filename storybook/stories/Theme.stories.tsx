@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
 import React from 'react'
 import { Chamber, Tunnel, useBurrow } from '@badger-burrow/web'
-import { generateHarmonics, generateScale } from '@badger-burrow/tokens'
+import { generateHarmonics, generateScale, generateTheme, type GeneratedTheme, type ThemeHarmony } from '@badger-burrow/tokens'
 import { getTheme } from '../.storybook/themes'
 
 /** Storybook's colour control can hand back hex or rgb(a) — normalise to #rrggbb. */
@@ -192,13 +192,13 @@ export const ThemePalette: Story = {
                 </Chamber>
                 <Chamber as="button" onClick={action('secondary clicked')}
                     bg="interactive.secondary" color="text.inverse" px="5" py="3" radius="md" fontWeight="semibold"
-                    cursor="pointer" _active={{ opacity: 0.85 }}>
+                    cursor="pointer" _hover={{ bg: 'interactive.secondary.hover' }} _active={{ opacity: 0.85 }}>
                     Secondary action
                 </Chamber>
                 <Chamber as="button" onClick={action('outline clicked')}
                     bg="bg.elevated" color="interactive.primary" borderWidth={1}
                     borderColor="interactive.primary" px="5" py="3" radius="md" fontWeight="semibold"
-                    cursor="pointer" _hover={{ bg: 'bg.surface' }} _active={{ opacity: 0.85 }}>
+                    cursor="pointer" _hover={{ bg: 'bg.surface.hover' }} _active={{ opacity: 0.85 }}>
                     Outline
                 </Chamber>
             </Chamber>
@@ -330,6 +330,150 @@ export const HarmonicsExplorer: Story = {
             </Chamber>
         )
     },
+}
+
+// ─── generateTheme — one hex → an AA-checked theme ────────────────────────────
+
+/** WCAG relative luminance + contrast, so the story can prove its own AA claim. */
+function lin(c: number): number {
+    return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+}
+function lum(hex: string): number {
+    const h = hex.replace('#', '')
+    const r = parseInt(h.slice(0, 2), 16) / 255
+    const g = parseInt(h.slice(2, 4), 16) / 255
+    const b = parseInt(h.slice(4, 6), 16) / 255
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+}
+function contrastRatio(a: string, b: string): number {
+    const la = lum(a), lb = lum(b)
+    const [hi, lo] = la > lb ? [la, lb] : [lb, la]
+    return (hi + 0.05) / (lo + 0.05)
+}
+
+/** Resolve a `{color.scale.shade}` reference (or raw hex) against a generated theme. */
+function resolveRef(theme: GeneratedTheme, value: string): string {
+    const m = value.match(/^\{color\.(\w+)\.(\d+)\}$/)
+    if (!m) return value
+    return (theme.primitive.color[m[1]] as Record<string, string>)[m[2]]
+}
+
+/** A live themed button pair with its measured contrast ratio + AA verdict. */
+function ThemedButtons({ theme }: { theme: GeneratedTheme }) {
+    const s = theme.semantic.light
+    const label = resolveRef(theme, s['color.text.inverse'])
+    const rows = [
+        ['Primary', resolveRef(theme, s['color.interactive.primary']), resolveRef(theme, s['color.interactive.primary.hover'])],
+        ['Secondary', resolveRef(theme, s['color.interactive.secondary']), resolveRef(theme, s['color.interactive.secondary.hover'])],
+    ] as const
+    return (
+        <Chamber display="flex" flexDir="column" gap="3">
+            {rows.map(([name, bg, hover]) => {
+                const ratio = contrastRatio(bg, label)
+                const pass = ratio >= 4.5
+                return (
+                    <Chamber key={name} display="flex" align="center" gap="3" wrap="wrap">
+                        <Chamber as="button" bg={bg} color={label} px="5" py="3" radius="md"
+                            fontWeight="semibold" cursor="pointer" borderWidth={0}
+                            _hover={{ bg: hover }} _active={{ opacity: 0.85 }}>
+                            {name} action
+                        </Chamber>
+                        <Tunnel fontFamily="mono" fontSize="sm" color="text.secondary">{bg}</Tunnel>
+                        <Tunnel fontFamily="mono" fontSize="sm"
+                            color={pass ? 'feedback.success' : 'feedback.error'} fontWeight="semibold">
+                            {ratio.toFixed(2)}:1 {pass ? 'AA ✓' : 'FAIL'}
+                        </Tunnel>
+                        <Tunnel fontSize="xs" color="text.secondary">
+                            label {label.toLowerCase() === '#ffffff' ? 'white' : 'dark'}
+                        </Tunnel>
+                    </Chamber>
+                )
+            })}
+        </Chamber>
+    )
+}
+
+export const ThemeGenerator: Story = {
+    name: 'generateTheme — live',
+    argTypes: {
+        brand: { control: 'color', name: 'Brand colour' },
+        harmony: {
+            control: 'select',
+            options: ['complementary', 'analogous', 'triadic', 'splitComplementary'],
+            name: 'Secondary harmony',
+        },
+    },
+    args: { brand: '#8B5CF6', harmony: 'complementary' },
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Pick **any** brand colour in the Controls panel. `generateTheme(brand)` returns a complete, ready-for-`extendBurrow` theme — and chooses each button’s shade + label colour so it stays WCAG-AA readable. The measured contrast ratio is shown next to every button; it never drops below 4.5:1, whatever hue you choose. Note how light brands (try yellow) flip the label to dark automatically.',
+            },
+        },
+    },
+    render: (args) => {
+        const brand = normalizeHex(String((args as { brand?: string }).brand ?? '#8b5cf6'))
+        const harmony = ((args as { harmony?: string }).harmony ?? 'complementary') as ThemeHarmony
+        const theme = generateTheme(brand, { harmony })
+        return (
+            <Chamber display="flex" flexDir="column" gap="6" maxW="720px">
+                <Chamber display="flex" flexDir="column" gap="1">
+                    <Tunnel as="h3" fontSize="xl" fontWeight="bold">One hex → a complete, accessible theme</Tunnel>
+                    <Tunnel color="text.secondary">
+                        <Tunnel as="span" fontFamily="mono">extendBurrow(generateTheme('{brand}'))</Tunnel> — that’s the whole setup.
+                    </Tunnel>
+                </Chamber>
+                <ThemedButtons theme={theme} />
+                <Chamber display="flex" flexDir="column" gap="2">
+                    <Tunnel fontWeight="semibold">Generated scales</Tunnel>
+                    <ScaleStrip label="primary" scale={theme.primitive.color.primary as Record<string, string>} />
+                    <ScaleStrip label="secondary" scale={theme.primitive.color.secondary as Record<string, string>} />
+                    <ScaleStrip label="neutral" scale={theme.primitive.color.neutral as Record<string, string>} />
+                    <ScaleStrip label="ink" scale={theme.primitive.color.ink as Record<string, string>} />
+                </Chamber>
+            </Chamber>
+        )
+    },
+}
+
+const TRICKY_HUES: [string, string][] = [
+    ['Violet', '#8B5CF6'],
+    ['Yellow', '#F5D90A'],
+    ['Lime', '#84CC16'],
+    ['Cyan', '#06B6D4'],
+    ['Red', '#EF4444'],
+    ['Navy', '#1E293B'],
+    ['Near-white', '#F8FAFC'],
+]
+
+export const ThemeGeneratorHues: Story = {
+    name: 'generateTheme — any hue stays AA',
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'The same `generateTheme` call across hues that normally break a fixed “white label on shade 600” rule — light yellows, limes, cyans, near-whites. Every primary button still clears 4.5:1; the label flips white↔dark as needed.',
+            },
+        },
+    },
+    render: () => (
+        <Chamber display="flex" flexDir="column" gap="4" maxW="720px">
+            <Tunnel as="h3" fontSize="xl" fontWeight="bold">Readable buttons for every brand colour</Tunnel>
+            {TRICKY_HUES.map(([name, hex]) => {
+                const theme = generateTheme(hex)
+                return (
+                    <Chamber key={hex} display="flex" align="center" gap="4" wrap="wrap">
+                        <Chamber w="100px" display="flex" flexDir="column">
+                            <Tunnel fontWeight="semibold">{name}</Tunnel>
+                            <Tunnel fontFamily="mono" fontSize="xs" color="text.secondary">{hex}</Tunnel>
+                        </Chamber>
+                        <ThemedButtons theme={theme} />
+                    </Chamber>
+                )
+            })}
+        </Chamber>
+    ),
 }
 
 // ─── colour scales ────────────────────────────────────────────────────────────

@@ -124,6 +124,43 @@ const harmonics = generateHarmonics('#744577')
 
 Each value is a ready-to-use colour scale. Drop straight into `extendBurrow`.
 
+### `generateTheme` — one brand colour → a complete, AA-checked theme
+
+When you just want a working theme from a single brand hex, `generateTheme` does
+the whole job: it builds the `primary` scale, derives a `secondary` from a colour
+harmony, adds `neutral` + `ink` greys, and — the part that matters — **picks the
+interactive button shade and its label colour so the button stays WCAG-AA readable
+for any hue**. Light brands (yellow, lime, cyan) get a dark label automatically
+instead of an unreadable white one.
+
+```ts
+import { generateTheme } from '@badger-burrow/tokens'
+import { extendBurrow } from '@badger-burrow/core'
+
+extendBurrow(generateTheme('#8B5CF6'))
+```
+
+It returns `{ primitive: { color }, semantic }` — exactly the shape `extendBurrow`
+expects. Everything you don't override (backgrounds, text, borders, feedback)
+cascades from the default semantic layer against the scales it generated.
+
+```ts
+generateTheme('#F5D90A', {
+  harmony: 'triadic',     // how secondary is derived — default 'complementary'
+  secondary: '#10B981',   // or pin secondary explicitly (overrides harmony)
+  neutral: '#737373',     // surface-grey seed (default #808080)
+  ink: '#1e1e24',         // text-colour seed   (default #71717A)
+})
+```
+
+It's a pure token utility — no React, no DOM — so it works **identically with or
+without SSR**. Call it once at startup; the result is just data.
+
+> One global theme per app. Because the store is a singleton, `generateTheme`
+> sets the theme process-wide — perfect for a single app theme, but a *different*
+> theme per SSR request (multi-tenant) would race across concurrent renders. Out
+> of scope for v1.
+
 ### Surfaces vs text — `neutral` and `ink`
 
 Greys do two different jobs, so they get two scales:
@@ -748,11 +785,11 @@ from one hex by regenerating the `primary` scale). Story groups:
 
 | Package | Tests |
 |---|---|
-| `@badger-burrow/tokens` | 42 |
+| `@badger-burrow/tokens` | 59 |
 | `@badger-burrow/core` | 236 |
 | `@badger-burrow/web` | 332 |
 | `@badger-burrow/native` | 82 |
-| **Total** | **692** |
+| **Total** | **709** |
 
 ---
 

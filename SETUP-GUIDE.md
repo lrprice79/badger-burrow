@@ -98,6 +98,36 @@ That's a complete, themeable app. **Everything below is optional depth** — ric
 > *Optional.* You only need this if you want BadgerBurrow to generate full,
 > harmonious colour scales for you. To just get going, the [simplest setup](#the-simplest-setup) above is enough.
 
+### `generateTheme` — the whole theme from one hex (the shortcut)
+
+If you don't want to wire scales up by hand, `generateTheme` is the fast path:
+one brand colour in, a complete theme out — `primary` + a harmony-derived
+`secondary`, `neutral`/`ink` greys, and interactive button colours whose label is
+auto-chosen to stay **WCAG-AA readable for any hue** (light brands get a dark
+label instead of an unreadable white one).
+
+```ts
+import { generateTheme } from '@badger-burrow/tokens'
+import { extendBurrow } from '@badger-burrow/core'
+
+extendBurrow(generateTheme('#8B5CF6'))   // done — that's a full themed app
+```
+
+Tune it if you like — all optional:
+
+```ts
+generateTheme('#F5D90A', {
+  harmony: 'triadic',     // how secondary is derived (default 'complementary')
+  secondary: '#10B981',   // …or pin secondary outright (overrides harmony)
+  neutral: '#737373',     // surface-grey seed (default #808080)
+  ink: '#1e1e24',         // text-colour seed   (default #71717A)
+})
+```
+
+It's pure data (no React, no DOM), so it behaves the same with or without SSR.
+The rest of this section covers the lower-level building blocks if you want more
+control than `generateTheme` gives you.
+
 ### `generateScale` — one hex colour → a full 50–900 scale
 
 Give it your brand colour and get back ten shades you can drop straight into tokens.
