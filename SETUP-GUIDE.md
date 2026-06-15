@@ -920,6 +920,36 @@ function Card({ title }) {
 
 ---
 
+## Server-side rendering (optional)
+
+You write your components **the same way whether or not you use SSR** — `<Chamber>`
+and `<Tunnel>` have no SSR-specific props or imports. SSR is opt-in at the render
+boundary only.
+
+**Client-only apps (Vite SPA, CRA, etc.):** do nothing. Pseudo (`_hover`) and
+responsive styles inject into `document.head` automatically on first render.
+
+**SSR apps (Next.js, etc.):** wrap the server render so those `<style>` rules are
+collected — on the server there's no DOM to inject them into — and put them in
+`<head>`:
+
+```tsx
+import { renderToString } from 'react-dom/server'
+import { createStyleRegistry } from '@badger-burrow/web'
+
+const registry = createStyleRegistry()
+const body = registry.collect(() => renderToString(<App />))  // App uses Chamber as normal
+const head = registry.styleTags()   // <style data-bb-ssr …>…</style>
+// send: <head>…{head}</head><body>{body}</body>
+```
+
+On the client there's nothing to wire up — `adoptServerStyles()` runs on import and
+stops hydration from duplicating the rules. Base token styles (`bg`, `p`, …) are
+plain inline styles and serialize on their own; only pseudo and responsive styles
+need the registry. Synchronous `renderToString` only for now.
+
+---
+
 ## Summary
 
 | Step | What you do |

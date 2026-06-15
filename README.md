@@ -625,17 +625,28 @@ the headline use: a misspelled `fontSize="larg"` shows up as the raw string
 
 ## Server-side rendering
 
-Base token styles are plain inline styles, so they server-render with no setup.
-**Pseudo (`_hover` etc.) and responsive (`@media`) rules** are injected as
-`<style>` tags, which can't happen on the server — so collect them during render
-and emit them into `<head>`:
+**You use `<Chamber>` and `<Tunnel>` the exact same way with or without SSR —
+the components never change.** SSR is purely opt-in at the render boundary; there
+are no SSR-specific props, variants, or imports inside your components.
+
+**Without SSR (SPA / client-only):** nothing to do. On first render, pseudo and
+responsive rules inject straight into `document.head` at runtime.
+
+```tsx
+// works as-is in any client app
+<Chamber bg="primary.500" p="4" _hover={{ bg: 'primary.600' }} />
+```
+
+**With SSR (Next.js, etc.):** the *same* components, but wrap the server render so
+those `<style>` rules are collected (they can't touch a DOM that doesn't exist on
+the server) and emitted into `<head>`:
 
 ```tsx
 import { renderToString } from 'react-dom/server'
 import { createStyleRegistry } from '@badger-burrow/web'
 
 const registry = createStyleRegistry()
-const body = registry.collect(() => renderToString(<App />))
+const body = registry.collect(() => renderToString(<App />))  // <App> uses Chamber freely
 const head = registry.styleTags()   // → <style data-bb-ssr data-bb-ids="…">…</style>
 
 // send:  <head>…{head}</head><body>{body}</body>
@@ -645,6 +656,12 @@ On the client nothing else is needed — `adoptServerStyles()` runs automaticall
 import, reads the `data-bb-ssr` tag, and primes the cache so hydration never
 re-injects or duplicates those rules. No provider, no `<ThemeProvider>` — same as
 everything else.
+
+**What needs the registry, and what doesn't:** base token styles (`bg`, `p`,
+`fontSize`, …) are plain inline `style={...}` props — they serialize in
+`renderToString` with zero help, SSR or not. Only **pseudo (`_hover`)** and
+**responsive (`{ base, md }`)** styles become real `<style>` rules, so those are
+the only thing the registry collects.
 
 > Synchronous `renderToString` only (the registry is active for the duration of
 > `collect`). Streaming/async SSR isn't supported yet.
