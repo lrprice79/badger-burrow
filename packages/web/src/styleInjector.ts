@@ -127,11 +127,23 @@ function toKebab(prop: string): string {
     return prop.replace(/([A-Z])/g, '-$1').toLowerCase()
 }
 
-/** Convert a resolved style object to a CSS rule body string */
-function styleObjectToCss(styles: Record<string, string | number | undefined>): string {
+/**
+ * Convert a resolved style object to a CSS rule body string.
+ *
+ * `important` marks every declaration `!important`. Pseudo rules need this:
+ * base token props are applied as INLINE styles, which outrank a normal
+ * `.bb:hover { … }` class rule in the cascade — so a hover override would be
+ * silently ignored. An `!important` author declaration beats a normal inline
+ * style, letting the pseudo state actually win.
+ */
+function styleObjectToCss(
+    styles: Record<string, string | number | undefined>,
+    important = false,
+): string {
+    const suffix = important ? ' !important' : ''
     return Object.entries(styles)
         .filter(([, v]) => v !== undefined && v !== '')
-        .map(([k, v]) => `${toKebab(k)}: ${v};`)
+        .map(([k, v]) => `${toKebab(k)}: ${v}${suffix};`)
         .join(' ')
 }
 
@@ -156,7 +168,7 @@ export function injectPseudoRule(
     // Server: collect into the active registry instead of touching the DOM.
     if (_registry) {
         if (_registry.has(id)) return
-        const css = styleObjectToCss(styles)
+        const css = styleObjectToCss(styles, true)
         if (css) _registry.set(id, `.${className}:${pseudoSelector(pseudo)} { ${css} }`)
         return
     }
@@ -164,7 +176,7 @@ export function injectPseudoRule(
     if (typeof document === 'undefined') return
     if (_injected.has(id)) return
 
-    const css = styleObjectToCss(styles)
+    const css = styleObjectToCss(styles, true)
     if (!css) return
 
     const rule = `.${className}:${pseudoSelector(pseudo)} { ${css} }`

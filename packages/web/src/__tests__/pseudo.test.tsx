@@ -35,6 +35,16 @@ describe('Chamber _hover', () => {
         expect(tag?.textContent).toContain('background-color')
     })
 
+    // Base token props are applied as INLINE styles, which outrank a normal
+    // `.bb:hover { … }` class rule in the cascade — so the hover override would be
+    // silently ignored. Marking pseudo declarations `!important` lets the author
+    // rule beat the inline base. This is the actual "does hover work" guarantee.
+    it('emits pseudo declarations as !important so they beat the inline base style', () => {
+        render(<Chamber data-testid="c" bg="primary.500" _hover={{ bg: 'primary.700' }} />)
+        const tag = document.head.querySelector('[data-bb]')
+        expect(tag?.textContent).toMatch(/background-color:[^;]+!important/)
+    })
+
     it('Chamber element gets the generated className', () => {
         render(<Chamber data-testid="c" _hover={{ bg: 'color.interactive.primary' }} />)
         const el = screen.getByTestId('c')
