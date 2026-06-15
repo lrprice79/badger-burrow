@@ -18,18 +18,25 @@ type Story = StoryObj
 
 // ─── building blocks ──────────────────────────────────────────────────────────
 
-function Button({ children, variant = 'primary', ...rest }: { children: React.ReactNode; variant?: 'primary' | 'secondary' | 'ghost'; [k: string]: unknown }) {
+function Button({ children, variant = 'primary', disabled, ...rest }: { children: React.ReactNode; variant?: 'primary' | 'secondary' | 'ghost'; disabled?: boolean; [k: string]: unknown }) {
     const base = {
-        as: 'button' as const, onClick: action('button clicked'),
+        as: 'button' as const, onClick: action('button clicked'), disabled,
         px: '5', py: '3', radius: 'md', fontWeight: 'semibold' as const, fontSize: 'sm' as const,
-        cursor: 'pointer', _active: { opacity: 0.85 },
+        // A disabled button must not react to pointer/hover/active — drop the
+        // interactive props entirely (browsers still match :hover on a disabled
+        // <button>, so it isn't enough to rely on the attribute alone).
+        ...(disabled ? {} : { cursor: 'pointer', _active: { opacity: 0.85 } }),
     }
+    const hover = (h: Record<string, unknown>) => (disabled ? {} : { _hover: h })
     if (variant === 'primary')
-        return <Chamber {...base} bg="interactive.primary" color="text.inverse" _hover={{ bg: 'interactive.primary.hover' }} {...rest}>{children}</Chamber>
+        return <Chamber {...base} bg="interactive.primary" color="text.inverse" {...hover({ bg: 'interactive.primary.hover' })} {...rest}>{children}</Chamber>
     if (variant === 'secondary')
-        return <Chamber {...base} bg="bg.elevated" color="interactive.primary" borderWidth={1} borderColor="interactive.primary" _hover={{ bg: 'bg.surface' }} {...rest}>{children}</Chamber>
-    // ghost — no border/chrome; brand-coloured text, subtle bg on hover
-    return <Chamber {...base} bg="transparent" color="interactive.primary" _hover={{ bg: 'bg.surface' }} {...rest}>{children}</Chamber>
+        return <Chamber {...base} bg="bg.elevated" color="interactive.primary" borderWidth={1} borderColor="interactive.primary" {...hover({ bg: 'bg.surface.hover' })} {...rest}>{children}</Chamber>
+    // ghost — no border/chrome; brand-coloured text, subtle fill on hover.
+    // Hover uses `bg.surface.hover` (one step off the surface) rather than
+    // `bg.surface` — the story canvas IS `bg.surface`, so hovering to it would be
+    // invisible. `.hover` stays distinct from the canvas in both light and dark.
+    return <Chamber {...base} bg="transparent" color="interactive.primary" {...hover({ bg: 'bg.surface.hover' })} {...rest}>{children}</Chamber>
 }
 
 function Badge({ children, tone = 'primary' }: { children: React.ReactNode; tone?: 'primary' | 'success' | 'error' | 'warning' }) {
