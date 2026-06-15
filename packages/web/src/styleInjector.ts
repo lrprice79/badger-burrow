@@ -28,6 +28,79 @@ export function __resetStyleInjectorCache(): void {
     _injected.clear()
 }
 
+// ─── SSR support ──────────────────────────────────────────────────────────────
+
+/**
+ * When a server registry is active, the injectors write their CSS rules here
+ * (keyed by the same id used client-side) instead of touching the DOM. Set only
+ * for the synchronous duration of `registry.collect()`.
+ */
+let _registry: Map<string, string> | null = null
+
+export interface BurrowStyleRegistry {
+    /** Run a synchronous render with this registry active; returns its result. */
+    collect<T>(fn: () => T): T
+    /** A single `<style>` tag string with every collected rule — emit in <head>. */
+    styleTags(): string
+    /** Forget all collected rules (reuse the registry for another request). */
+    clear(): void
+}
+
+/**
+ * Server-side style collection (provider-less, framework-agnostic). Pseudo and
+ * responsive rules aren't injected on the server (there's no DOM), so collect
+ * them during `renderToString` and emit them into the document `<head>`:
+ *
+ *   const registry = createStyleRegistry()
+ *   const html = registry.collect(() => renderToString(<App />))
+ *   // <head> … {registry.styleTags()} … </head><body>{html}</body>
+ *
+ * On the client, the emitted tag carries `data-bb-ids`; `adoptServerStyles()`
+ * (run automatically on import) seeds the cache from it so hydration never
+ * re-injects or duplicates those rules.
+ *
+ * Synchronous SSR only (`renderToString`) — the active registry is a module
+ * global set around `collect`, which is safe because Node runs sync code without
+ * interleaving. Not for streaming/async SSR.
+ */
+export function createStyleRegistry(): BurrowStyleRegistry {
+    const map = new Map<string, string>()
+    return {
+        collect(fn) {
+            const prev = _registry
+            _registry = map
+            try {
+                return fn()
+            } finally {
+                _registry = prev
+            }
+        },
+        styleTags() {
+            if (map.size === 0) return ''
+            const ids = [...map.keys()].join(' ')
+            const css = [...map.values()].join('\n')
+            return `<style data-bb-ssr data-bb-ids="${ids}">${css}</style>`
+        },
+        clear() {
+            map.clear()
+        },
+    }
+}
+
+/**
+ * Seed the injection cache from a server-rendered `[data-bb-ssr]` tag so the
+ * client skips re-injecting (and thus never duplicates) SSR'd rules. Runs once
+ * automatically on import; exported for tests.
+ */
+export function adoptServerStyles(): void {
+    if (typeof document === 'undefined') return
+    const ssr = document.querySelector('style[data-bb-ssr]')
+    const ids = ssr?.getAttribute('data-bb-ids')
+    if (ids) for (const id of ids.split(' ')) _injected.add(id)
+}
+
+adoptServerStyles()
+
 /**
  * JSON.stringify with object keys sorted (two levels deep) — so responsive
  * objects written in different key order hash to the same class name.
@@ -78,9 +151,17 @@ export function injectPseudoRule(
     pseudo: string,
     styles: Record<string, string | number | undefined>,
 ): void {
-    if (typeof document === 'undefined') return
-
     const id = `${className}:${pseudo}`
+
+    // Server: collect into the active registry instead of touching the DOM.
+    if (_registry) {
+        if (_registry.has(id)) return
+        const css = styleObjectToCss(styles)
+        if (css) _registry.set(id, `.${className}:${pseudoSelector(pseudo)} { ${css} }`)
+        return
+    }
+
+    if (typeof document === 'undefined') return
     if (_injected.has(id)) return
 
     const css = styleObjectToCss(styles)
@@ -139,10 +220,7 @@ export function injectResponsiveStyles(
     bpStyles: Partial<Record<string, Record<string, string | number | undefined>>>,
     breakpoints: Record<string, string>,
 ): void {
-    if (typeof document === 'undefined') return
-
     const id = `resp:${className}`
-    if (_injected.has(id)) return
 
     const rules: string[] = []
 
@@ -167,8 +245,17 @@ export function injectResponsiveStyles(
     }
 
     if (rules.length === 0) return
-
     const content = rules.join('\n')
+
+    // Server: collect into the active registry instead of touching the DOM.
+    if (_registry) {
+        if (!_registry.has(id)) _registry.set(id, content)
+        return
+    }
+
+    if (typeof document === 'undefined') return
+    if (_injected.has(id)) return
+
     // One DOM read per unique className total
     const existing = document.head.querySelector(`[${RESPONSIVE_ATTR}="${className}"]`)
     _injected.add(id)

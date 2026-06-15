@@ -623,6 +623,34 @@ the headline use: a misspelled `fontSize="larg"` shows up as the raw string
 
 ---
 
+## Server-side rendering
+
+Base token styles are plain inline styles, so they server-render with no setup.
+**Pseudo (`_hover` etc.) and responsive (`@media`) rules** are injected as
+`<style>` tags, which can't happen on the server — so collect them during render
+and emit them into `<head>`:
+
+```tsx
+import { renderToString } from 'react-dom/server'
+import { createStyleRegistry } from '@badger-burrow/web'
+
+const registry = createStyleRegistry()
+const body = registry.collect(() => renderToString(<App />))
+const head = registry.styleTags()   // → <style data-bb-ssr data-bb-ids="…">…</style>
+
+// send:  <head>…{head}</head><body>{body}</body>
+```
+
+On the client nothing else is needed — `adoptServerStyles()` runs automatically on
+import, reads the `data-bb-ssr` tag, and primes the cache so hydration never
+re-injects or duplicates those rules. No provider, no `<ThemeProvider>` — same as
+everything else.
+
+> Synchronous `renderToString` only (the registry is active for the duration of
+> `collect`). Streaming/async SSR isn't supported yet.
+
+---
+
 ## Token values — short form
 
 Token props take the **short form** — the prop name already implies the category,
@@ -705,9 +733,9 @@ from one hex by regenerating the `primary` scale). Story groups:
 |---|---|
 | `@badger-burrow/tokens` | 42 |
 | `@badger-burrow/core` | 236 |
-| `@badger-burrow/web` | 325 |
+| `@badger-burrow/web` | 332 |
 | `@badger-burrow/native` | 82 |
-| **Total** | **685** |
+| **Total** | **692** |
 
 ---
 
