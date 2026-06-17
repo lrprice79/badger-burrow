@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, act } from '@testing-library/react-native'
-import { BadgerBase, extendBurrow } from '@badger-eco/burrow-core'
+import { BadgerBase, extendBurrow } from '@purple-brock/burrow-core'
 import { Chamber } from '../Chamber'
 
 // toJSON() returns ReactTestRendererJSON from react-test-renderer (children can be strings).

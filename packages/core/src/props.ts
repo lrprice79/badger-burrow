@@ -12,7 +12,7 @@ import type {
     FontFamilyToken,
     DurationToken,
     EasingToken,
-} from '@badger-eco/burrow-tokens'
+} from '@purple-brock/burrow-tokens'
 
 // ─── shared ───────────────────────────────────────────────────────────────────
 

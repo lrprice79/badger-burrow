@@ -1,5 +1,5 @@
 {
-  "name": "@badger-eco/burrow-native",
+  "name": "@purple-brock/burrow-native",
   "version": "0.0.1",
   "private": true,
   "main": "./dist/index.mjs",
@@ -16,8 +16,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@badger-eco/burrow-core": "workspace:*",
-    "@badger-eco/burrow-tokens": "workspace:*"
+    "@purple-brock/burrow-core": "workspace:*",
+    "@purple-brock/burrow-tokens": "workspace:*"
   },
   "devDependencies": {
     "@react-native/babel-preset": "^0.85.3",

@@ -20,7 +20,7 @@ importers:
 
   packages/core:
     dependencies:
-      '@badger-eco/burrow-tokens':
+      '@purple-brock/burrow-tokens':
         specifier: workspace:*
         version: link:../tokens
       react:
@@ -51,10 +51,10 @@ importers:
 
   packages/native:
     dependencies:
-      '@badger-eco/burrow-core':
+      '@purple-brock/burrow-core':
         specifier: workspace:*
         version: link:../core
-      '@badger-eco/burrow-tokens':
+      '@purple-brock/burrow-tokens':
         specifier: workspace:*
         version: link:../tokens
     devDependencies:
@@ -118,10 +118,10 @@ importers:
 
   packages/web:
     dependencies:
-      '@badger-eco/burrow-core':
+      '@purple-brock/burrow-core':
         specifier: workspace:*
         version: link:../core
-      '@badger-eco/burrow-tokens':
+      '@purple-brock/burrow-tokens':
         specifier: workspace:*
         version: link:../tokens
     devDependencies:
@@ -158,13 +158,13 @@ importers:
 
   storybook:
     dependencies:
-      '@badger-eco/burrow-core':
+      '@purple-brock/burrow-core':
         specifier: workspace:*
         version: link:../packages/core
-      '@badger-eco/burrow-tokens':
+      '@purple-brock/burrow-tokens':
         specifier: workspace:*
         version: link:../packages/tokens
-      '@badger-eco/burrow-web':
+      '@purple-brock/burrow-web':
         specifier: workspace:*
         version: link:../packages/web
       react:

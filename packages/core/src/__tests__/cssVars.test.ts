@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { toCssVar, buildCssVarMap, injectCssVars, removeCssVars } from '../cssVars'
-import { defaultTokens } from '@badger-eco/burrow-tokens'
+import { defaultTokens } from '@purple-brock/burrow-tokens'
 
 // ─── toCssVar ────────────────────────────────────────────────────────────────
 

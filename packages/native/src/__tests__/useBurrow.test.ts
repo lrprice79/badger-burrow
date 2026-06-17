@@ -1,5 +1,5 @@
-import { BadgerBase, extendBurrow } from '@badger-eco/burrow-core'
-import { defaultTokens } from '@badger-eco/burrow-tokens'
+import { BadgerBase, extendBurrow } from '@purple-brock/burrow-core'
+import { defaultTokens } from '@purple-brock/burrow-tokens'
 
 beforeEach(() => {
     BadgerBase.reset()

@@ -4,7 +4,7 @@ import { act } from 'react'
 import { Chamber } from '../Chamber'
 // note: act is still used in the unmount test below
 import { Tunnel } from '../Tunnel'
-import { BadgerBase } from '@badger-eco/burrow-core'
+import { BadgerBase } from '@purple-brock/burrow-core'
 import { __resetStyleInjectorCache } from '../styleInjector'
 
 beforeEach(() => {

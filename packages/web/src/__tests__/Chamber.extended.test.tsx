@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { Chamber } from '../Chamber'
-import { BadgerBase } from '@badger-eco/burrow-core'
+import { BadgerBase } from '@purple-brock/burrow-core'
 
 beforeEach(() => {
     BadgerBase.reset()

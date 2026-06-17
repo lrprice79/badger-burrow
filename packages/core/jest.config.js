@@ -4,7 +4,7 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
   moduleNameMapper: {
-    '^@badger-eco/burrow-tokens$': '<rootDir>/../tokens/src/index.ts',
+    '^@purple-brock/burrow-tokens$': '<rootDir>/../tokens/src/index.ts',
   },
 }
 

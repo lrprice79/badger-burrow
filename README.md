@@ -39,7 +39,7 @@ badger-burrow/
 
 ```tsx
 // entry file — call once, no wrapper needed
-import { extendBurrow } from '@badger-eco/burrow-core'
+import { extendBurrow } from '@purple-brock/burrow-core'
 
 extendBurrow({
   primitive: {
@@ -52,7 +52,7 @@ extendBurrow({
 
 ```tsx
 // any component, anywhere in the tree
-import { Chamber, Tunnel } from '@badger-eco/burrow-web'
+import { Chamber, Tunnel } from '@purple-brock/burrow-web'
 
 function Card() {
   return (
@@ -78,7 +78,7 @@ function Card() {
 
 ---
 
-## `@badger-eco/burrow-tokens`
+## `@purple-brock/burrow-tokens`
 
 The design foundation. Pure TypeScript — no React dependency.
 
@@ -105,7 +105,7 @@ The design foundation. Pure TypeScript — no React dependency.
 ### Generating a colour scale
 
 ```ts
-import { generateScale } from '@badger-eco/burrow-tokens'
+import { generateScale } from '@purple-brock/burrow-tokens'
 
 generateScale('#744577')
 // → { 50: '#f9f0f7', 100: '...', ..., 500: '#744577', ..., 900: '...' }
@@ -116,7 +116,7 @@ Options: `anchor` (which shade your hex maps to, default `500`) and `format` (`'
 ### Finding harmonious colours
 
 ```ts
-import { generateHarmonics } from '@badger-eco/burrow-tokens'
+import { generateHarmonics } from '@purple-brock/burrow-tokens'
 
 const harmonics = generateHarmonics('#744577')
 // harmonics.complementary — colour directly opposite on the wheel
@@ -138,8 +138,8 @@ for any hue**. Light brands (yellow, lime, cyan) get a dark label automatically
 instead of an unreadable white one.
 
 ```ts
-import { generateTheme } from '@badger-eco/burrow-tokens'
-import { extendBurrow } from '@badger-eco/burrow-core'
+import { generateTheme } from '@purple-brock/burrow-tokens'
+import { extendBurrow } from '@purple-brock/burrow-core'
 
 extendBurrow(generateTheme('#8B5CF6'))
 ```
@@ -194,14 +194,14 @@ extendBurrow({ primitive: { color: {
 
 ---
 
-## `@badger-eco/burrow-core`
+## `@purple-brock/burrow-core`
 
 The engine. No React dependency — usable in any TypeScript project.
 
 ### Store — `BadgerBase`
 
 ```ts
-import { BadgerBase } from '@badger-eco/burrow-core'
+import { BadgerBase } from '@purple-brock/burrow-core'
 
 BadgerBase.getTokens()        // current BurrowTokens
 BadgerBase.setTokens(tokens)  // replace token set, notifies all subscribers
@@ -216,7 +216,7 @@ BadgerBase.getSnapshot()      // stable reference for useSyncExternalStore
 Deep-merges a partial override onto `defaultTokens`, stores the result, and notifies all subscribers. Never mutates `defaultTokens`.
 
 ```ts
-import { extendBurrow } from '@badger-eco/burrow-core'
+import { extendBurrow } from '@purple-brock/burrow-core'
 
 extendBurrow({
   primitive: {
@@ -234,7 +234,7 @@ first call's overrides. For layering (app sets the brand, a feature module adds 
 own tokens later) use **`mergeBurrow`**, which merges onto the *current* token set:
 
 ```ts
-import { extendBurrow, mergeBurrow } from '@badger-eco/burrow-core'
+import { extendBurrow, mergeBurrow } from '@purple-brock/burrow-core'
 
 extendBurrow({ primitive: { color: { primary: brandScale } } })       // app entry
 mergeBurrow({ primitive: { color: { chartAccent: accentScale } } })   // feature module — brand kept
@@ -247,7 +247,7 @@ Both are one-shot merges at call time — zero per-render cost.
 Map named variant keys to token-backed styles.
 
 ```ts
-import { createVariants } from '@badger-eco/burrow-core'
+import { createVariants } from '@purple-brock/burrow-core'
 
 const size = createVariants({
   sm: { padding: 'space.2', fontSize: 'fontSize.sm' },
@@ -263,7 +263,7 @@ const styles = size('md', tokens, mode)
 ### Token resolution — `resolveToken`
 
 ```ts
-import { resolveToken } from '@badger-eco/burrow-core'
+import { resolveToken } from '@purple-brock/burrow-core'
 
 resolveToken('color.interactive.primary', tokens, 'light')
 // → '#744577'  (resolves semantic → primitive)
@@ -275,7 +275,7 @@ resolveToken('space.4', tokens)
 ### CSS variables — web only
 
 ```ts
-import { injectCssVars, removeCssVars, buildCssVarMap } from '@badger-eco/burrow-core'
+import { injectCssVars, removeCssVars, buildCssVarMap } from '@purple-brock/burrow-core'
 
 injectCssVars(tokens, 'light')           // injects --badger-* on :root
 injectCssVars(tokens, 'dark', element)   // scoped to an element
@@ -285,7 +285,7 @@ removeCssVars()                          // cleans up
 ### Token-aware sx resolution — `resolveSx`
 
 ```ts
-import { resolveSx } from '@badger-eco/burrow-core'
+import { resolveSx } from '@purple-brock/burrow-core'
 
 resolveSx({ padding: 'space.4', cursor: 'pointer' }, tokens, 'light')
 // → { padding: '16px', cursor: 'pointer' }
@@ -307,19 +307,19 @@ import type {
   // motion token keywords:
   DurationToken, EasingToken,
   FontProps, TextLayoutProps, TextHelperProps,
-} from '@badger-eco/burrow-core'
+} from '@purple-brock/burrow-core'
 ```
 
 ---
 
-## `@badger-eco/burrow-web`
+## `@purple-brock/burrow-web`
 
 React components for web. Requires React 18+.
 
 ### `useBurrow`
 
 ```tsx
-import { useBurrow } from '@badger-eco/burrow-web'
+import { useBurrow } from '@purple-brock/burrow-web'
 
 function ThemeToggle() {
   const { tokens, mode, setMode } = useBurrow()
@@ -555,14 +555,14 @@ Defaults to `<span>`. Use `as` to change the tag — `h1`–`h6`, `p`, `label` a
 
 ---
 
-## `@badger-eco/burrow-native`
+## `@purple-brock/burrow-native`
 
 React Native components. Same token props as the web package — the same `extendBurrow()` call works across both.
 
 Install:
 
 ```bash
-npm install @badger-eco/burrow-tokens @badger-eco/burrow-core @badger-eco/burrow-native
+npm install @purple-brock/burrow-tokens @purple-brock/burrow-core @purple-brock/burrow-native
 ```
 
 ### `useBurrow`
@@ -570,7 +570,7 @@ npm install @badger-eco/burrow-tokens @badger-eco/burrow-core @badger-eco/burrow
 Identical API to the web version — `useSyncExternalStore` over `BadgerBase`. Works in React Native out of the box.
 
 ```tsx
-import { useBurrow } from '@badger-eco/burrow-native'
+import { useBurrow } from '@purple-brock/burrow-native'
 
 const { tokens, mode, setMode } = useBurrow()
 ```
@@ -582,7 +582,7 @@ Same token props as web Chamber. Renders a `View`. No `as` prop needed — in Re
 **Shadow** uses `tokens.primitive.shadow[key].native` — the elevation object (`{ elevation, shadowColor, ... }`) rather than a CSS string.
 
 ```tsx
-import { Chamber, Tunnel } from '@badger-eco/burrow-native'
+import { Chamber, Tunnel } from '@purple-brock/burrow-native'
 
 function Card() {
   return (
@@ -684,7 +684,7 @@ the server) and emitted into `<head>`:
 
 ```tsx
 import { renderToString } from 'react-dom/server'
-import { createStyleRegistry } from '@badger-eco/burrow-web'
+import { createStyleRegistry } from '@purple-brock/burrow-web'
 
 const registry = createStyleRegistry()
 const body = registry.collect(() => renderToString(<App />))  // <App> uses Chamber freely
@@ -789,10 +789,10 @@ from one hex by regenerating the `primary` scale). Story groups:
 
 | Package | Tests |
 |---|---|
-| `@badger-eco/burrow-tokens` | 59 |
-| `@badger-eco/burrow-core` | 236 |
-| `@badger-eco/burrow-web` | 332 |
-| `@badger-eco/burrow-native` | 82 |
+| `@purple-brock/burrow-tokens` | 59 |
+| `@purple-brock/burrow-core` | 236 |
+| `@purple-brock/burrow-web` | 332 |
+| `@purple-brock/burrow-native` | 82 |
 | **Total** | **709** |
 
 ---
@@ -801,7 +801,7 @@ from one hex by regenerating the `primary` scale). Story groups:
 
 | Package | Status |
 |---|---|
-| `@badger-eco/burrow-tokens` | ✅ Complete |
-| `@badger-eco/burrow-core` | ✅ Complete |
-| `@badger-eco/burrow-web` | ✅ Complete |
-| `@badger-eco/burrow-native` | ✅ Complete |
+| `@purple-brock/burrow-tokens` | ✅ Complete |
+| `@purple-brock/burrow-core` | ✅ Complete |
+| `@purple-brock/burrow-web` | ✅ Complete |
+| `@purple-brock/burrow-native` | ✅ Complete |

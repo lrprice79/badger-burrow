@@ -10,14 +10,14 @@ The packages are not yet published (`private: true`); entries accumulate under
 
 ### Added
 
-- **`generateTheme()`** (`@badger-eco/burrow-tokens`) — one brand hex → a complete,
+- **`generateTheme()`** (`@purple-brock/burrow-tokens`) — one brand hex → a complete,
   AA-checked theme `{ primitive, semantic }` ready for `extendBurrow`. Builds the
   primary scale, a harmony-derived secondary, and `neutral` + `ink` greys, and
   picks each interactive button's shade + label colour so it stays WCAG-AA
   readable for **any** hue (light brands get a dark label automatically). Pure
   utility — no React/DOM — so it behaves identically with and without SSR.
   Options: `harmony`, `secondary`, `neutral`, `ink`.
-- **Server-side rendering** (`@badger-eco/burrow-web`) — `createStyleRegistry()` +
+- **Server-side rendering** (`@purple-brock/burrow-web`) — `createStyleRegistry()` +
   `adoptServerStyles()` collect pseudo/responsive `<style>` rules during
   `renderToString` and prime the client cache so hydration never duplicates them.
 

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
 import React from 'react'
-import { Chamber, Tunnel, useBurrow } from '@badger-eco/burrow-web'
-import { generateHarmonics, generateScale, generateTheme, type GeneratedTheme, type ThemeHarmony } from '@badger-eco/burrow-tokens'
+import { Chamber, Tunnel, useBurrow } from '@purple-brock/burrow-web'
+import { generateHarmonics, generateScale, generateTheme, type GeneratedTheme, type ThemeHarmony } from '@purple-brock/burrow-tokens'
 import { getTheme } from '../.storybook/themes'
 
 /** Storybook's colour control can hand back hex or rgb(a) — normalise to #rrggbb. */

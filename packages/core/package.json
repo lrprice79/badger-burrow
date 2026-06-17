@@ -1,5 +1,5 @@
 {
-  "name": "@badger-eco/burrow-core",
+  "name": "@purple-brock/burrow-core",
   "version": "0.0.1",
   "private": true,
   "main": "./dist/index.mjs",
@@ -16,7 +16,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@badger-eco/burrow-tokens": "workspace:*"
+    "@purple-brock/burrow-tokens": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^29.0.0",

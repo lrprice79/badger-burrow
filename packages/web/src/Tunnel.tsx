@@ -7,8 +7,8 @@ import {
     BURROW_TEXT_KEYS,
     splitResponsiveProps,
     getBreakpointOrder,
-} from '@badger-eco/burrow-core'
-import type { BurrowTextProps } from '@badger-eco/burrow-core'
+} from '@purple-brock/burrow-core'
+import type { BurrowTextProps } from '@purple-brock/burrow-core'
 import { useBurrow } from './useBurrow'
 import { injectPseudoStyles, injectResponsiveStyles, stableStringify } from './styleInjector'
 import { useDebug, mergeRefs } from './useDebug'

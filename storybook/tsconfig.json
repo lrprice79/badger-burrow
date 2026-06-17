@@ -11,9 +11,9 @@
     "noEmit": true,
     "types": ["node"],
     "paths": {
-      "@badger-eco/burrow-tokens": ["../packages/tokens/src/index.ts"],
-      "@badger-eco/burrow-core": ["../packages/core/src/index.ts"],
-      "@badger-eco/burrow-web": ["../packages/web/src/index.ts"]
+      "@purple-brock/burrow-tokens": ["../packages/tokens/src/index.ts"],
+      "@purple-brock/burrow-core": ["../packages/core/src/index.ts"],
+      "@purple-brock/burrow-web": ["../packages/web/src/index.ts"]
     }
   },
   "include": [".storybook", "stories"]

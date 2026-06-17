@@ -4,7 +4,7 @@ module.exports = {
   testEnvironment: 'jsdom',
   roots: ['<rootDir>/src'],
   moduleNameMapper: {
-    '^@badger-eco/burrow-tokens$': '<rootDir>/../tokens/src/index.ts',
-    '^@badger-eco/burrow-core$': '<rootDir>/../core/src/index.ts',
+    '^@purple-brock/burrow-tokens$': '<rootDir>/../tokens/src/index.ts',
+    '^@purple-brock/burrow-core$': '<rootDir>/../core/src/index.ts',
   },
 }

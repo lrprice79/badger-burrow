@@ -1,4 +1,4 @@
-import { defaultTokens } from '@badger-eco/burrow-tokens'
+import { defaultTokens } from '@purple-brock/burrow-tokens'
 import { buildBoxStyles, buildTextStyles } from '../buildStyles'
 import { buildPseudoStyles } from '../pseudo'
 

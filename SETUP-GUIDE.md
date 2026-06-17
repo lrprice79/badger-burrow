@@ -41,13 +41,13 @@ Greys are split in two: a **`neutral`** scale for surfaces/borders and an **`ink
 **React (web):**
 
 ```bash
-npm install @badger-eco/burrow-tokens @badger-eco/burrow-core @badger-eco/burrow-web
+npm install @purple-brock/burrow-tokens @purple-brock/burrow-core @purple-brock/burrow-web
 ```
 
 **React Native:**
 
 ```bash
-npm install @badger-eco/burrow-tokens @badger-eco/burrow-core @badger-eco/burrow-native
+npm install @purple-brock/burrow-tokens @purple-brock/burrow-core @purple-brock/burrow-native
 ```
 
 Both packages share the same `extendBurrow()` setup and the same token props. The only difference is the component internals — `Chamber` renders `<View>` in native, `<div>` on web; `Tunnel` renders `<Text>` in native, `<span>` on web.
@@ -61,8 +61,8 @@ You can get a fully themed, dark-mode-ready app with **two bits of code**.
 **1. Set your brand colour once, at app startup** (`main.tsx` / `App.tsx`):
 
 ```ts
-import { extendBurrow } from '@badger-eco/burrow-core'
-import { generateScale } from '@badger-eco/burrow-tokens'
+import { extendBurrow } from '@purple-brock/burrow-core'
+import { generateScale } from '@purple-brock/burrow-tokens'
 
 // one hex → a full 50–900 scale → becomes your `primary`
 extendBurrow({ primitive: { color: { primary: generateScale('#8B5CF6') } } })
@@ -73,7 +73,7 @@ That's the whole setup. No wrapper, no provider. Everything you don't set keeps 
 **2. Build UI with `Chamber` (boxes) and `Tunnel` (text):**
 
 ```tsx
-import { Chamber, Tunnel } from '@badger-eco/burrow-web'
+import { Chamber, Tunnel } from '@purple-brock/burrow-web'
 
 function Hello() {
   return (
@@ -107,8 +107,8 @@ auto-chosen to stay **WCAG-AA readable for any hue** (light brands get a dark
 label instead of an unreadable white one).
 
 ```ts
-import { generateTheme } from '@badger-eco/burrow-tokens'
-import { extendBurrow } from '@badger-eco/burrow-core'
+import { generateTheme } from '@purple-brock/burrow-tokens'
+import { extendBurrow } from '@purple-brock/burrow-core'
 
 extendBurrow(generateTheme('#8B5CF6'))   // done — that's a full themed app
 ```
@@ -133,7 +133,7 @@ control than `generateTheme` gives you.
 Give it your brand colour and get back ten shades you can drop straight into tokens.
 
 ```ts
-import { generateScale } from '@badger-eco/burrow-tokens'
+import { generateScale } from '@purple-brock/burrow-tokens'
 
 const green = generateScale('#2E7D5E')
 // {
@@ -182,7 +182,7 @@ const scale = generateScale('#2E7D5E', { format: 'hsl' })
 Give it your brand hex and get back scientifically paired colour hues — each one already built into a full scale.
 
 ```ts
-import { generateHarmonics } from '@badger-eco/burrow-tokens'
+import { generateHarmonics } from '@purple-brock/burrow-tokens'
 
 const harmonics = generateHarmonics('#2E7D5E')
 ```
@@ -235,8 +235,8 @@ const harmonics = generateHarmonics('#2E7D5E', { format: 'hsl' })
 ### Putting it together — a complete palette from one brand colour
 
 ```ts
-import { generateScale, generateHarmonics } from '@badger-eco/burrow-tokens'
-import { extendBurrow } from '@badger-eco/burrow-core'
+import { generateScale, generateHarmonics } from '@purple-brock/burrow-tokens'
+import { extendBurrow } from '@purple-brock/burrow-core'
 
 const brand   = generateScale('#2E7D5E')
 const palette = generateHarmonics('#2E7D5E')
@@ -359,8 +359,8 @@ Common naming patterns:
 In your root file (`main.tsx`, `index.tsx`, `App.tsx` — wherever your app starts):
 
 ```ts
-import { extendBurrow } from '@badger-eco/burrow-core'
-import { generateScale } from '@badger-eco/burrow-tokens'
+import { extendBurrow } from '@purple-brock/burrow-core'
+import { generateScale } from '@purple-brock/burrow-tokens'
 
 const green = generateScale('#2E7D5E')
 const warm  = generateScale('#C0562B')  // your accent
@@ -419,7 +419,7 @@ Chamber defaults to `<div>` but renders as any semantic element via the `as` pro
 > token keys (they're generic, so the category can't be inferred).
 
 ```tsx
-import { Chamber, Tunnel } from '@badger-eco/burrow-web'
+import { Chamber, Tunnel } from '@purple-brock/burrow-web'
 
 // Button — renders as <button> with hover + disabled states
 function PrimaryButton({ children, onClick, disabled }) {
@@ -500,7 +500,7 @@ function Card({ title, subtitle }: { title: string; subtitle: string }) {
 ## Dark mode toggle — anywhere in your app
 
 ```tsx
-import { useBurrow } from '@badger-eco/burrow-web'
+import { useBurrow } from '@purple-brock/burrow-web'
 
 function DarkModeToggle() {
   const { mode, setMode } = useBurrow()
@@ -799,8 +799,8 @@ per project via `extendBurrow({ motion: { duration: { fast: 120 } } })`.
 Define them once, use the resolver in any component:
 
 ```ts
-import { createVariants } from '@badger-eco/burrow-core'
-import { useBurrow } from '@badger-eco/burrow-web'
+import { createVariants } from '@purple-brock/burrow-core'
+import { useBurrow } from '@purple-brock/burrow-web'
 
 const buttonSize = createVariants({
   sm: { padding: 'space.2', fontSize: 'fontSize.sm' },
@@ -834,10 +834,10 @@ Everything above applies to React Native too — same `extendBurrow()`, same tok
 
 ```tsx
 // Web
-import { Chamber, Tunnel, useBurrow } from '@badger-eco/burrow-web'
+import { Chamber, Tunnel, useBurrow } from '@purple-brock/burrow-web'
 
 // Native — same API, different import
-import { Chamber, Tunnel, useBurrow } from '@badger-eco/burrow-native'
+import { Chamber, Tunnel, useBurrow } from '@purple-brock/burrow-native'
 ```
 
 ### What's different in native
@@ -867,7 +867,7 @@ Pass the same token path on both platforms — BadgerBurrow picks the right form
 
 ```tsx
 import { Pressable } from 'react-native'
-import { Chamber, Tunnel } from '@badger-eco/burrow-native'
+import { Chamber, Tunnel } from '@purple-brock/burrow-native'
 
 function PrimaryButton({ children, onPress }) {
   return (
@@ -918,8 +918,8 @@ The same `extendBurrow()` call at app entry works for both platforms. Import fro
 
 ```ts
 // app entry — same on both platforms
-import { extendBurrow } from '@badger-eco/burrow-core'
-import { generateScale } from '@badger-eco/burrow-tokens'
+import { extendBurrow } from '@purple-brock/burrow-core'
+import { generateScale } from '@purple-brock/burrow-tokens'
 
 extendBurrow({
   primitive: { color: { primary: generateScale('#744577') } },
@@ -932,10 +932,10 @@ extendBurrow({
 
 ```tsx
 // Web component
-import { Chamber, Tunnel } from '@badger-eco/burrow-web'
+import { Chamber, Tunnel } from '@purple-brock/burrow-web'
 
 // React Native component — identical props
-import { Chamber, Tunnel } from '@badger-eco/burrow-native'
+import { Chamber, Tunnel } from '@purple-brock/burrow-native'
 
 function Card({ title }) {
   return (
@@ -965,7 +965,7 @@ collected — on the server there's no DOM to inject them into — and put them 
 
 ```tsx
 import { renderToString } from 'react-dom/server'
-import { createStyleRegistry } from '@badger-eco/burrow-web'
+import { createStyleRegistry } from '@purple-brock/burrow-web'
 
 const registry = createStyleRegistry()
 const body = registry.collect(() => renderToString(<App />))  // App uses Chamber as normal
@@ -984,8 +984,8 @@ need the registry. Synchronous `renderToString` only for now.
 
 | Step | What you do |
 |---|---|
-| Install (web) | `npm install @badger-eco/burrow-tokens @badger-eco/burrow-core @badger-eco/burrow-web` |
-| Install (native) | `npm install @badger-eco/burrow-tokens @badger-eco/burrow-core @badger-eco/burrow-native` |
+| Install (web) | `npm install @purple-brock/burrow-tokens @purple-brock/burrow-core @purple-brock/burrow-web` |
+| Install (native) | `npm install @purple-brock/burrow-tokens @purple-brock/burrow-core @purple-brock/burrow-native` |
 | Generate colours | `generateScale(brandHex)` → full 50–900 scale |
 | Find harmonics | `generateHarmonics(brandHex)` → complementary, analogous, triadic etc. |
 | Configure | `extendBurrow({ primitive, semantic })` once at app entry — no wrapper, works on both platforms |

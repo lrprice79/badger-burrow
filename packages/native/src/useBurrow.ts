@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { BadgerBase } from '@badger-eco/burrow-core'
+import { BadgerBase } from '@purple-brock/burrow-core'
 
 export function useBurrow() {
     const snapshot = useSyncExternalStore(

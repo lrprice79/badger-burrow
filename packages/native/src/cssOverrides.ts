@@ -24,7 +24,7 @@
  */
 
 import type { ViewStyle, TextStyle } from 'react-native'
-import type { ResponsiveValue } from '@badger-eco/burrow-core'
+import type { ResponsiveValue } from '@purple-brock/burrow-core'
 
 // ─── box overrides (Chamber) ──────────────────────────────────────────────────
 

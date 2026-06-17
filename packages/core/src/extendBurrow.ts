@@ -1,5 +1,5 @@
-import { defaultTokens } from '@badger-eco/burrow-tokens'
-import type { BurrowTokens } from '@badger-eco/burrow-tokens'
+import { defaultTokens } from '@purple-brock/burrow-tokens'
+import type { BurrowTokens } from '@purple-brock/burrow-tokens'
 import { BadgerBase } from './store'
 
 type DeepPartial<T> = T extends object

@@ -1,5 +1,5 @@
 import { createVariants } from '../variants'
-import { defaultTokens } from '@badger-eco/burrow-tokens'
+import { defaultTokens } from '@purple-brock/burrow-tokens'
 
 // ─── createVariants return type ───────────────────────────────────────────────
 

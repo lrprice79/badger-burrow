@@ -1,4 +1,4 @@
-import type { BurrowTokens } from '@badger-eco/burrow-tokens'
+import type { BurrowTokens } from '@purple-brock/burrow-tokens'
 import type { ColorMode } from './resolver'
 import { buildBoxStyles, buildTextStyles } from './buildStyles'
 import type { BurrowBoxVisualProps, BurrowTextVisualProps, PseudoBoxProps, PseudoTextProps, RV } from './props'

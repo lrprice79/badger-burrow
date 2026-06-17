@@ -6,8 +6,8 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "dev": "turbo run dev --parallel",
-    "storybook": "pnpm --filter @badger-eco/burrow-storybook storybook",
-    "build-storybook": "pnpm --filter @badger-eco/burrow-storybook build-storybook"
+    "storybook": "pnpm --filter @purple-brock/burrow-storybook storybook",
+    "build-storybook": "pnpm --filter @purple-brock/burrow-storybook build-storybook"
   },
   "devDependencies": {
     "turbo": "^2.0.0",
