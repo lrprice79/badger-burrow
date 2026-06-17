@@ -791,9 +791,9 @@ from one hex by regenerating the `primary` scale). Story groups:
 |---|---|
 | `@purple-brock/burrow-tokens` | 59 |
 | `@purple-brock/burrow-core` | 236 |
-| `@purple-brock/burrow-web` | 332 |
+| `@purple-brock/burrow-web` | 333 |
 | `@purple-brock/burrow-native` | 82 |
-| **Total** | **709** |
+| **Total** | **710** |
 
 ---
 
