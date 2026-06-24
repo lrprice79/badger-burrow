@@ -4,3 +4,6 @@ dist
 *.tsbuildinfo
 
 storybook-static/
+
+# macOS
+.DS_Store
