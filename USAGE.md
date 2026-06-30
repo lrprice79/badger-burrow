@@ -18,7 +18,26 @@ burrow is a **token-driven, provider-less styling system** for React Native (Exp
 | `@purple-brock/burrow-core` | The engine. The global store (`BadgerBase`), token resolution (`resolveToken`), `extendBurrow`/`mergeBurrow`, style builders, responsive + pseudo + sx logic. No React Native. |
 | `@purple-brock/burrow-native` | The components you actually render: `Chamber` (View) and `Tunnel` (Text), plus the `useBurrow` hook. |
 
-> There is also an internal `web` package, but native is what Badger apps use.
+> There is also a `@purple-brock/burrow-web` package that ships DOM `Chamber`/`Tunnel` for plain React (react-dom). Native is what Badger apps use, but burrow is not RN-only — see below.
+
+---
+
+## Requirements & platform support
+
+burrow is a **React-based** library. The split between pure data and the React layer matters, so here it is precisely:
+
+- **React is required for the components.** `@purple-brock/burrow-native` and `@purple-brock/burrow-web` declare `react` (`>=18.0.0`) as a peer dependency; `@purple-brock/burrow-core` also peer-depends on `react` (it hosts the hook glue). If you render any burrow component, you are in a React app.
+- **Tokens are React-free.** `@purple-brock/burrow-tokens` has **no** peer dependencies at all — it's pure TypeScript (OKLCH colour maths: `generateScale` / `generateHarmonics` / `generateTheme`, plus the default token data and types). You can import and run it anywhere, React or not, e.g. to generate a palette in a build script.
+
+**It is not tied to Expo.** `@purple-brock/burrow-native` peer-depends only on `react` (`>=18.0.0`) and `react-native` (`>=0.73.0`), and its source imports nothing but `react`, `react-native`, and the burrow core/tokens packages — **no `expo` / `expo-*` dependency anywhere.** So the components work in **any** React Native app: Expo *or* bare/plain React Native. (Badger apps happen to use Expo, and this guide's examples show Expo entry files, but that's a choice, not a requirement.)
+
+**Web React works too.** `@purple-brock/burrow-web` ships ready-made DOM `Chamber`/`Tunnel` (peer-dep `react`, with `react-dom`) — these are real components, not RN-on-web. And because `burrow-core` can emit CSS custom properties (`toCssVar` / `buildCssVarMap` / `injectCssVars` in `cssVars.ts`) and `burrow-tokens` is framework-agnostic, you can also consume tokens directly as CSS variables or raw values in any web setup.
+
+| Target | Package(s) | Requirement |
+|---|---|---|
+| **React Native** (Expo **or** bare) | `burrow-native` + core + tokens | `react >=18`, `react-native >=0.73`. No Expo coupling. |
+| **Web React** (DOM) | `burrow-web` + core + tokens | `react >=18`, `react-dom`. Ready-made DOM components. |
+| **Any JS/TS** (palette/token generation only) | `burrow-tokens` | None — pure TypeScript, no React. |
 
 ---
 
