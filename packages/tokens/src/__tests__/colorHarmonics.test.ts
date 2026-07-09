@@ -138,7 +138,8 @@ describe('generateHarmonics — error handling', () => {
     expect(() => generateHarmonics('not-a-color')).toThrow(/invalid hex/i)
   })
 
-  it('throws on short hex', () => {
-    expect(() => generateHarmonics('#abc')).toThrow(/invalid hex/i)
+  it('accepts 3-digit shorthand hex (expands #abc → #aabbcc)', () => {
+    expect(() => generateHarmonics('#abc')).not.toThrow()
+    expect(generateHarmonics('#abc')).toEqual(generateHarmonics('#aabbcc'))
   })
 })

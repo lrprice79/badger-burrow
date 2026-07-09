@@ -1,5 +1,5 @@
 import type { PrimitiveColorScale } from './schema'
-import { generateScale, type ColorFormat } from './colorScale'
+import { generateScale, hexToRgb, type ColorFormat } from './colorScale'
 
 export interface HarmonicsOptions {
   scales?: boolean
@@ -17,19 +17,7 @@ export interface HarmonicsResult<S extends boolean = true> {
   tetradic: ScaleOrHex<S>[]
 }
 
-// ─── Internal hex ↔ OKLCH utilities (mirrored from colorScale.ts) ─────────────
-
-function hexToRgb(hex: string): [number, number, number] {
-  const clean = hex.replace('#', '')
-  if (!/^[0-9a-fA-F]{6}$/.test(clean)) {
-    throw new Error(`BadgerBurrow: invalid hex colour "${hex}". Expected #rrggbb format.`)
-  }
-  return [
-    parseInt(clean.slice(0, 2), 16) / 255,
-    parseInt(clean.slice(2, 4), 16) / 255,
-    parseInt(clean.slice(4, 6), 16) / 255,
-  ]
-}
+// ─── Internal OKLCH utilities (hex parsing shared from colorScale.ts) ──────────
 
 function linearise(c: number): number {
   return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)

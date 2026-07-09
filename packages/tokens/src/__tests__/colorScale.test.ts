@@ -117,8 +117,8 @@ describe('generateScale — error handling', () => {
     expect(() => generateScale('not-a-color')).toThrow(/invalid hex/i)
   })
 
-  it('throws on hex with wrong length', () => {
-    expect(() => generateScale('#abc')).toThrow(/invalid hex/i)
+  it('throws on hex with wrong length (not 3 or 6 digits)', () => {
+    expect(() => generateScale('#abcde')).toThrow(/invalid hex/i)
   })
 
   it('throws if anchor is not a valid shade key', () => {
@@ -127,5 +127,37 @@ describe('generateScale — error handling', () => {
 
   it('throws if anchor is 0', () => {
     expect(() => generateScale('#8B5CF6', { anchor: 0 })).toThrow(/invalid anchor/i)
+  })
+})
+
+// ─── hex input normalisation (3-digit shorthand, whitespace, no-hash) ──────────
+
+describe('generateScale — hex input normalisation', () => {
+  it('accepts 3-digit shorthand and expands it (#f0a → #ff00aa)', () => {
+    expect(generateScale('#f0a')).toEqual(generateScale('#ff00aa'))
+  })
+
+  it('accepts 3-digit shorthand without a leading hash', () => {
+    expect(generateScale('abc')).toEqual(generateScale('#aabbcc'))
+  })
+
+  it('trims surrounding whitespace', () => {
+    expect(generateScale('  #744577  ')).toEqual(generateScale('#744577'))
+  })
+
+  it('is case-insensitive', () => {
+    expect(generateScale('#ABCDEF')).toEqual(generateScale('#abcdef'))
+  })
+
+  it('still throws on a clearly invalid hex', () => {
+    expect(() => generateScale('not-a-color')).toThrow(/invalid hex/i)
+  })
+
+  it('throws on a 4-digit hex (neither 3 nor 6)', () => {
+    expect(() => generateScale('#1234')).toThrow(/invalid hex/i)
+  })
+
+  it('throws on non-hex characters', () => {
+    expect(() => generateScale('#ggg')).toThrow(/invalid hex/i)
   })
 })

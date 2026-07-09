@@ -27,11 +27,27 @@ const LIGHTNESS_MAP: Record<number, number> = {
 
 // ─── Colour conversion math ───────────────────────────────────────────────────
 
-function hexToRgb(hex: string): [number, number, number] {
-  const clean = hex.replace('#', '')
-  if (!/^[0-9a-fA-F]{6}$/.test(clean)) {
-    throw new Error(`BadgerBurrow: invalid hex colour "${hex}". Expected #rrggbb format.`)
+/**
+ * Normalise a hex colour string to a lowercase 6-digit body (no `#`).
+ * Accepts `#rgb` / `rgb` shorthand (expanded by doubling each nibble),
+ * `#rrggbb` / `rrggbb`, with or without the leading `#` and any surrounding
+ * whitespace. Throws a clear error on anything else.
+ *
+ * @example
+ * normalizeHex('#f0a')      // → 'ff00aa'
+ * normalizeHex('  744577 ') // → '744577'
+ */
+export function normalizeHex(hex: string): string {
+  const clean = hex.trim().replace(/^#/, '').toLowerCase()
+  if (/^[0-9a-f]{3}$/.test(clean)) {
+    return clean[0] + clean[0] + clean[1] + clean[1] + clean[2] + clean[2]
   }
+  if (/^[0-9a-f]{6}$/.test(clean)) return clean
+  throw new Error(`BadgerBurrow: invalid hex colour "${hex}". Expected #rgb or #rrggbb format.`)
+}
+
+export function hexToRgb(hex: string): [number, number, number] {
+  const clean = normalizeHex(hex)
   return [
     parseInt(clean.slice(0, 2), 16) / 255,
     parseInt(clean.slice(2, 4), 16) / 255,
