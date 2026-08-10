@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { BadgerBase } from '@purple-brock/burrow-core'
 import { Chamber } from '../Chamber'
 import { Tunnel } from '../Tunnel'
@@ -155,5 +155,36 @@ describe('Tunnel responsive props', () => {
         render(<Tunnel data-testid="t" fontSize={{ base: 'fontSize.sm', lg: 'fontSize.xl' }} />)
         expect(respTag()?.textContent).toContain('font-size')
         expect(respTag()?.textContent).toContain('992px')
+    })
+})
+
+// ─── content-addressed class name (token change → fresh rule) ─────────────────
+// Regression: the responsive class name is hashed from the RESOLVED CSS, so a
+// runtime token change produces a new class + a fresh @media rule rather than
+// silently reusing the stale cached one.
+
+describe('responsive class name is content-addressed on resolved CSS', () => {
+    it('re-renders with a new class + fresh CSS when a referenced token changes', () => {
+        const { rerender } = render(<Chamber data-testid="c" w={{ md: 'space.4' }} />)
+        const firstCls = screen.getByTestId('c').className
+        const firstTag = document.head.querySelector(`[data-bb-responsive="${firstCls}"]`)
+        expect(firstTag?.textContent).toContain('width: 16px')
+
+        // Change what space.4 resolves to, then re-render the same element.
+        act(() => {
+            BadgerBase.setTokens({
+                ...BadgerBase.getTokens(),
+                primitive: {
+                    ...BadgerBase.getTokens().primitive,
+                    space: { ...BadgerBase.getTokens().primitive.space, 4: 99 },
+                },
+            })
+        })
+        rerender(<Chamber data-testid="c" w={{ md: 'space.4' }} />)
+
+        const secondCls = screen.getByTestId('c').className
+        expect(secondCls).not.toBe(firstCls)
+        const secondTag = document.head.querySelector(`[data-bb-responsive="${secondCls}"]`)
+        expect(secondTag?.textContent).toContain('width: 99px')
     })
 })

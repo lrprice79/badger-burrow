@@ -74,21 +74,16 @@ export const Tunnel = React.forwardRef<HTMLElement, TunnelProps>(function Tunnel
     const hasPseudo    = Object.keys(pseudoStyles).length > 0
     const hasResponsive = Object.keys(responsiveProps).length > 0
 
-    // Generate a scoped class name when pseudo or responsive styles are needed
-    const className = (hasPseudo || hasResponsive)
-        ? toClassName(JSON.stringify(pseudoStyles) + stableStringify(responsiveProps) + mode)
-        : undefined
-
-    // Inject <style> tags synchronously during render — idempotent, no useEffect needed
-    if (hasPseudo && className) {
-        injectPseudoStyles(className, pseudoStyles)
-    }
-
-    // Inject media-query rules for responsive props
-    if (hasResponsive && className) {
-        const breakpoints = tokens.breakpoints ?? {}
+    // Resolve each breakpoint's CSS up-front so the class name can be
+    // content-addressed against the RESOLVED styles rather than the raw props.
+    // If tokens change at runtime, the resolved CSS (and thus the class name)
+    // changes too — so a new rule is injected instead of a stale one being reused.
+    // Built in getBreakpointOrder order (base first), so key order is stable.
+    const breakpoints = tokens.breakpoints ?? {}
+    let bpStyles: Partial<Record<string, Record<string, string | number | undefined>>> | undefined
+    if (hasResponsive) {
         const bpOrder = getBreakpointOrder(breakpoints)
-        const bpStyles: Partial<Record<string, Record<string, string | number | undefined>>> = {}
+        bpStyles = {}
         // Include 'base' — it is emitted as an unwrapped class rule, with the
         // named breakpoints overriding it via ascending min-width media queries.
         for (const bp of bpOrder) {
@@ -101,6 +96,21 @@ export const Tunnel = React.forwardRef<HTMLElement, TunnelProps>(function Tunnel
                 bpStyles[bp] = buildTextStyles(bpProps as BurrowTextProps, tokens, mode)
             }
         }
+    }
+
+    // Generate a scoped class name when pseudo or responsive styles are needed —
+    // content-addressed on the resolved pseudo + responsive CSS plus mode.
+    const className = (hasPseudo || hasResponsive)
+        ? toClassName(JSON.stringify(pseudoStyles) + stableStringify(bpStyles ?? {}) + mode)
+        : undefined
+
+    // Inject <style> tags synchronously during render — idempotent, no useEffect needed
+    if (hasPseudo && className) {
+        injectPseudoStyles(className, pseudoStyles)
+    }
+
+    // Inject media-query rules for responsive props
+    if (hasResponsive && className && bpStyles) {
         injectResponsiveStyles(className, bpStyles, breakpoints)
     }
 
@@ -109,13 +119,22 @@ export const Tunnel = React.forwardRef<HTMLElement, TunnelProps>(function Tunnel
 
     // Cast to ElementType so the dynamic tag union doesn't explode the ref/prop types.
     const Component = Tag as React.ElementType
+    // Merge the scoped burrow class with any user-supplied className — spreading
+    // htmlProps must never clobber the generated class the injected pseudo /
+    // responsive rules target.
+    const { className: userClassName, ...restHtmlProps } = htmlProps as { className?: string }
+    const mergedClassName =
+        [className, userClassName].filter(Boolean).join(' ') || undefined
+    // Memoise the merged ref callback — a fresh callback each render makes React
+    // detach (call with null) and re-attach the ref on every render.
+    const combinedRef = React.useMemo(() => mergeRefs(ref, dbg.debugRef), [ref, dbg.debugRef])
     return (
         <Component
-            ref={mergeRefs(ref, dbg.debugRef)}
-            className={className}
+            ref={combinedRef}
+            className={mergedClassName}
             style={dbg.outline ? { ...resolvedStyle, outline: dbg.outline } : resolvedStyle}
             {...(dbg.attr ? { 'data-bb-debug': dbg.attr } : {})}
-            {...(htmlProps as React.HTMLAttributes<HTMLElement>)}
+            {...(restHtmlProps as React.HTMLAttributes<HTMLElement>)}
         >
             {children}
         </Component>

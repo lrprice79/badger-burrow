@@ -27,8 +27,12 @@ export function fnv1a(str: string): string {
 
     for (let i = 0; i < str.length; i++) {
         hash ^= str.charCodeAt(i)
-        // Multiply by FNV prime — keep in unsigned 32-bit range
-        hash = (hash * FNV_PRIME) >>> 0
+        // Multiply by FNV prime in true 32-bit space. Math.imul avoids the
+        // float64 precision loss of `hash * FNV_PRIME` (whose product exceeds
+        // 2^53 for most inputs), keeping the hash a faithful FNV-1a with full
+        // 32-bit distribution — so distinct style combos don't collide onto the
+        // same className (which would silently drop the second one's styles).
+        hash = Math.imul(hash, FNV_PRIME) >>> 0
     }
 
     return hash.toString(36)

@@ -789,11 +789,11 @@ from one hex by regenerating the `primary` scale). Story groups:
 
 | Package | Tests |
 |---|---|
-| `@purple-brock/burrow-tokens` | 59 |
+| `@purple-brock/burrow-tokens` | 66 |
 | `@purple-brock/burrow-core` | 236 |
-| `@purple-brock/burrow-web` | 333 |
+| `@purple-brock/burrow-web` | 336 |
 | `@purple-brock/burrow-native` | 82 |
-| **Total** | **710** |
+| **Total** | **720** |
 
 ---
 

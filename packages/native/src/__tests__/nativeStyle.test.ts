@@ -130,9 +130,13 @@ describe('sanitizeNativeStyle — view drops text-only props', () => {
 // ─── lineHeight multiplier resolution ────────────────────────────────────────
 
 describe('sanitizeNativeStyle — lineHeight', () => {
-    it('converts a unitless string multiplier to a number', () => {
+    it('drops an unresolvable multiplier when no fontSize is present', () => {
+        // A unitless multiplier (e.g. 1.5) can't be turned into RN's absolute
+        // point lineHeight without a fontSize. Emitting 1.5 would give a ~1.5px
+        // line height (overlapping text), so it must be dropped — RN then falls
+        // back to its own sensible line height for the font.
         const out = sanitizeNativeStyle({ lineHeight: '1.5' }, { text: true })
-        expect(typeof out.lineHeight).toBe('number')
+        expect(out.lineHeight).toBeUndefined()
     })
 
     it('resolves a multiplier against fontSize to absolute px', () => {

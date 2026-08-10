@@ -115,15 +115,21 @@ export function sanitizeNativeStyle(
     }
 
     // Resolve a unitless lineHeight multiplier (e.g. 1.5) against fontSize so RN
-    // gets an absolute pixel value rather than a ~1px line height.
+    // gets an absolute pixel value rather than a ~1px line height. Without a
+    // fontSize to multiply by, the multiplier can't be resolved — drop it so RN
+    // falls back to its own sensible line height instead of emitting ~1.5px
+    // (which would overlap the text).
     if (
         opts.text &&
         typeof out.lineHeight === 'number' &&
         out.lineHeight > 0 &&
-        out.lineHeight < 4 &&
-        typeof out.fontSize === 'number'
+        out.lineHeight < 4
     ) {
-        out.lineHeight = Math.round(out.lineHeight * out.fontSize)
+        if (typeof out.fontSize === 'number') {
+            out.lineHeight = Math.round(out.lineHeight * out.fontSize)
+        } else {
+            delete out.lineHeight
+        }
     }
 
     return out

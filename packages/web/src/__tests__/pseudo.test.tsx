@@ -211,3 +211,32 @@ describe('Tunnel _hover', () => {
         expect(el.className).toMatch(/^bb-/)
     })
 })
+
+// ─── user className merges with the scoped burrow class ───────────────────────
+// Regression: a user-supplied className must NOT clobber the generated bb- class
+// that the injected :hover / responsive rules target.
+
+describe('user className + pseudo', () => {
+    it('Chamber merges a user className with the scoped hover class', () => {
+        render(<Chamber data-testid="c" className="my-layout" _hover={{ bg: 'color.interactive.primary' }} />)
+        const el = screen.getByTestId('c')
+        expect(el.className).toContain('my-layout')
+        expect(el.className).toMatch(/bb-/)
+        // The injected rule's selector must actually match the element.
+        const tag = document.head.querySelector('[data-bb]')!
+        const selector = tag.textContent!.split(':')[0].trim()
+        expect(el.matches(selector)).toBe(true)
+    })
+
+    it('Tunnel merges a user className with the scoped hover class', () => {
+        render(<Tunnel data-testid="t" className="my-text" _hover={{ color: 'color.text.primary' }}>hi</Tunnel>)
+        const el = screen.getByTestId('t')
+        expect(el.className).toContain('my-text')
+        expect(el.className).toMatch(/bb-/)
+    })
+
+    it('Chamber passes a user className through even with no pseudo/responsive', () => {
+        render(<Chamber data-testid="c" className="only-mine" />)
+        expect(screen.getByTestId('c').className).toBe('only-mine')
+    })
+})
