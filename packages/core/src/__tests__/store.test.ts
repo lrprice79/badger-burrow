@@ -171,3 +171,17 @@ describe('reset', () => {
         expect(listener).toHaveBeenCalledTimes(0)
     })
 })
+
+// ─── invalid mode (audit B5) ─────────────────────────────────────────────────
+
+describe('setMode rejects an invalid mode', () => {
+    it('ignores anything other than light/dark (keeps the current mode, no notify)', () => {
+        const listener = jest.fn()
+        BadgerBase.subscribe(listener)
+        BadgerBase.setMode('dark')
+        BadgerBase.setMode('purple' as never)
+        BadgerBase.setMode(undefined as never)
+        expect(BadgerBase.getMode()).toBe('dark')
+        expect(listener).toHaveBeenCalledTimes(1)
+    })
+})

@@ -6,28 +6,45 @@
   "types": "./dist/index.d.mts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs",
-      "types": "./dist/index.d.mts"
+      "default": "./dist/index.mjs"
     }
   },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
     "test": "jest --passWithNoTests",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "@purple-brock/burrow-tokens": "workspace:*"
   },
   "devDependencies": {
-    "@types/jest": "^29.0.0",
-    "@types/react": "^18.0.0",
-    "jest": "^29.0.0",
-    "jest-environment-jsdom": "^30.4.1",
-    "ts-jest": "^29.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.4.0"
+    "@types/jest": "^29.5.14",
+    "@types/react": "^18.3.31",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.5.2",
+    "ts-jest": "^29.4.15",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "react": ">=18.0.0"
+  },
+  "license": "MIT",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lrprice79/badger-burrow.git",
+    "directory": "packages/core"
   }
 }

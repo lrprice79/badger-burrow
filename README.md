@@ -805,3 +805,7 @@ from one hex by regenerating the `primary` scale). Story groups:
 | `@purple-brock/burrow-core` | ✅ Complete |
 | `@purple-brock/burrow-web` | ✅ Complete |
 | `@purple-brock/burrow-native` | ✅ Complete |
+
+## License
+
+[MIT](LICENSE) © 2026 Luke Price (The Purple Brock).

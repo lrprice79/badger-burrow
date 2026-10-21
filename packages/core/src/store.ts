@@ -36,6 +36,9 @@ export const BadgerBase = {
     },
 
     setMode(mode: ColorMode): void {
+        // Only 'light' | 'dark' are real modes — anything else (a plain-JS caller, a bad saved
+        // preference) is ignored rather than breaking every style lookup.
+        if (mode !== 'light' && mode !== 'dark') return
         if (mode === _mode) return
         _mode = mode
         notify()

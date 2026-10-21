@@ -117,3 +117,45 @@ describe('resolveToken — unknown paths', () => {
         expect(resolveToken('', defaultTokens, 'light')).toBeUndefined()
     })
 })
+
+// ─── unknown mode never crashes (audit B5) ───────────────────────────────────
+
+describe('resolveToken with an unknown mode', () => {
+    it('falls back to light instead of throwing', () => {
+        expect(() => resolveToken('color.text.primary', defaultTokens, 'purple' as never)).not.toThrow()
+        expect(resolveToken('color.text.primary', defaultTokens, 'purple' as never))
+            .toBe(resolveToken('color.text.primary', defaultTokens, 'light'))
+    })
+})
+
+// ─── unknown token warning (audit B6) ────────────────────────────────────────
+
+import { resolveScoped } from '../resolver'
+
+describe('resolveScoped warns (dev only) about a token path that does not exist', () => {
+    const proc = (globalThis as unknown as { process: { env: Record<string, string | undefined> } }).process
+    const env = proc.env.NODE_ENV
+    let warn: jest.SpyInstance
+    beforeEach(() => { proc.env.NODE_ENV = 'development'; warn = jest.spyOn(console, 'warn').mockImplementation(() => {}) })
+    afterEach(() => { proc.env.NODE_ENV = env; warn.mockRestore() })
+
+    it('warns once for a typo like "text.primry" and still passes the value through', () => {
+        expect(resolveScoped('color', 'text.primry', defaultTokens)).toBe('text.primry')
+        resolveScoped('color', 'text.primry', defaultTokens)
+        expect(warn).toHaveBeenCalledTimes(1)
+        expect(String(warn.mock.calls[0][0])).toMatch(/text\.primry/)
+    })
+
+    it('stays quiet for raw CSS values and real tokens', () => {
+        for (const v of ['#fff', 'rgba(0,0,0,0.5)', 'red', 'transparent', 'text.primary', 'bg.surface']) {
+            resolveScoped('color', v, defaultTokens)
+        }
+        expect(warn).not.toHaveBeenCalled()
+    })
+
+    it('stays quiet outside development', () => {
+        proc.env.NODE_ENV = 'production'
+        resolveScoped('color', 'bg.surfaec', defaultTokens)
+        expect(warn).not.toHaveBeenCalled()
+    })
+})

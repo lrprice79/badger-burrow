@@ -70,7 +70,8 @@ export function resolveToken(
     tokens: BurrowTokens,
     mode: ColorMode = 'light'
 ): string | number | undefined {
-    const semanticValue = tokens.semantic[mode][path]
+    // An unknown mode falls back to light rather than throwing on `semantic[mode]`.
+    const semanticValue = (tokens.semantic[mode] ?? tokens.semantic.light)[path]
 
     if (semanticValue !== undefined) {
         // It's a {reference} — resolve against primitive
@@ -146,5 +147,26 @@ export function resolveScoped(
     }
 
     const resolved = resolveToken(path, tokens, mode)
+    if (resolved === undefined && TOKEN_PATH_RE.test(value)) warnUnknownToken(category, value)
     return resolved !== undefined ? resolved : value
+}
+
+/** A dotted identifier like "text.primary" — looks like a token path, not raw CSS. */
+const TOKEN_PATH_RE = /^[A-Za-z][A-Za-z0-9]*(\.[A-Za-z0-9]+)+$/
+const _warnedUnknown = new Set<string>()
+
+/** Dev-only, once per value: a token path that resolves to nothing is almost always a typo, and
+ * would otherwise be passed through as an invalid CSS value (a red-box colour error on native). */
+function warnUnknownToken(category: string, value: string): void {
+    const env = (globalThis as { process?: { env?: { NODE_ENV?: string } } })
+        .process?.env?.NODE_ENV
+    if (env !== 'development') return
+    const key = `${category}|${value}`
+    if (_warnedUnknown.has(key)) return
+    _warnedUnknown.add(key)
+    // eslint-disable-next-line no-console
+    console.warn(
+        `[BadgerBurrow] Unknown ${category} token "${value}" — no such token, so it was passed ` +
+        `through as a raw value. Check for a typo.`,
+    )
 }

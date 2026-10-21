@@ -57,11 +57,12 @@ export const defaultTokens: BurrowTokens = {
       // borders
       'color.border.default':                   '{color.neutral.200}',
       'color.border.default.hover':             '{color.neutral.400}',
-      // feedback
-      'color.feedback.success':                 '{color.success.500}',
-      'color.feedback.error':                   '{color.error.500}',
-      'color.feedback.warning':                 '{color.warning.500}',
-      'color.feedback.info':                    '{color.info.500}',
+      // feedback — used as TEXT, so each step is the lightest that clears WCAG AA 4.5:1 on both
+      // bg.surface and bg.elevated (pinned by __tests__/contrast.test.ts)
+      'color.feedback.success':                 '{color.success.800}',
+      'color.feedback.error':                   '{color.error.600}',
+      'color.feedback.warning':                 '{color.warning.800}',
+      'color.feedback.info':                    '{color.info.600}',
     },
     dark: {
       // interactive — same primary.600 as light; white label, consistent across modes
@@ -78,7 +79,7 @@ export const defaultTokens: BurrowTokens = {
       // text — from the dedicated `ink` scale
       'color.text.primary':                     '{color.ink.50}',
       'color.text.primary.hover':               '{color.ink.200}',
-      'color.text.secondary':                   '{color.ink.400}',
+      'color.text.secondary':                   '{color.ink.300}', // ink.400 was 3.94:1 on bg.elevated
       'color.text.secondary.hover':             '{color.ink.200}',
       'color.text.inverse':                     '#ffffff',
       // borders
@@ -86,7 +87,7 @@ export const defaultTokens: BurrowTokens = {
       'color.border.default.hover':             '{color.neutral.500}',
       // feedback
       'color.feedback.success':                 '{color.success.400}',
-      'color.feedback.error':                   '{color.error.400}',
+      'color.feedback.error':                   '{color.error.300}', // error.400 was 4.46:1 on bg.elevated
       'color.feedback.warning':                 '{color.warning.400}',
       'color.feedback.info':                    '{color.info.400}',
     },

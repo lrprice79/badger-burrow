@@ -79,7 +79,7 @@ export function buildCssVarMap(
     }
 
     // ── Semantic tokens (resolved for the current mode) ───────────────────────
-    for (const path of Object.keys(tokens.semantic[mode])) {
+    for (const path of Object.keys(tokens.semantic[mode] ?? tokens.semantic.light)) {
         const resolved = resolveToken(path, tokens, mode)
         if (resolved !== undefined) {
             vars[toCssVar(path)] = resolved

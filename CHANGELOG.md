@@ -3,10 +3,32 @@
 All notable changes to BadgerBurrow are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-The packages are not yet published (`private: true`); entries accumulate under
-**Unreleased** until the first release.
+The packages are not yet published; entries accumulate under **Unreleased** until
+the first release. **Publish with `pnpm publish -r`** (not `npm publish`): pnpm
+rewrites the `workspace:*` dependencies to real versions.
 
 ## [Unreleased]
+
+### Changed (audit 2026-10-21)
+
+- **Default theme is now WCAG-AA readable** (`@purple-brock/burrow-tokens`). Feedback colours are
+  used as text, so they moved to the lightest step that clears 4.5:1 on both `bg.surface` and
+  `bg.elevated`: light `success.800`, `error.600`, `warning.800`, `info.600`; dark `error.300`
+  and `text.secondary` → `ink.300`. Pinned by `contrast.test.ts`. Apps that override these
+  semantic keys are unaffected.
+- **Packaging:** MIT license (root + each package), `files` = `dist` + LICENSE + README (no
+  source/tests published), `publishConfig.access: public`, `sideEffects: false`, `exports` lists
+  `types` first plus a `default` condition, per-package READMEs.
+- **Tooling:** `lint` (which did nothing) replaced by a real `typecheck` task; GitHub Actions CI
+  runs build + typecheck + test; dev dependencies updated (dev-only advisories 51 → 15).
+
+### Fixed (audit 2026-10-21)
+
+- **`BadgerBase.setMode()` ignores anything but `'light'`/`'dark'`** — an invalid mode used to make
+  every style lookup crash. `resolveToken` and `buildCssVarMap` also fall back to light.
+- **Dev warning for unknown token paths** — `color="text.primry"` now logs a one-time
+  `[BadgerBurrow] Unknown color token` warning in development instead of silently passing an
+  invalid colour through.
 
 ### Added
 
