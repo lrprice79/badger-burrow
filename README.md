@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lrprice79/badger-burrow/HEAD/assets/purple-brock-icon.png" width="140" alt="BadgerBurrow">
+  <img src="https://raw.githubusercontent.com/lrprice79/badger-burrow/HEAD/assets/purple-brock-icon.png" width="140" alt="Purple Brock Burrow">
 </p>
 
-<h1 align="center">BadgerBurrow</h1>
+<h1 align="center">Purple Brock Burrow</h1>
 
 > *No ThemeProvider. No Context. No cascade re-renders. Your theme lives in the burrow.*
 
@@ -10,11 +10,11 @@ A styling library for React (web) and React Native. Style components with props 
 
 ---
 
-## Why BadgerBurrow?
+## Why Purple Brock Burrow?
 
 Every major styling library makes you wrap your app in a `ThemeProvider`. When the theme changes, every component below it re-renders — even ones that didn't change. In large apps this gets slow.
 
-BadgerBurrow works differently:
+Purple Brock Burrow works differently:
 
 - **No provider** — call `extendBurrow()` once at startup. That's it.
 - **No Context** — the store is a plain pub/sub singleton. Components subscribe directly.
@@ -411,7 +411,7 @@ Token paths are resolved automatically. Numbers get `px` appended where appropri
 
 #### Pseudo-state props
 
-All pseudo props accept the same style props as Chamber itself (minus other pseudo props — no nesting). BadgerBurrow generates a scoped class name and injects a `<style>` tag — no inline-style limitation.
+All pseudo props accept the same style props as Chamber itself (minus other pseudo props — no nesting). Purple Brock Burrow generates a scoped class name and injects a `<style>` tag — no inline-style limitation.
 
 ```tsx
 <Chamber
@@ -428,7 +428,7 @@ All pseudo props accept the same style props as Chamber itself (minus other pseu
 
 #### Smart hover background
 
-When `bg` is a **primitive colour path** (e.g. `color.primary.500`), BadgerBurrow automatically steps the hover background two shades darker — no `_hover` needed:
+When `bg` is a **primitive colour path** (e.g. `color.primary.500`), Purple Brock Burrow automatically steps the hover background two shades darker — no `_hover` needed:
 
 ```tsx
 <Chamber bg="primary.500" />
@@ -642,7 +642,7 @@ Semantic tokens resolve differently per mode. Primitive tokens are always the sa
 
 ## Debugging — `__debug`
 
-Add `__debug` to any `Chamber` or `Tunnel` and it reveals what BadgerBurrow
+Add `__debug` to any `Chamber` or `Tunnel` and it reveals what Purple Brock Burrow
 actually did with it — the questions inspect-element can't answer:
 
 ```tsx
@@ -770,7 +770,7 @@ pnpm storybook          # dev server on :6006
 pnpm build-storybook    # static build
 ```
 
-Two global toolbar controls drive the whole library through the BadgerBurrow
+Two global toolbar controls drive the whole library through the Purple Brock Burrow
 store (no provider): **Mode** (light / dark) and **Brand** (recolours everything
 from one hex by regenerating the `primary` scale). Story groups:
 
