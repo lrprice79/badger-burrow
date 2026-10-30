@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lrprice79/badger-burrow/HEAD/assets/purple-brock-icon.png" width="120" alt="BadgerBurrow">
+</p>
+
 # @purple-brock/burrow-core
 
 Framework-agnostic engine for BadgerBurrow — the provider-less token store (`BadgerBase`), `extendBurrow` / `mergeBurrow`, token resolution, and the style builders (`buildBoxStyles`, `buildTextStyles`) the web and native packages share.

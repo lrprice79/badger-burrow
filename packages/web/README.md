@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lrprice79/badger-burrow/HEAD/assets/purple-brock-icon.png" width="120" alt="BadgerBurrow">
+</p>
+
 # @purple-brock/burrow-web
 
 BadgerBurrow for React on the web — `<Chamber>` and `<Tunnel>` with pseudo states (`_hover`, `_focus`…), responsive props and SSR style collection.

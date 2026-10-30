@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/badger-logo.png" width="140" alt="BadgerBurrow">
+  <img src="https://raw.githubusercontent.com/lrprice79/badger-burrow/HEAD/assets/purple-brock-icon.png" width="140" alt="BadgerBurrow">
 </p>
 
 <h1 align="center">BadgerBurrow</h1>
@@ -789,11 +789,11 @@ from one hex by regenerating the `primary` scale). Story groups:
 
 | Package | Tests |
 |---|---|
-| `@purple-brock/burrow-tokens` | 66 |
-| `@purple-brock/burrow-core` | 236 |
-| `@purple-brock/burrow-web` | 336 |
-| `@purple-brock/burrow-native` | 82 |
-| **Total** | **720** |
+| `@purple-brock/burrow-tokens` | 90 |
+| `@purple-brock/burrow-core` | 253 |
+| `@purple-brock/burrow-web` | 337 |
+| `@purple-brock/burrow-native` | 85 |
+| **Total** | **765** |
 
 ---
 

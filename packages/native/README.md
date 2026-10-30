@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lrprice79/badger-burrow/HEAD/assets/purple-brock-icon.png" width="120" alt="BadgerBurrow">
+</p>
+
 # @purple-brock/burrow-native
 
 BadgerBurrow for React Native / Expo — `<Chamber>` (box) and `<Tunnel>` (text) styled from tokens, plus `useBurrow()`. No ThemeProvider: switch theme with `BadgerBase.setMode`.

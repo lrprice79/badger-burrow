@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lrprice79/badger-burrow/HEAD/assets/purple-brock-icon.png" width="120" alt="BadgerBurrow">
+</p>
+
 # @purple-brock/burrow-tokens
 
 Design tokens for BadgerBurrow — the primitive + semantic token schema, default theme (AA-checked in light and dark), and colour tools (`generateScale`, `generateHarmonics`, `generateTheme`).
